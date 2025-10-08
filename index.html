@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cellipse cx='12' cy='5' rx='9' ry='3' /%3e%3cpath d='M21 12c0 1.66-4 3-9 3s-9-1.34-9-3' /%3e%3cpath d='M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5' /%3e%3c/svg%3e" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Realistic Data Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Required for data generation and download -->
+    <script src="https://cdn.jsdelivr.net/npm/faker@5.5.3/dist/faker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!-- Import Map for React and Google GenAI -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "@google/genai": "https://esm.sh/@google/genai@0.14.0"
+      }
+    }
+    </script>
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-900">
+    <div id="root"></div>
+    <script type="module">
+      import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+      import ReactDOM from 'react-dom/client';
+      import { GoogleGenAI, Type } from '@google/genai';
+
+      // --- Constants and Generators (from constants.ts & dataGenerator.ts) ---
+
+      const FIELD_GENERATORS = {
+          id:()=>faker.datatype.uuid(),date:()=>faker.date.past(1).toISOString().split("T")[0],address:()=>`${faker.address.streetAddress()}, ${faker.address.city()}, ${faker.address.zipCode()}`,phone_number:()=>faker.phone.phoneNumber(),order_id:()=>`ORD-${faker.datatype.number({min:1e3,max:99999})}`,customer_id:()=>`CUS-${faker.datatype.number({min:1e3,max:99999})}`,product_id:()=>`PROD-${faker.datatype.number({min:1e3,max:99999})}`,customer_name:()=>faker.name.findName(),customer_email:()=>faker.internet.email(),product_name:()=>faker.commerce.productName(),product_category:()=>faker.commerce.department(),price:()=>parseFloat(faker.commerce.price(5,500)),quantity:()=>faker.datatype.number({min:1,max:10}),order_status:()=>faker.random.arrayElement(["Pending","Shipped","Delivered","Cancelled"]),payment_method:()=>faker.random.arrayElement(["Credit Card","PayPal","Stripe","Bank Transfer"]),shipping_method:()=>faker.random.arrayElement(["Standard","Express","Next-day Air"]),total_amount:()=>parseFloat(faker.finance.amount(10,700,2)),tracking_number:()=>faker.random.alphaNumeric(12).toUpperCase(),patient_id:()=>`PAT-${faker.datatype.number({min:1e4,max:99999})}`,patient_name:()=>faker.name.findName(),date_of_birth:()=>faker.date.past(50,new Date("2004-01-01")).toISOString().split("T")[0],gender:()=>faker.name.gender(!0),blood_type:()=>faker.random.arrayElement(["A+","A-","B+","B-","AB+","AB-","O+","O-"]),insurance_provider:()=>`${faker.company.companyName()} Health`,hospital_name:()=>`${faker.company.companyName()} Hospital`,doctor_name:()=>`Dr. ${faker.name.firstName()} ${faker.name.lastName()}`,appointment_date:()=>faker.date.future(1).toISOString().split("T")[0],symptoms:()=>faker.lorem.words(5),diagnosis:()=>faker.lorem.words(3),prescription:()=>faker.lorem.words(2),treatment_name:()=>faker.lorem.words(3),treatment_cost:()=>parseFloat(faker.finance.amount(100,1e4,2)),room_number:()=>`${faker.random.arrayElement(["A","B","C"])}-${faker.datatype.number({min:100,max:599})}`,student_id:()=>`STU-${faker.datatype.number({min:1e3,max:9999})}`,student_name:()=>faker.name.findName(),school_name:()=>`${faker.company.companyName()} University`,major:()=>faker.name.jobArea(),gpa:()=>parseFloat(faker.finance.amount(2.5,4,2)),enrollment_date:()=>faker.date.past(4).toISOString().split("T")[0],course_id:()=>`${faker.random.alpha({count:3,upcase:!0})}-${faker.datatype.number({min:101,max:499})}`,course_name:()=>faker.lorem.words(2)+" 101",credits:()=>faker.datatype.number({min:1,max:4}),grade:()=>faker.datatype.number({min:60,max:100}),professor_name:()=>`Prof. ${faker.name.lastName()}`,semester:()=>`${faker.random.arrayElement(["Fall","Spring"])} ${new Date().getFullYear()+faker.datatype.number({min:0,max:2})}`,attendance_percentage:()=>faker.datatype.number({min:70,max:100}),booking_id:()=>faker.random.alphaNumeric(6).toUpperCase(),passenger_name:()=>faker.name.findName(),flight_number:()=>`${faker.random.alpha({count:2,upcase:!0})}${faker.datatype.number({min:100,max:9999})}`,airline:()=>faker.company.companyName(),aircraft_type:()=>faker.random.arrayElement(["Boeing 737","Airbus A320","Boeing 787","Airbus A380"]),seat_number:()=>`${faker.datatype.number({min:1,max:35})}${faker.random.arrayElement(["A","B","C","D","E","F"])}`,departure_city:()=>faker.address.city(),arrival_city:()=>faker.address.city(),departure_time:()=>faker.date.future(.1).toISOString(),arrival_time:()=>faker.date.future(.2).toISOString(),flight_duration_hours:()=>faker.datatype.number({min:1,max:15}),gate_number:()=>`${faker.random.arrayElement(["A","B","C","D"])}${faker.datatype.number({min:1,max:20})}`,terminal:()=>`Terminal ${faker.datatype.number({min:1,max:5})}`,flight_status:()=>faker.random.arrayElement(["On Time","Delayed","Cancelled","Boarding"]),ticket_price:()=>parseFloat(faker.finance.amount(150,2500,2)),transaction_id:()=>faker.finance.transactionType()+"-"+faker.datatype.uuid().substring(0,8),account_number:()=>faker.finance.account(),iban:()=>faker.finance.iban(),bank_name:()=>`${faker.company.companyName()} Bank`,transaction_type:()=>faker.finance.transactionType(),transaction_amount:()=>parseFloat(faker.finance.amount(-5e3,5e3,2)),currency:()=>faker.finance.currencyCode(),account_balance:()=>parseFloat(faker.finance.amount(0,5e4,2)),merchant_name:()=>faker.company.companyName(),card_type:()=>faker.finance.creditCardIssuer(),card_number_masked:()=>`**** **** **** ${faker.finance.mask(4)}`,transaction_description:()=>faker.finance.transactionDescription(),employee_id:()=>`EMP-${faker.datatype.number({min:100,max:999})}`,employee_name:()=>faker.name.findName(),job_title:()=>faker.name.jobTitle(),department:()=>faker.name.jobArea(),manager_name:()=>faker.name.findName(),employment_type:()=>faker.random.arrayElement(["Full-time","Part-time","Contract","Intern"]),hire_date:()=>faker.date.past(10).toISOString().split("T")[0],end_date:()=>faker.date.future(5).toISOString().split("T")[0],salary:()=>parseFloat(faker.finance.amount(4e4,15e4,0)),bonus:()=>parseFloat(faker.finance.amount(0,1e4,0)),office_location:()=>faker.address.city(),property_id:()=>`PROP-${faker.datatype.number({min:1e3,max:9999})}`,property_type:()=>faker.random.arrayElement(["Apartment","House","Condo","Townhouse"]),listing_price:()=>parseFloat(faker.finance.amount(15e4,2e6,0)),listing_status:()=>faker.random.arrayElement(["For Sale","Sold","Pending","For Rent"]),bedrooms:()=>faker.datatype.number({min:1,max:6}),bathrooms:()=>faker.datatype.number({min:1,max:5}),square_footage:()=>faker.datatype.number({min:800,max:5e3}),lot_size_acres:()=>parseFloat(faker.finance.amount(.1,5,2)),year_built:()=>faker.datatype.number({min:1950,max:new Date().getFullYear()}),has_garage:()=>faker.datatype.boolean(),has_pool:()=>faker.datatype.boolean(),agent_name:()=>faker.name.findName(),agency_name:()=>`${faker.company.companyName()} Realty`,user_id:()=>`@${faker.internet.userName().toLowerCase()}`,user_followers:()=>faker.datatype.number({min:100,max:1e6}),user_following:()=>faker.datatype.number({min:50,max:5e3}),post_date:()=>faker.date.recent(30).toISOString(),post_type:()=>faker.random.arrayElement(["Text","Image","Video","Link"]),post_content:()=>faker.lorem.sentence(),hashtags:()=>Array.from({length:faker.datatype.number({min:1,max:5})},()=>`#${faker.lorem.word()}`).join(" "),likes:()=>faker.datatype.number({min:0,max:5e3}),comments:()=>faker.datatype.number({min:0,max:500}),shares:()=>faker.datatype.number({min:0,max:1e3}),post_location:()=>`${faker.address.city()}, ${faker.address.country()}`,image_url:()=>faker.image.imageUrl(640,480,"nature",!0),video_url:()=>faker.internet.url(),sku:()=>faker.random.alphaNumeric(8).toUpperCase(),barcode:()=>faker.random.alphaNumeric(13),cost_price:()=>parseFloat(faker.commerce.price(1,400)),stock_quantity:()=>faker.datatype.number({min:0,max:1e3}),reorder_level:()=>faker.datatype.number({min:10,max:100}),inventory_status:()=>faker.random.arrayElement(["In Stock","Out of Stock","Low Stock"]),supplier:()=>faker.company.companyName(),warehouse_location:()=>`${faker.address.stateAbbr()}-${faker.datatype.number({min:1,max:20})}`,last_restock_date:()=>faker.date.past(1).toISOString().split("T")[0],product_weight_kg:()=>faker.datatype.number({min:1,max:50}),dimensions_cm:()=>`${faker.datatype.number({min:10,max:100})}x${faker.datatype.number({min:10,max:100})}x${faker.datatype.number({min:10,max:100})}`,contact_name:()=>faker.name.findName(),company_name:()=>faker.company.companyName(),industry:()=>faker.commerce.department(),lead_status:()=>faker.random.arrayElement(["New","Contacted","Qualified","Lost","Won"]),lead_source:()=>faker.random.arrayElement(["Web","Referral","Cold Call","Trade Show"]),owner_name:()=>faker.name.findName(),deal_value:()=>parseFloat(faker.finance.amount(1e3,1e5,0)),expected_close_date:()=>faker.date.future(1).toISOString().split("T")[0],last_contact_date:()=>faker.date.recent(90).toISOString().split("T")[0],last_activity:()=>faker.lorem.sentence(),next_step:()=>faker.lorem.words(3),project_id:()=>`${faker.random.alpha({count:3,upcase:!0})}-${faker.datatype.number({min:100,max:999})}`,project_name:()=>`${faker.commerce.productName()} Initiative`,sprint_name:()=>`Sprint ${faker.datatype.number({min:1,max:10})}`,task_name:()=>`${faker.hacker.verb()} ${faker.hacker.noun()}`,task_description:()=>faker.lorem.paragraph(),assignee:()=>faker.name.findName(),reporter_name:()=>faker.name.findName(),start_date_pm:()=>faker.date.past(.1).toISOString().split("T")[0],due_date:()=>faker.date.future(1).toISOString().split("T")[0],completion_date:()=>faker.date.future(.5).toISOString().split("T")[0],estimated_hours:()=>faker.datatype.number({min:1,max:40}),logged_hours:()=>faker.datatype.number({min:0,max:40}),task_status:()=>faker.random.arrayElement(["To Do","In Progress","Done","Blocked"]),priority:()=>faker.random.arrayElement(["Low","Medium","High","Urgent"]),review_id:()=>`REV-${faker.datatype.uuid().substring(0,8)}`,reviewer_name:()=>faker.name.findName(),review_period:()=>`Q${faker.datatype.number({min:1,max:4})} ${new Date().getFullYear()}`,performance_rating:()=>faker.datatype.number({min:1,max:5}),goals_achieved:()=>faker.datatype.number({min:0,max:5}),goals_total:()=>5,strengths:()=>faker.lorem.sentence(),areas_for_improvement:()=>faker.lorem.sentence(),feedback_comments:()=>faker.lorem.paragraph(),employee_comments:()=>faker.lorem.paragraph(),next_review_date:()=>faker.date.future(.5).toISOString().split("T")[0]
+      };
+      
+      const ALL_FIELDS=[{id:"id",label:"UUID",description:"Unique identifier"},{id:"date",label:"Date",description:"A random past date"},{id:"address",label:"Address",description:"Full physical address"},{id:"phone_number",label:"Phone",description:"Contact's phone number"},{id:"order_id",label:"Order ID",description:"Unique order identifier"},{id:"customer_id",label:"Customer ID",description:"Unique customer identifier"},{id:"product_id",label:"Product ID",description:"Unique product identifier"},{id:"customer_name",label:"Customer Name",description:"Full name of the customer"},{id:"customer_email",label:"Customer Email",description:"Email address of the customer"},{id:"product_name",label:"Product",description:"Name of the product"},{id:"product_category",label:"Category",description:"Product category"},{id:"price",label:"Price",description:"Price of the product"},{id:"quantity",label:"Quantity",description:"Number of items ordered"},{id:"order_status",label:"Order Status",description:"Current status of the order"},{id:"payment_method",label:"Payment Method",description:"Method used for payment"},{id:"shipping_method",label:"Shipping Method",description:"Method used for shipping"},{id:"total_amount",label:"Total Amount",description:"Total cost of the order"},{id:"tracking_number",label:"Tracking Number",description:"Shipping tracking number"},{id:"patient_id",label:"Patient ID",description:"Unique patient identifier"},{id:"patient_name",label:"Patient Name",description:"Full name of the patient"},{id:"date_of_birth",label:"Date of Birth",description:"Patient's date of birth"},{id:"gender",label:"Gender",description:"Gender of the person"},{id:"blood_type",label:"Blood Type",description:"Patient's blood type"},{id:"insurance_provider",label:"Insurance Provider",description:"Health insurance company"},{id:"hospital_name",label:"Hospital",description:"Name of the hospital"},{id:"doctor_name",label:"Doctor Name",description:"Name of the attending doctor"},{id:"appointment_date",label:"Appointment Date",description:"Date of the appointment"},{id:"symptoms",label:"Symptoms",description:"Patient's reported symptoms"},{id:"diagnosis",label:"Diagnosis",description:"Medical diagnosis"},{id:"prescription",label:"Prescription",description:"Prescribed medication"},{id:"treatment_name",label:"Treatment",description:"Description of the treatment"},{id:"treatment_cost",label:"Treatment Cost",description:"Cost of the treatment"},{id:"room_number",label:"Room Number",description:"Hospital room number"},{id:"student_id",label:"Student ID",description:"Unique student identifier"},{id:"student_name",label:"Student Name",description:"Full name of the student"},{id:"school_name",label:"School Name",description:"Name of the educational institution"},{id:"major",label:"Major",description:"Student's major field of study"},{id:"gpa",label:"GPA",description:"Grade Point Average"},{id:"enrollment_date",label:"Enrollment Date",description:"Date of enrollment"},{id:"course_id",label:"Course ID",description:"Unique course identifier"},{id:"course_name",label:"Course",description:"Name of the course"},{id:"credits",label:"Credits",description:"Number of credits for the course"},{id:"grade",label:"Grade",description:"Student's grade in the course"},{id:"professor_name",label:"Professor",description:"Name of the course professor"},{id:"semester",label:"Semester",description:"Academic semester"},{id:"attendance_percentage",label:"Attendance (%)",description:"Student's attendance percentage"},{id:"booking_id",label:"Booking ID",description:"Unique booking reference"},{id:"passenger_name",label:"Passenger Name",description:"Full name of the passenger"},{id:"flight_number",label:"Flight Number",description:"Unique flight identifier"},{id:"airline",label:"Airline",description:"Name of the airline"},{id:"aircraft_type",label:"Aircraft",description:"Model of the aircraft"},{id:"seat_number",label:"Seat",description:"Assigned seat number"},{id:"departure_city",label:"Departure City",description:"City of departure"},{id:"arrival_city",label:"Arrival City",description:"City of arrival"},{id:"departure_time",label:"Departure Time",description:"Scheduled departure time"},{id:"arrival_time",label:"Arrival Time",description:"Scheduled arrival time"},{id:"flight_duration_hours",label:"Duration (hrs)",description:"Flight duration in hours"},{id:"gate_number",label:"Gate",description:"Departure gate number"},{id:"terminal",label:"Terminal",description:"Airport terminal"},{id:"flight_status",label:"Flight Status",description:"Current status of the flight"},{id:"ticket_price",label:"Ticket Price",description:"Cost of the flight ticket"},{id:"transaction_id",label:"Transaction ID",description:"Unique transaction identifier"},{id:"account_number",label:"Account Number",description:"Bank account number"},{id:"iban",label:"IBAN",description:"International Bank Account Number"},{id:"bank_name",label:"Bank",description:"Name of the bank"},{id:"transaction_type",label:"Type",description:"Type of transaction"},{id:"transaction_amount",label:"Amount",description:"Transaction amount"},{id:"currency",label:"Currency",description:"Currency of the transaction"},{id:"account_balance",label:"Account Balance",description:"Balance after transaction"},{id:"merchant_name",label:"Merchant",description:"Name of the merchant"},{id:"card_type",label:"Card Type",description:"Type of card used"},{id:"card_number_masked",label:"Card Number",description:"Masked card number"},{id:"transaction_description",label:"Description",description:"Description of the transaction"},{id:"employee_id",label:"Employee ID",description:"Unique employee identifier"},{id:"employee_name",label:"Employee Name",description:"Full name of the employee"},{id:"job_title",label:"Job Title",description:"Employee's job title"},{id:"department",label:"Department",description:"Employee's department"},{id:"manager_name",label:"Manager",description:"Name of the employee's manager"},{id:"employment_type",label:"Employment Type",description:"Type of employment (e.g., Full-time)"},{id:"hire_date",label:"Hire Date",description:"Date of hiring"},{id:"end_date",label:"End Date",description:"End date of employment (if applicable)"},{id:"salary",label:"Salary",description:"Annual salary"},{id:"bonus",label:"Bonus",description:"Annual bonus amount"},{id:"office_location",label:"Office Location",description:"Location of the office"},{id:"property_id",label:"Property ID",description:"Unique property identifier"},{id:"property_type",label:"Type",description:"Type of property"},{id:"listing_price",label:"Price",description:"Listing price of the property"},{id:"listing_status",label:"Status",description:"Current status of the listing"},{id:"bedrooms",label:"Bedrooms",description:"Number of bedrooms"},{id:"bathrooms",label:"Bathrooms",description:"Number of bathrooms"},{id:"square_footage",label:"Sq. Footage",description:"Total square footage"},{id:"lot_size_acres",label:"Lot Size (Acres)",description:"Size of the property lot in acres"},{id:"year_built",label:"Year Built",description:"Year the property was built"},{id:"has_garage",label:"Has Garage",description:"Whether the property has a garage"},{id:"has_pool",label:"Has Pool",description:"Whether the property has a pool"},{id:"agent_name",label:"Agent Name",description:"Real estate agent's name"},{id:"agency_name",label:"Agency",description:"Real estate agency name"},{id:"user_id",label:"User ID",description:"Unique user handle"},{id:"user_followers",label:"Followers",description:"Number of followers"},{id:"user_following",label:"Following",description:"Number of users being followed"},{id:"post_date",label:"Post Date",description:"Date and time of the post"},{id:"post_type",label:"Post Type",description:"Type of post (e.g., Image, Text)"},{id:"post_content",label:"Post Content",description:"Text content of the post"},{id:"hashtags",label:"Hashtags",description:"Hashtags used in the post"},{id:"likes",label:"Likes",description:"Number of likes on the post"},{id:"comments",label:"Comments",description:"Number of comments on the post"},{id:"shares",label:"Shares",description:"Number of shares of the post"},{id:"post_location",label:"Location",description:"Geotagged location of the post"},{id:"image_url",label:"Image URL",description:"URL of the image in the post"},{id:"video_url",label:"Video URL",description:"URL of the video in the post"},{id:"sku",label:"SKU",description:"Stock Keeping Unit identifier"},{id:"barcode",label:"Barcode",description:"Product barcode (UPC, EAN)"},{id:"cost_price",label:"Cost Price",description:"Cost to acquire the product"},{id:"stock_quantity",label:"Stock Quantity",description:"Number of items in stock"},{id:"reorder_level",label:"Reorder Level",description:"Stock level at which to reorder"},{id:"inventory_status",label:"Status",description:"Current inventory status"},{id:"supplier",label:"Supplier",description:"Name of the product supplier"},{id:"warehouse_location",label:"Warehouse Location",description:"Location code in the warehouse"},{id:"last_restock_date",label:"Last Restock",description:"Date of the last restock"},{id:"product_weight_kg",label:"Weight (kg)",description:"Weight of the product in kilograms"},{id:"dimensions_cm",label:"Dimensions (cm)",description:"Product dimensions (LxWxH)"},{id:"contact_name",label:"Contact Name",description:"Full name of the contact"},{id:"company_name",label:"Company",description:"Name of the company"},{id:"industry",label:"Industry",description:"Industry of the company"},{id:"lead_status",label:"Lead Status",description:"Current status in the sales funnel"},{id:"lead_source",label:"Lead Source",description:"Source of the lead"},{id:"owner_name",label:"Owner",description:"Sales representative owning the lead"},{id:"deal_value",label:"Deal Value",description:"Estimated value of the deal"},{id:"expected_close_date",label:"Close Date",description:"Expected date to close the deal"},{id:"last_contact_date",label:"Last Contact",description:"Date of last interaction"},{id:"last_activity",label:"Last Activity",description:"Description of the last activity"},{id:"next_step",label:"Next Step",description:"Next action to be taken"},{id:"project_id",label:"Project ID",description:"Unique project identifier"},{id:"project_name",label:"Project",description:"Name of the project"},{id:"sprint_name",label:"Sprint",description:"Name of the sprint or iteration"},{id:"task_name",label:"Task",description:"Description of the task"},{id:"task_description",label:"Task Description",description:"Detailed description of the task"},{id:"assignee",label:"Assignee",description:"Person responsible for the task"},{id:"reporter_name",label:"Reporter",description:"Person who created the task"},{id:"start_date_pm",label:"Start Date",description:"Start date of the task"},{id:"due_date",label:"Due Date",description:"Deadline for the task"},{id:"completion_date",label:"Completion Date",description:"Date the task was completed"},{id:"estimated_hours",label:"Estimated Hours",description:"Estimated hours to complete the task"},{id:"logged_hours",label:"Logged Hours",description:"Hours logged against the task"},{id:"task_status",label:"Status",description:"Current status of the task"},{id:"priority",label:"Priority",description:"Priority level of the task"},{id:"review_id",label:"Review ID",description:"Unique identifier for the review"},{id:"reviewer_name",label:"Reviewer",description:"Name of the person conducting the review"},{id:"review_period",label:"Review Period",description:"The period being reviewed (e.g., Q4 2023)"},{id:"performance_rating",label:"Rating (1-5)",description:"Performance rating from 1 to 5"},{id:"goals_achieved",label:"Goals Achieved",description:"Number of goals achieved"},{id:"goals_total",label:"Total Goals",description:"Total number of goals set"},{id:"strengths",label:"Strengths",description:"Employee's strengths"},{id:"areas_for_improvement",label:"Improvement Areas",description:"Areas for employee improvement"},{id:"feedback_comments",label:"Feedback",description:"Detailed feedback comments from the reviewer"},{id:"employee_comments",label:"Employee Comments",description:"Comments from the employee"},{id:"next_review_date",label:"Next Review Date",description:"Date for the next performance review"}];
+      
+      const CATEGORIES = {
+          "E-commerce":{simple:["order_id","customer_name","product_name","price","quantity","order_status","date"],detailed:["order_id","customer_id","customer_name","customer_email","product_id","product_name","product_category","price","quantity","total_amount","order_status","payment_method","date","address","shipping_method","tracking_number"].slice(0,15)},Healthcare:{simple:["patient_id","patient_name","date_of_birth","gender","hospital_name","doctor_name","appointment_date"],detailed:["patient_id","patient_name","date_of_birth","gender","blood_type","phone_number","address","insurance_provider","hospital_name","doctor_name","appointment_date","symptoms","diagnosis","prescription","treatment_cost"]},Education:{simple:["student_id","student_name","major","course_name","grade","professor_name","semester"],detailed:["student_id","student_name","date_of_birth","customer_email","phone_number","major","gpa","enrollment_date","school_name","course_id","course_name","credits","grade","professor_name","semester"]},Transportation:{simple:["flight_number","passenger_name","departure_city","arrival_city","airline","flight_status","date"],detailed:["booking_id","passenger_name","flight_number","airline","aircraft_type","seat_number","departure_city","arrival_city","departure_time","arrival_time","flight_duration_hours","gate_number","terminal","flight_status","ticket_price"]},Financial:{simple:["transaction_id","customer_name","transaction_amount","currency","transaction_type","merchant_name","date"],detailed:["transaction_id","date","customer_name","account_number","iban","bank_name","transaction_type","transaction_amount","currency","account_balance","merchant_name","card_type","card_number_masked","transaction_description"]},HR:{simple:["employee_id","employee_name","job_title","department","employment_type","manager_name","hire_date"],detailed:["employee_id","employee_name","date_of_birth","gender","customer_email","phone_number","address","job_title","department","manager_name","employment_type","hire_date","salary","bonus","office_location"]},"Real Estate":{simple:["address","property_type","listing_price","bedrooms","bathrooms","square_footage","listing_status"],detailed:["property_id","address","property_type","listing_price","listing_status","bedrooms","bathrooms","square_footage","lot_size_acres","year_built","has_garage","has_pool","agent_name","agency_name","date"]},"Social Media":{simple:["user_id","post_date","post_type","post_content","likes","comments","shares"],detailed:["id","post_date","user_id","user_followers","user_following","post_type","post_content","hashtags","likes","comments","shares","post_location","image_url","video_url"].slice(0,15)},"Inventory Management":{simple:["sku","product_name","product_category","stock_quantity","inventory_status","supplier","warehouse_location"],detailed:["product_id","sku","barcode","product_name","product_category","price","cost_price","stock_quantity","reorder_level","inventory_status","supplier","warehouse_location","last_restock_date","product_weight_kg","dimensions_cm"]},CRM:{simple:["contact_name","company_name","lead_status","deal_value","owner_name","lead_source","last_contact_date"],detailed:["id","contact_name","job_title","company_name","industry","customer_email","phone_number","lead_status","lead_source","owner_name","deal_value","expected_close_date","last_contact_date","last_activity","next_step"]},"Project Management":{simple:["project_name","task_name","assignee","due_date","priority","task_status","sprint_name"],detailed:["project_id","project_name","sprint_name","id","task_name","task_description","assignee","reporter_name","start_date_pm","due_date","completion_date","estimated_hours","logged_hours","priority","task_status"]},"Employee Performance":{simple:["employee_id","employee_name","job_title","review_period","performance_rating","reviewer_name","date"],detailed:["review_id","employee_id","employee_name","job_title","department","review_period","date","reviewer_name","performance_rating","goals_achieved","goals_total","strengths","areas_for_improvement","feedback_comments","employee_comments"]}
+      };
+      
+      function generateData(config) {
+          if (typeof faker === 'undefined') {
+              console.error("Faker.js is not loaded.");
+              return [];
+          }
+      
+          faker.seed(config.seed);
+      
+          const data = [];
+          for (let i = 0; i < config.numRows; i++) {
+              const row = {};
+              for (const field of config.selectedFields) {
+                  if (FIELD_GENERATORS[field]) {
+                      row[field] = FIELD_GENERATORS[field]();
+                  } else {
+                      row[field] = null;
+                  }
+              }
+              data.push(row);
+          }
+          return data;
+      }
+      
+      // --- Icon Components ---
+
+      const IconWrapper = ({ children }) => (
+          React.createElement('div', { className: "w-full h-full text-inherit" }, children)
+      );
+      
+      const ECommerceIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("circle", { cx: "9", cy: "21", r: "1" }), React.createElement("circle", { cx: "20", cy: "21", r: "1" }), React.createElement("path", { d: "M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" })));
+      const HealthcareIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("path", { d: "M12 2L12 22" }), React.createElement("path", { d: "M18.4 16L5.6 16" }), React.createElement("path", { d: "M22 12L2 12" })));
+      const EducationIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("path", { d: "M22 10v6M2 10l10-5 10 5-10 5z" }), React.createElement("path", { d: "M6 12v5c0 5 4 5 4 5s4 0 4-5v-5" })));
+      const TransportationIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("path", { d: "M2 12h17.6a.4.4 0 0 1 .4.4v3.2a.4.4 0 0 1-.4.4H2Z" }), React.createElement("path", { d: "M19 16V6.5c0-1.2-.8-2.3-2-2.3H5c-1.2 0-2 .8-2 1.7V16" }), React.createElement("path", { d: "M3 16v2" }), React.createElement("path", { d: "M19 16v2" }), React.createElement("circle", { cx: "6", cy: "19", r: "2" }), React.createElement("circle", { cx: "16", cy: "19", r: "2" })));
+      const FinancialIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("line", { x1: "12", y1: "1", x2: "12", y2: "23" }), React.createElement("path", { d: "M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" })));
+      const HRIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("path", { d: "M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" }), React.createElement("circle", { cx: "8.5", cy: "7", r: "4" }), React.createElement("polyline", { points: "17 11 19 13 23 9" })));
+      const RealEstateIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("path", { d: "m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" }), React.createElement("polyline", { points: "9 22 9 12 15 12 15 22" })));
+      const SocialMediaIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("path", { d: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" })));
+      const InventoryIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("line", { x1: "16.5", y1: "9.4", x2: "7.5", y2: "4.21" }), React.createElement("path", { d: "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" }), React.createElement("polyline", { points: "3.27 6.96 12 12.01 20.73 6.96" }), React.createElement("line", { x1: "12", y1: "22.08", x2: "12", y2: "12" })));
+      const CRMIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("path", { d: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" }), React.createElement("circle", { cx: "9", cy: "7", r: "4" }), React.createElement("path", { d: "M23 21v-2a4 4 0 0 0-3-3.87" }), React.createElement("path", { d: "M16 3.13a4 4 0 0 1 0 7.75" })));
+      const ProjectManagementIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("path", { d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" }), React.createElement("rect", { x: "8", y: "2", width: "8", height: "4", rx: "1", ry: "1" }), React.createElement("path", { d: "m9 14 2 2 4-4" }), React.createElement("line", { x1: "9", y1: "18", x2: "15", y2: "18" }), React.createElement("line", { x1: "9", y1: "10", x2: "15", y2: "10" })));
+      const EmployeePerformanceIcon = () => React.createElement(IconWrapper, null, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement("polyline", { points: "23 6 13.5 15.5 8.5 10.5 1 18" }), React.createElement("polyline", { points: "17 6 23 6 23 12" })));
+      const RefreshCwIcon = (props) => React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...props }, React.createElement("path", { d: "M3 2v6h6" }), React.createElement("path", { d: "M21 12A9 9 0 0 0 6 5.3L3 8" }), React.createElement("path", { d: "M21 22v-6h-6" }), React.createElement("path", { d: "M3 12a9 9 0 0 0 15 6.7l3-2.7" }));
+      const DownloadIcon = (props) => React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...props }, React.createElement("path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }), React.createElement("polyline", { points: "7 10 12 15 17 10" }), React.createElement("line", { x1: "12", y1: "15", x2: "12", y2: "3" }));
+      const SparklesIcon = (props) => React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...props }, React.createElement("path", { d: "M12 3L9.5 8.5 4 11l5.5 2.5L12 19l2.5-5.5L20 11l-5.5-2.5z" }), React.createElement("path", { d: "M5 3v4" }), React.createElement("path", { d: "M19 17v4" }), React.createElement("path", { d: "M3 5h4" }), React.createElement("path", { d: "M17 19h4" }));
+      const DatabaseIcon = (props) => React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...props }, React.createElement("ellipse", { cx: "12", cy: "5", rx: "9", ry: "3" }), React.createElement("path", { d: "M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" }), React.createElement("path", { d: "M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" }));
+
+      // --- UI Components ---
+
+      const AIConfigurator = ({ prompt, setPrompt, onGenerate, isLoading, error, }) => {
+          return React.createElement('div', { className: "bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 space-y-4" },
+              React.createElement('div', { className: "flex items-center gap-3" },
+                  React.createElement(SparklesIcon, { className: "w-6 h-6 text-indigo-500" }),
+                  React.createElement('h2', { className: "text-lg font-bold text-slate-700 dark:text-slate-200" }, "Describe Your Data")
+              ),
+              React.createElement('div', null,
+                  React.createElement('label', { htmlFor: "ai-prompt", className: "block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" }, "Your Requirements"),
+                  React.createElement('textarea', {
+                      id: "ai-prompt",
+                      rows: 4,
+                      value: prompt,
+                      onChange: (e) => setPrompt(e.target.value),
+                      className: "w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-slate-900 dark:border-slate-600 resize-none",
+                      placeholder: "e.g., 'I need 500 rows of detailed healthcare data about patients for a hospital report.'"
+                  }),
+                  React.createElement('p', { className: "text-xs text-slate-400 dark:text-slate-500 mt-2" }, "Describe the data you need, and the AI will set up the configuration for you.")
+              ),
+              error && React.createElement('p', { className: "text-sm text-red-500 dark:text-red-400" }, error),
+              React.createElement('button', {
+                  onClick: onGenerate,
+                  disabled: isLoading || !prompt,
+                  className: "w-full flex items-center justify-center bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all duration-200"
+              }, isLoading ?
+                  React.createElement(React.Fragment, null,
+                      React.createElement('svg', { className: "animate-spin -ml-1 mr-3 h-5 w-5 text-white", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24" },
+                          React.createElement('circle', { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
+                          React.createElement('path', { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })
+                      ), "Thinking..."
+                  ) :
+                  React.createElement(React.Fragment, null,
+                      React.createElement(SparklesIcon, { className: "w-5 h-5 mr-2" }), "Configure with AI"
+                  )
+              )
+          );
+      };
+      
+      const CategorySelector = ({ selectedCategory, onSelectCategory }) => {
+          const categoryIcons = {
+              'E-commerce': React.createElement(ECommerceIcon),
+              'Healthcare': React.createElement(HealthcareIcon),
+              'Education': React.createElement(EducationIcon),
+              'Transportation': React.createElement(TransportationIcon),
+              'Financial': React.createElement(FinancialIcon),
+              'HR': React.createElement(HRIcon),
+              'Real Estate': React.createElement(RealEstateIcon),
+              'Social Media': React.createElement(SocialMediaIcon),
+              'Inventory Management': React.createElement(InventoryIcon),
+              'CRM': React.createElement(CRMIcon),
+              'Project Management': React.createElement(ProjectManagementIcon),
+              'Employee Performance': React.createElement(EmployeePerformanceIcon),
+          };
+          const categoryKeys = Object.keys(CATEGORIES);
+      
+          return React.createElement('div', { className: "bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6" },
+              React.createElement('h2', { className: "text-lg font-bold text-slate-700 dark:text-slate-200 mb-4" }, "Select a Category"),
+              React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-3" },
+                  categoryKeys.map((category) => React.createElement('button', {
+                      key: category,
+                      onClick: () => onSelectCategory(category),
+                      className: `flex flex-col items-center justify-center text-center p-3 rounded-lg border-2 transition-all duration-200 transform hover:scale-105 ${selectedCategory === category
+                              ? 'bg-indigo-50 border-indigo-500 text-indigo-600 dark:bg-indigo-900/50 dark:border-indigo-500 dark:text-indigo-300'
+                              : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-indigo-400 hover:text-indigo-600 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300 dark:hover:border-indigo-500 dark:hover:text-indigo-300'
+                          }`
+                  },
+                      React.createElement('div', { className: "w-8 h-8 mb-2" }, categoryIcons[category]),
+                      React.createElement('span', { className: "text-xs font-semibold" }, category)
+                  ))
+              )
+          );
+      };
+      
+      const ConfigPanel = ({ config, availableFields, onConfigChange, onFieldSelectionChange, onGenerate, isLoading, }) => {
+          const generateNewSeed = () => {
+              onConfigChange('seed', Math.floor(Math.random() * 100000));
+          };
+      
+          return React.createElement('div', { className: "bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 space-y-6" },
+              React.createElement('h2', { className: "text-lg font-bold text-slate-700 dark:text-slate-200" }, "Configuration"),
+              React.createElement('div', null,
+                  React.createElement('label', { htmlFor: "numRows", className: "block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" }, "Number of Rows"),
+                  React.createElement('div', { className: "flex items-center gap-4" },
+                      React.createElement('input', { type: "range", id: "numRows", min: "10", max: "10000", step: "10", value: config.numRows, onChange: (e) => onConfigChange('numRows', parseInt(e.target.value, 10)), className: "w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700" }),
+                      React.createElement('span', { className: "font-semibold text-indigo-600 dark:text-indigo-400 w-16 text-center bg-slate-100 dark:bg-slate-700 rounded-md py-1" }, config.numRows)
+                  )
+              ),
+              React.createElement('div', null,
+                  React.createElement('label', { className: "block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2" }, "Data Complexity"),
+                  React.createElement('div', { className: "flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1" },
+                      ['simple', 'detailed'].map(c => React.createElement('button', {
+                          key: c,
+                          onClick: () => onConfigChange('complexity', c),
+                          className: `w-full py-1.5 text-sm font-semibold rounded-md transition-colors duration-200 ${config.complexity === c ? 'bg-white text-indigo-600 shadow-sm dark:bg-slate-900 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-300'}`
+                      }, c.charAt(0).toUpperCase() + c.slice(1)))
+                  )
+              ),
+              React.createElement('div', null,
+                  React.createElement('label', { htmlFor: "seed", className: "block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1" }, "Random Seed"),
+                  React.createElement('div', { className: "relative" },
+                      React.createElement('input', { type: "number", id: "seed", value: config.seed, onChange: (e) => onConfigChange('seed', parseInt(e.target.value, 10)), className: "w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-slate-900 dark:border-slate-600", placeholder: "for reproducibility" }),
+                      React.createElement('button', { onClick: generateNewSeed, className: "absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-indigo-500 dark:text-slate-400 dark:hover:text-indigo-400" },
+                          React.createElement(RefreshCwIcon, { className: "w-4 h-4" })
+                      )
+                  )
+              ),
+              React.createElement('div', null,
+                  React.createElement('h3', { className: "text-sm font-medium text-slate-600 dark:text-slate-300 mb-2" }, "Field Selection"),
+                  React.createElement('div', { className: "max-h-60 overflow-y-auto space-y-2 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-md" },
+                      availableFields.map(field => React.createElement('label', { key: field.id, className: "flex items-center space-x-3 cursor-pointer group" },
+                          React.createElement('input', { type: "checkbox", checked: config.selectedFields.includes(field.id), onChange: () => onFieldSelectionChange(field.id), className: "h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:checked:bg-indigo-500" }),
+                          React.createElement('span', { className: "text-sm text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" }, field.label)
+                      ))
+                  )
+              ),
+              React.createElement('button', {
+                  onClick: onGenerate,
+                  disabled: isLoading,
+                  className: "w-full flex items-center justify-center bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all duration-200"
+              }, isLoading ? React.createElement(React.Fragment, null, React.createElement('svg', { className: "animate-spin -ml-1 mr-3 h-5 w-5 text-white", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24" }, React.createElement('circle', { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }), React.createElement('path', { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })), "Generating...") : 'Generate Data')
+          );
+      };
+      
+      const DownloadButtons = ({ onDownload, isDataGenerated }) => {
+          const baseButtonClass = "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
+          const jsonButtonClass = "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/50 dark:text-green-300 dark:hover:bg-green-900";
+          const csvButtonClass = "bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/50 dark:text-sky-300 dark:hover:bg-sky-900";
+      
+          return React.createElement('div', { className: "flex items-center gap-3" },
+              React.createElement('button', { onClick: () => onDownload('json'), disabled: !isDataGenerated, className: `${baseButtonClass} ${jsonButtonClass}` }, React.createElement(DownloadIcon, { className: "w-4 h-4" }), React.createElement('span', null, "JSON")),
+              React.createElement('button', { onClick: () => onDownload('csv'), disabled: !isDataGenerated, className: `${baseButtonClass} ${csvButtonClass}` }, React.createElement(DownloadIcon, { className: "w-4 h-4" }), React.createElement('span', null, "CSV"))
+          );
+      };
+
+      const Header = ({ apiKey, setApiKey }) => {
+          return React.createElement('header', { className: "bg-white dark:bg-slate-800/50 shadow-md backdrop-blur-sm sticky top-0 z-10" },
+              React.createElement('div', { className: "container mx-auto px-4 md:px-8 py-4 flex flex-wrap items-center justify-between gap-4" },
+                  React.createElement('div', { className: "flex items-center gap-4" },
+                      React.createElement(DatabaseIcon, { className: "w-8 h-8 text-indigo-500" }),
+                      React.createElement('h1', { className: "text-2xl font-bold text-slate-800 dark:text-white tracking-tight" }, "Realistic Data Generator")
+                  ),
+                  React.createElement('div', { className: "relative w-full sm:w-auto" },
+                      React.createElement('input', {
+                          type: "password",
+                          placeholder: "Enter Gemini API Key here",
+                          value: apiKey,
+                          onChange: (e) => setApiKey(e.target.value),
+                          className: "px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-slate-900 dark:border-slate-600 w-full sm:w-80",
+                          "aria-label": "Gemini API Key"
+                      })
+                  )
+              )
+          );
+      };
+
+      const PreviewTable = ({ data, isLoading, headers, columnWidths, onColumnReorder, onColumnResize }) => {
+          const previewData = data.slice(0, 15);
+          const [draggedHeader, setDraggedHeader] = useState(null);
+          const [dropTarget, setDropTarget] = useState(null);
+          const resizingColumnRef = useRef(null);
+      
+          const handleDrop = (targetHeader) => {
+              if (!draggedHeader || draggedHeader === targetHeader) {
+                  setDraggedHeader(null);
+                  return;
+              }
+              const draggedIndex = headers.indexOf(draggedHeader);
+              const targetIndex = headers.indexOf(targetHeader);
+      
+              const newHeaders = [...headers];
+              const [removed] = newHeaders.splice(draggedIndex, 1);
+              newHeaders.splice(targetIndex, 0, removed);
+      
+              onColumnReorder(newHeaders);
+          };
+      
+          const handleDragEnd = () => {
+              setDraggedHeader(null);
+              setDropTarget(null);
+          }
+      
+          const handleMouseMove = useCallback((e) => {
+              if (!resizingColumnRef.current) return;
+      
+              const { id, startWidth, startX } = resizingColumnRef.current;
+              const deltaX = e.clientX - startX;
+              const newWidth = Math.max(100, startWidth + deltaX);
+      
+              onColumnResize(id, newWidth);
+          }, [onColumnResize]);
+      
+          const handleMouseUp = useCallback(() => {
+              window.removeEventListener('mousemove', handleMouseMove);
+              window.removeEventListener('mouseup', handleMouseUp);
+              resizingColumnRef.current = null;
+          }, [handleMouseMove]);
+      
+          const handleResizeMouseDown = (e, headerId) => {
+              e.preventDefault();
+              e.stopPropagation();
+      
+              const thElement = e.target.closest('th');
+              if (!thElement) return;
+      
+              resizingColumnRef.current = {
+                  id: headerId,
+                  startWidth: thElement.offsetWidth,
+                  startX: e.clientX,
+              };
+      
+              window.addEventListener('mousemove', handleMouseMove);
+              window.addEventListener('mouseup', handleMouseUp);
+          };
+      
+          if (isLoading) {
+              return React.createElement('div', { className: "flex items-center justify-center h-96 text-slate-500 dark:text-slate-400" },
+                  React.createElement('svg', { className: "animate-spin mr-3 h-6 w-6", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24" },
+                      React.createElement('circle', { className: "opacity-25", cx: "12", cy: "12", r: "10", stroke: "currentColor", strokeWidth: "4" }),
+                      React.createElement('path', { className: "opacity-75", fill: "currentColor", d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" })
+                  ),
+                  React.createElement('span', null, "Generating your data...")
+              );
+          }
+      
+          if (previewData.length === 0) {
+              return React.createElement('div', { className: "flex flex-col items-center justify-center h-96 text-center text-slate-500 dark:text-slate-400 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-4" },
+                  React.createElement('p', { className: "text-lg font-semibold mb-2" }, "No data generated yet."),
+                  React.createElement('p', { className: "text-sm" }, "Use the AI prompt or the manual controls to generate some data.")
+              );
+          }
+      
+          return React.createElement('div', { className: "flex-grow overflow-auto border border-slate-200 dark:border-slate-700 rounded-lg" },
+              React.createElement('table', { className: "min-w-full divide-y divide-slate-200 dark:divide-slate-700 table-fixed" },
+                  React.createElement('thead', { className: "bg-slate-50 dark:bg-slate-900/50 sticky top-0 z-10" },
+                      React.createElement('tr', null, headers.map((key) => React.createElement('th', {
+                          key: key,
+                          scope: "col",
+                          draggable: true,
+                          onDragStart: () => setDraggedHeader(key),
+                          onDragEnd: handleDragEnd,
+                          onDragEnter: () => setDropTarget(key),
+                          onDragOver: (e) => e.preventDefault(),
+                          onDrop: () => handleDrop(key),
+                          style: { width: columnWidths[key] ? `${columnWidths[key]}px` : 'auto' },
+                          className: `relative px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-300 uppercase tracking-wider select-none ${draggedHeader ? 'cursor-grabbing' : 'cursor-grab'} ${dropTarget === key && draggedHeader !== key ? 'bg-indigo-100 dark:bg-indigo-900/80' : ''}`
+                      },
+                          React.createElement('div', { className: "truncate" }, key.replace(/_/g, ' ')),
+                          React.createElement('div', { className: "absolute top-0 right-0 h-full w-1.5 cursor-col-resize select-none", onMouseDown: (e) => handleResizeMouseDown(e, key) })
+                      )))
+                  ),
+                  React.createElement('tbody', { className: "bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700" },
+                      previewData.map((row, index) => React.createElement('tr', { key: index, className: "hover:bg-slate-50 dark:hover:bg-slate-700/50" },
+                          headers.map((header) => React.createElement('td', { key: `${index}-${header}`, className: "px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400 truncate" }, String(row[header])))
+                      ))
+                  )
+              )
+          );
+      };
+
+      // --- Main App Component ---
+
+      const App = () => {
+          const [config, setConfig] = useState({
+              category: 'E-commerce',
+              numRows: 100,
+              format: 'json',
+              complexity: 'simple',
+              seed: Math.floor(Math.random() * 10000),
+              selectedFields: [],
+          });
+          const [apiKey, setApiKey] = useState('');
+          const [columnWidths, setColumnWidths] = useState({});
+          const [generatedData, setGeneratedData] = useState([]);
+          const [isLoading, setIsLoading] = useState(false);
+          const [aiPrompt, setAiPrompt] = useState('');
+          const [isAiLoading, setIsAiLoading] = useState(false);
+          const [aiError, setAiError] = useState(null);
+          const [shouldGenerateAfterAi, setShouldGenerateAfterAi] = useState(false);
+      
+          const availableFields = useMemo(() => {
+              if (!config.category) return [];
+              const categoryFields = CATEGORIES[config.category][config.complexity];
+              return ALL_FIELDS.filter(field => categoryFields.includes(field.id));
+          }, [config.category, config.complexity]);
+      
+          useEffect(() => {
+              const key = `datagen-prefs-${config.category}-${config.complexity}`;
+              const savedPrefs = localStorage.getItem(key);
+      
+              let initialFields = CATEGORIES[config.category][config.complexity];
+              let initialWidths = {};
+      
+              if (savedPrefs) {
+                  try {
+                      const { order, widths } = JSON.parse(savedPrefs);
+                      if (Array.isArray(order) && typeof widths === 'object') {
+                          const availableFieldIds = CATEGORIES[config.category][config.complexity];
+                          const validOrder = order.filter((fieldId) => availableFieldIds.includes(fieldId));
+                          const newFields = availableFieldIds.filter(fieldId => !validOrder.includes(fieldId));
+                          initialFields = [...validOrder, ...newFields];
+                          initialWidths = widths || {};
+                      }
+                  } catch (e) {
+                      console.error("Failed to parse saved preferences:", e);
+                  }
+              }
+      
+              setConfig(prev => ({ ...prev, selectedFields: initialFields }));
+              setColumnWidths(initialWidths);
+          }, [config.category, config.complexity]);
+      
+          useEffect(() => {
+              if (config.selectedFields.length === 0) return;
+              const key = `datagen-prefs-${config.category}-${config.complexity}`;
+              const prefs = { order: config.selectedFields, widths: columnWidths };
+              localStorage.setItem(key, JSON.stringify(prefs));
+          }, [config.selectedFields, columnWidths, config.category, config.complexity]);
+      
+          const handleConfigChange = useCallback((key, value) => {
+              setConfig(prev => ({ ...prev, [key]: value }));
+          }, []);
+      
+          const handleFieldSelectionChange = (fieldId) => {
+              setConfig(prev => {
+                  const newSelectedFields = prev.selectedFields.includes(fieldId) ?
+                      prev.selectedFields.filter(id => id !== fieldId) :
+                      [...prev.selectedFields, fieldId];
+                  return { ...prev, selectedFields: newSelectedFields };
+              });
+          };
+      
+          const handleColumnReorder = (newOrder) => {
+              setConfig(prev => ({ ...prev, selectedFields: newOrder }));
+          };
+      
+          const handleColumnResize = (fieldId, width) => {
+              setColumnWidths(prev => ({ ...prev, [fieldId]: width }));
+          };
+      
+          const handleGenerateData = useCallback(() => {
+              setIsLoading(true);
+              setGeneratedData([]);
+              setTimeout(() => {
+                  const data = generateData(config);
+                  setGeneratedData(data);
+                  setIsLoading(false);
+              }, 50);
+          }, [config]);
+      
+          const downloadFile = (content, fileName, contentType) => {
+              const a = document.createElement("a");
+              const file = new Blob([content], { type: contentType });
+              a.href = URL.createObjectURL(file);
+              a.download = fileName;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(a.href);
+          };
+      
+          const handleDownload = (format) => {
+              if (generatedData.length === 0) return;
+              if (format === 'json') {
+                  const jsonString = JSON.stringify(generatedData, null, 2);
+                  downloadFile(jsonString, `data-${new Date().getTime()}.json`, 'application/json');
+              } else if (format === 'csv') {
+                  const csv = Papa.unparse(generatedData);
+                  downloadFile(csv, `data-${new Date().getTime()}.csv`, 'text/csv');
+              }
+          };
+      
+          const handleAiConfiguration = useCallback(async () => {
+              if (!apiKey) {
+                  setAiError("Please enter your Gemini API Key in the header.");
+                  return;
+              }
+      
+              setIsAiLoading(true);
+              setAiError(null);
+      
+              try {
+                  const ai = new GoogleGenAI(apiKey);
+                  const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use a standard model name
+      
+                  const schema = {
+                      type: Type.OBJECT,
+                      properties: {
+                          category: { type: Type.STRING, enum: Object.keys(CATEGORIES), description: 'The best data category for the user\'s request.' },
+                          numRows: { type: Type.INTEGER, description: 'The number of data rows to generate. Default to a reasonable number if not specified.' },
+                          complexity: { type: Type.STRING, enum: ['simple', 'detailed'], description: 'The level of detail for the data. Choose "detailed" if the user asks for more specific fields.' },
+                          selectedFields: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'An array of field IDs that best match the user\'s request. These IDs must exist in the chosen category and complexity.' }
+                      },
+                      required: ['category', 'numRows', 'complexity', 'selectedFields']
+                  };
+      
+                  const prompt = `You are an expert data generation assistant. Your task is to interpret the user's request and configure the data generation parameters accordingly. You must return a valid JSON object that adheres to the provided schema. Here are the available categories and their fields for 'simple' and 'detailed' complexity levels: ${JSON.stringify(CATEGORIES, null, 2)}. Here is a complete list of all possible field IDs and their descriptions: ${JSON.stringify(ALL_FIELDS, null, 2)}. Based on the user's request below, provide a JSON configuration object. Ensure the 'category' is one of the valid options. Determine an appropriate 'numRows' (between 10 and 10000). Choose the 'complexity' ('simple' or 'detailed') that best fits the request. The 'selectedFields' array must only contain valid field IDs from the chosen category and complexity. User Request: "${aiPrompt}"`;
+                  
+                  // Note: The original SDK call syntax was non-standard.
+                  // This is an adaptation to the standard GenAI SDK.
+                  const result = await model.generateContent({
+                      contents: [{ role: "user", parts: [{ text: prompt }] }],
+                      generationConfig: {
+                          responseMimeType: "application/json",
+                          responseSchema: schema,
+                      }
+                  });
+                  
+                  const response = result.response;
+                  const aiConfig = JSON.parse(response.text());
+      
+                  if (!aiConfig.category || !CATEGORIES[aiConfig.category]) {
+                      throw new Error("AI returned an invalid category.");
+                  }
+      
+                  setConfig(prev => ({ ...prev, category: aiConfig.category, numRows: Math.min(Math.max(aiConfig.numRows, 10), 10000), complexity: aiConfig.complexity, selectedFields: aiConfig.selectedFields, seed: Math.floor(Math.random() * 10000) }));
+                  setShouldGenerateAfterAi(true);
+      
+              } catch (error) {
+                  console.error("Error generating configuration with AI:", error);
+                  setAiError("Failed to generate configuration. Please check your prompt or API Key and try again.");
+              } finally {
+                  setIsAiLoading(false);
+              }
+          }, [aiPrompt, apiKey]);
+      
+          useEffect(() => {
+              if (shouldGenerateAfterAi) {
+                  handleGenerateData();
+                  setShouldGenerateAfterAi(false);
+              }
+          }, [shouldGenerateAfterAi, handleGenerateData]);
+      
+          return React.createElement('div', { className: "min-h-screen font-sans text-slate-800 dark:text-slate-200" },
+              React.createElement(Header, { apiKey, setApiKey }),
+              React.createElement('main', { className: "container mx-auto p-4 md:p-8" },
+                  React.createElement('div', { className: "grid grid-cols-1 lg:grid-cols-12 gap-8" },
+                      React.createElement('div', { className: "lg:col-span-4 xl:col-span-3 space-y-8" },
+                          React.createElement(AIConfigurator, { prompt: aiPrompt, setPrompt: setAiPrompt, onGenerate: handleAiConfiguration, isLoading: isAiLoading, error: aiError }),
+                          React.createElement(CategorySelector, { selectedCategory: config.category, onSelectCategory: (category) => handleConfigChange('category', category) }),
+                          React.createElement(ConfigPanel, { config, availableFields, onConfigChange: handleConfigChange, onFieldSelectionChange: handleFieldSelectionChange, onGenerate: handleGenerateData, isLoading: isLoading })
+                      ),
+                      React.createElement('div', { className: "lg:col-span-8 xl:col-span-9" },
+                          React.createElement('div', { className: "bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 h-full flex flex-col" },
+                              React.createElement('div', { className: "flex justify-between items-center mb-4 flex-wrap gap-4" },
+                                  React.createElement('h2', { className: "text-xl font-bold text-slate-700 dark:text-slate-200" }, "Data Preview"),
+                                  React.createElement(DownloadButtons, { onDownload: handleDownload, isDataGenerated: generatedData.length > 0 })
+                              ),
+                              React.createElement(PreviewTable, { data: generatedData, isLoading: isLoading, headers: config.selectedFields, columnWidths, onColumnReorder: handleColumnReorder, onColumnResize: handleColumnResize })
+                          )
+                      )
+                  )
+              )
+          );
+      };
+
+      // --- Render the App ---
+      const rootElement = document.getElementById('root');
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(React.createElement(React.StrictMode, null, React.createElement(App)));
+
+    </script>
+  </body>
+</html>
