@@ -1,102 +1,101 @@
 # Morrow
 
-A conversational assistant for a brain that doesn't get on with planners.
+A context-aware personal assistant that captures everything, hides the noise,
+protects real commitments, preserves valuable ideas, follows your creative
+energy, and surfaces only what is useful right now.
 
 **Capture freely. Display selectively. Protect what truly matters.**
 
-Morrow stores far more than it shows. Nothing you say becomes a task on its own,
-nothing acquires an invented due date, and nothing ever turns red. The only thing
-allowed to create pressure is a date somebody else imposed on you.
+## What's here
 
-## Running it
+| File | What it is |
+| --- | --- |
+| `index.html` | The whole app. One self-contained file — no build, no dependencies, no network calls. Open it in a browser or publish it as an artifact. |
+| `companion.js` | Optional desktop companion: a localhost service giving Morrow file access to folders you explicitly approve, and nothing else. |
+| `test-engine.js` | `node test-engine.js` — checks classification, the deadline model, recommendations and the idea garden. Runs the engine extracted from `index.html`, so there is only ever one copy of the logic. |
 
-```
-open morrow/index.html        # that's the whole app
-```
+## Using it
 
-No build, no server, no account. Everything lives in `localStorage` on your machine.
-Voice input uses the browser's Web Speech API (Chrome, Edge, Safari); the mic button
-disables itself where that isn't available, and typing works everywhere. Text and
-voice share one memory and one conversation.
+Open `index.html`. Talk or type — voice and text share one memory, one context
+and one transcript. Everything is stored in your browser's local storage;
+nothing is sent anywhere.
 
-## What it does
+Things worth saying:
 
-**Talk normally.** "I feel like designing today." "I have 20 minutes and no brainpower."
-"What actually needs my attention?" "What am I forgetting?" "Capture this idea."
-"Show me the best ideas I've had about the card business."
+- *"I feel like designing today."* / *"I have 20 minutes and no brainpower."*
+- *"What makes sense right now?"* — at most three options, never a list.
+- *"What actually needs my attention?"* — only real, external dates.
+- *"What am I forgetting?"* — open loops, including dates Morrow still needs from you.
+- *"Let me think out loud."* — Morrow listens and acknowledges, and only sorts
+  what you said once you say you're done.
+- *"Capture this idea."* — saved as a seed. It doesn't have to become anything.
+- *"Show me the best ideas I've had about the card business."*
 
-**Thinking out loud.** Say *let me think out loud* and Morrow stops interpreting.
-It acknowledges and listens until you say you're done, then classifies the whole
-dump at once and hands back a digest:
+## How it decides things
 
-> I captured six thoughts: one idea, two commitments, one possible action, one
-> reflection and one question. Nothing was added to active work without your approval.
+**Two kinds of dates, and only one of them is allowed to create pressure.** A
+date is *real* when something outside you imposes it — taxes, a flight, a bill,
+an appointment, a promise to another person. Those get protected, get the one
+persistent line on screen, and are the only thing coloured. A date you set for
+yourself is an *intention*: guidance, never an overdue counter. If something
+sounds like a real commitment but carries no date, Morrow asks instead of
+inventing one.
 
-**Two kinds of date, never confused.**
+**Nothing you say becomes active work on its own.** A brain dump is split into
+separate thoughts and sorted into commitments, possible actions, ideas,
+reflections, questions and decisions. You get a digest — *"I captured six
+thoughts: one idea, two commitments…"* — and everything sits stored until you
+choose otherwise.
 
-| | |
-|---|---|
-| **Real deadline** | Externally imposed — taxes, flights, bills, a promise to a person. Protected, surfaced when it matters, escalating as it nears. |
-| **Personal intention** | "I'd like to redesign the site this month." Guidance only. It never goes overdue and never counts against you. |
+**Work is chosen by readiness, not by schedule.** Each stored thing carries
+inferred attributes you never have to maintain: a work mode, an energy level, a
+rough duration, a real deadline if any, whether Morrow can help with it. Low
+energy never surfaces uphill work. When creative preference and a real deadline
+disagree, Morrow names the tension out loud and proposes a trade rather than
+burying either one.
 
-If Morrow thinks it heard a commitment but no date, it asks rather than inventing one.
+**Ideas grow through stages, quietly**: seed → explore → candidate → active bet
+→ archive. Seeds never appear in recommendations. Occasionally — not often —
+Morrow resurfaces two or three older ideas that look unusually strong next to
+what you're currently working on.
 
-**Energy over schedule.** Tell it your mood, energy and available time; it scores
-stored work by mode fit, energy required, duration and real-deadline pressure, and
-offers at most three options. It won't push high-energy work at a tired person —
-but when a real deadline is close it names the tension out loud instead of hiding it:
-
-> Designing fits your energy today. The VAT return doesn't, but leaving it much
-> longer makes the August 28 date risky. Fifteen minutes on the blocker, then the
-> rest of the session is yours.
-
-**Idea garden.** seed → explore → candidate → active bet → archive. Capture
-everything, activate almost nothing. Seeds stay out of recommendations entirely.
-Morrow quietly links ideas by shared subject and occasionally resurfaces two or
-three that look unusually strong next to your current work. Nothing is ever deleted.
-
-**No dashboard.** One conversation, a context strip while a mood is set, and a
-single-line whisper when a real deadline is within a fortnight. No counters, no
-badges, no inbox to process.
-
-## Files
-
-| | |
-|---|---|
-| `index.html` | The interface — one conversation and nothing else |
-| `engine.js` | Classification, date sense, memory, recommendation. Pure functions, also runnable under node |
-| `app.js` | Conversation routing, intents, thinking-aloud mode, voice |
-| `companion.js` | Optional local file companion (node, no dependencies) |
-| `test-engine.js` | `node test-engine.js` — checks on the classifier and recommender |
+**No dashboard, no counters, no badges.** At most three options at a time, an
+approaching real deadline, whatever you explicitly asked for, and a small
+curated set of ideas when they're worth it. Nothing is ever deleted; archive
+means archived.
 
 ## The desktop companion
 
 ```
-node morrow/companion.js ~/Projects ~/Design/Assets
+node companion.js ~/Projects ~/Design/Assets
 ```
 
-It prints a token, listens on `127.0.0.1:4471` only, and can reach the folders you
-named and nothing else. The boundary is enforced in the companion, not the UI:
+It prints a token and listens on `127.0.0.1:4471` only. The boundary is
+enforced in the service, not the interface:
 
-- Symlinks are resolved before the boundary check, so a link can't walk out.
-- Reading, listing and searching (by filename or content) need no repeated approval.
-- Creating, copying, moving and renaming return a **preview and a token**; nothing
-  happens until that token comes back to `/confirm`. Staged operations expire after
-  ten minutes.
-- It never overwrites an existing file — new paths only.
-- There is no delete operation at all. Asking for one gets you a refusal.
-- Nothing is uploaded anywhere. It has no outbound network code.
+- Only paths inside an approved folder are reachable; symlinks are resolved, so
+  a link can't walk out.
+- Reading, listing and searching (by filename or file contents) need no
+  repeated approval.
+- Creating, copying, moving and renaming return a **preview and a token**;
+  nothing happens until that token comes back to `/confirm`. Staged operations
+  expire after ten minutes.
+- Existing files are never overwritten.
+- There is no delete operation at all.
+- Nothing leaves the machine.
 
-Endpoints: `roots`, `list`, `search`, `grep`, `read`, `mkdir`, `copy`, `move`,
-`rename`, `write`, `confirm`, `cancel`. POST JSON with an `x-morrow-token` header.
+| Endpoint | Effect |
+| --- | --- |
+| `POST /roots`, `/list`, `/search`, `/grep`, `/read` | Immediate |
+| `POST /mkdir`, `/copy`, `/move`, `/rename`, `/write` | Returns a preview + token |
+| `POST /confirm`, `/cancel` | Runs or discards a staged operation |
 
-```
-curl -s localhost:4471/search -H 'x-morrow-token: <token>' \
-     -H 'content-type: application/json' -d '{"query":"card"}'
-```
+Every request needs the `x-morrow-token` header.
 
-## Not built yet
+## Where it stops
 
-Calendar and email integration, proactive check-ins, escalating reminder
-scheduling, cross-project reasoning, automatic document preparation, and the
-secure link between the browser app and the companion (today you paste the token).
+This first version is deliberately local and self-contained. Not here yet:
+calendar and email integration, escalating reminders as a real deadline
+approaches, proactive check-ins, cross-project reasoning, and a wired-up link
+between the conversation and the companion (the companion runs and enforces its
+own rules; the app does not yet call it).

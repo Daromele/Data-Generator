@@ -1,7 +1,18 @@
 /* Plain-node checks for the classification and recommendation engine.
    Run: node test-engine.js  */
 
-const e = require('./engine.js');
+// One source of truth: the engine lives inside index.html, and these checks
+// pull that exact section out of the file rather than a second copy of it.
+const fs = require('fs');
+const path = require('path');
+const page = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+const source = page.slice(
+  page.indexOf('/* ==== engine ==== */'),
+  page.indexOf('/* ==== end engine ==== */'));
+if (!source) throw new Error('Could not find the engine section in index.html');
+const box = { exports: {} };
+new Function('module', source)(box);
+const e = box.exports;
 
 let failures = 0;
 function check(label, cond, extra) {
