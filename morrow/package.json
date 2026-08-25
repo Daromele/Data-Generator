@@ -6,7 +6,7 @@
   "main": "agent.js",
   "scripts": {
     "start": "node agent.js",
-    "test": "node test-morrow.js && node test-loop.js"
+    "test": "node test-morrow.js && node test-loop.js && MORROW_MODEL=claude-opus-5 node test-loop.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.70.0"

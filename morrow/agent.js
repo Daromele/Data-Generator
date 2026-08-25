@@ -20,7 +20,13 @@ const crypto = require('crypto');
 const Anthropic = require('@anthropic-ai/sdk');
 const { betaTool } = require('@anthropic-ai/sdk/helpers/beta/json-schema');
 
-const MODEL = 'claude-opus-5';
+// Sonnet is the default: fast, and strong enough for the judgement Morrow
+// makes. Set MORROW_MODEL to claude-opus-5 if you want the deeper reasoning.
+const MODEL = process.env.MORROW_MODEL || 'claude-sonnet-5';
+
+// Server-side refusal fallbacks are an Opus/Fable-tier feature, and pairing
+// the parameter with a model that does not take it is a 400 on every request.
+const FALLBACK_TIER = /^claude-(opus-5|opus-4-8|fable-5|mythos-5)$/.test(MODEL);
 const PORT = process.env.MORROW_PORT ? Number(process.env.MORROW_PORT) : 4471;
 const HOME = process.env.HOME || process.env.USERPROFILE || os.homedir();
 const STORE = process.env.MORROW_STORE || path.join(HOME, '.morrow', 'memory.json');
@@ -596,7 +602,7 @@ function history() {
 async function respond(userText) {
   memory.transcript.push({ role: 'user', content: userText });
 
-  const runner = client.beta.messages.toolRunner({
+  const request = {
     model: MODEL,
     max_tokens: 8000,
     stream: true,
@@ -606,11 +612,18 @@ async function respond(userText) {
     ],
     thinking: { type: 'adaptive' },
     output_config: { effort: 'high' },
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
     tools: TOOLS,
     messages: history()
-  });
+  };
+
+  // On a policy decline the API re-runs the turn on a fallback model inside
+  // the same call, so a refusal does not simply end the conversation.
+  if (FALLBACK_TIER) {
+    request.betas = ['server-side-fallback-2026-07-01'];
+    request.fallbacks = 'default';
+  }
+
+  const runner = client.beta.messages.toolRunner(request);
 
   let spoken = '';
   for await (const stream of runner) {

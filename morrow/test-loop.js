@@ -15,7 +15,7 @@ const path = require('path');
 const http = require('http');
 
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 'morrow-loop-'));
-const PORT = 4487;
+const PORT = process.env.MORROW_MODEL ? 4488 : 4487;
 
 let failures = 0;
 const check = (label, fn) => {
@@ -26,6 +26,7 @@ const check = (label, fn) => {
 /* ------------------------------------------------------- the stub model -- */
 
 const seen = [];          // every request body the agent sent
+const headers = [];       // and the headers it sent them with
 
 function sse(res, events) {
   res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' });
@@ -70,6 +71,7 @@ const stub = http.createServer(async (req, res) => {
   for await (const chunk of req) body += chunk;
   const parsed = JSON.parse(body);
   seen.push(parsed);
+  headers.push(req.headers);
   if (seen.length === 1) {
     return sse(res, toolTurn({
       items: [
@@ -107,7 +109,25 @@ const stub = http.createServer(async (req, res) => {
     assert.equal(seen.length, 2));
 
   const first = seen[0];
-  check('it asked for the right model', () => assert.equal(first.model, 'claude-opus-5'));
+  // Run once as-is for the default, and once with MORROW_MODEL=claude-opus-5,
+  // because the fallback parameter is only valid on the Opus/Fable tier and
+  // sending it to the wrong model is a 400 on every single request.
+  const onOpus = process.env.MORROW_MODEL === 'claude-opus-5';
+  check(onOpus ? 'MORROW_MODEL is honoured' : 'it runs on Sonnet by default',
+    () => assert.equal(first.model, onOpus ? 'claude-opus-5' : 'claude-sonnet-5'));
+  check(onOpus
+    ? 'Opus gets the refusal fallback'
+    : 'Sonnet is not sent the Opus-tier fallback parameter', () => {
+    // The SDK sends betas as the anthropic-beta header, not in the body.
+    const beta = headers[0]['anthropic-beta'] || '';
+    if (onOpus) {
+      assert.equal(first.fallbacks, 'default');
+      assert.ok(beta.includes('server-side-fallback-2026-07-01'), 'header was: ' + beta);
+    } else {
+      assert.equal(first.fallbacks, undefined);
+      assert.ok(!beta.includes('server-side-fallback'), 'header was: ' + beta);
+    }
+  });
   check('it streams', () => assert.equal(first.stream, true));
   check('adaptive thinking is on', () => assert.deepEqual(first.thinking, { type: 'adaptive' }));
   check('the persona is sent and marked cacheable', () => {

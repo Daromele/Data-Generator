@@ -29,6 +29,7 @@ file tools are simply off.
 | Variable | Default |
 | --- | --- |
 | `ANTHROPIC_API_KEY` | required (or an `ant auth login` profile) |
+| `MORROW_MODEL` | `claude-sonnet-5` |
 | `MORROW_PORT` | `4471` |
 | `MORROW_STORE` | `~/.morrow/memory.json` |
 
@@ -82,10 +83,20 @@ creates, copies, moves or renames goes through one gate:
 
 ## Cost
 
-Every message is a Claude Opus 5 call with adaptive thinking, so this is not
-free to run. The system prompt is marked cacheable and Morrow sends counts
-rather than contents, which keeps the per-turn input small; a short exchange
-is a few cents. Swap `MODEL` in `agent.js` if you want a cheaper model.
+Every message is a Claude Sonnet 5 call with adaptive thinking. The system
+prompt is marked cacheable and Morrow sends counts rather than contents, so
+the per-turn input stays small.
+
+For deeper reasoning — better judgement on a messy brain dump, sharper calls
+on what to surface — run it on Opus:
+
+```bash
+MORROW_MODEL=claude-opus-5 node agent.js ~/Projects
+```
+
+Opus costs roughly 2.5x Sonnet per token. Anything on the Opus or Fable tier
+also gets server-side refusal fallbacks automatically; Sonnet does not take
+that parameter, so it isn't sent.
 
 ## Where it stops
 
