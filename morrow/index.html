@@ -171,6 +171,7 @@
   }
   /* A real deadline is the only thing that lights a card up. */
   .option.dated { border-left-color: var(--lamp); }
+  .option.unsure { border-left-style: dotted; }
   .option .what { font-size: 0.98rem; }
   .option .facts {
     display: flex;
@@ -455,6 +456,44 @@ const CUES = {
   ]
 };
 
+/* People rarely speak in full first-person sentences. Most of what gets typed
+   is two or three words - "book the dentist", "roof needs fixing", "meeting
+   with Tom Thursday" - so these patterns carry as much weight as the cues
+   above. Without them almost everything fell through to "reflection". */
+
+// A bare instruction: the sentence opens with something you do.
+const IMPERATIVE = new RegExp('^(?:' + [
+  'book','buy','call','ring','text','email','send','pay','fix','order','renew',
+  'check','chase','collect','cancel','print','upload','post','submit','file',
+  'schedule','arrange','clean','wash','sort','tidy','finish','write','draft',
+  'update','review','reply','confirm','find','get','grab','pick up','drop off',
+  'return','install','back up','backup','invoice','quote','message','remind',
+  'sign','scan','photograph','measure','pack','ship','deliver','set up','plan',
+  'read','watch','ask','tell','speak to','talk to','look at','look into','sell',
+  'list','edit','fix up','make','build','design','paint','cut','glue','laminate'
+].join('|') + ')\\b', 'i');
+
+// "the roof needs fixing", "copy needs rewriting", "van has to be moved"
+const NEEDS_DOING = /\b(needs?|need|has to be|have to be|must be|wants)\s+(?:to\s+be\s+)?\w+(?:ing|ed|e)?\b/;
+
+// Things another person is expecting you at, which are as binding as a bill.
+const APPOINTMENT = [
+  /\bmeeting\b/, /\bappointment\b/, /\bdentist\b/, /\bdoctor\b/, /\bgp\b/,
+  /\bhospital\b/, /\binterview\b/, /\bviewing\b/, /\bcatch ?up with\b/,
+  /\b(?:lunch|coffee|drinks|dinner|call) with\b/, /\bschool\b/, /\bpick ?up\b/,
+  /\bdrop ?off\b/, /\bwedding\b/, /\bfuneral\b/, /\bmot\b/, /\bservice\b/,
+  /\btrain\b/, /\bferry\b/, /\bcheck ?in\b/
+];
+
+// Terse idea shapes: an offer of a possibility rather than a job.
+const IDEA_OPENER = /^(?:maybe|what about|how about|an? idea|idea:|imagine|possibly|potentially|could do|thinking)\b/i;
+const MAKEABLE = [
+  /\bbox\b/, /\bapp\b/, /\bshop\b/, /\bbrand\b/, /\brange\b/, /\bcollection\b/,
+  /\bseries\b/, /\bbook\b/, /\bcourse\b/, /\bkit\b/, /\bsubscription\b/,
+  /\bnewsletter\b/, /\bpodcast\b/, /\bchannel\b/, /\bbundle\b/, /\btemplate\b/,
+  /\bworkshop\b/, /\bmarket stall\b/, /\bwebsite\b/, /\bline of\b/
+];
+
 const MODE_CUES = {
   designing: [/design/, /\blayout\b/, /\bmockup\b/, /\bvisual\b/, /\bcolou?r\b/, /\blogo\b/, /\bfigma\b/, /\bcard\b/],
   brainstorming: [/\bidea\b/, /\bbrainstorm\b/, /\bwhat if\b/, /\bconcept\b/, /\bname\b/, /\bexplore\b/],
@@ -507,14 +546,17 @@ function splitThoughts(text) {
     .replace(/[ \t]+/g, ' ')
     .split(CLAUSE_SPLIT)
     .map(s => (s || '').trim().replace(/^(?:and|but|also|then|plus)\s+/i, ''))
-    .filter(s => s.length > 2);
+    .filter(s => s.length > 1);
 }
 
 function score(text, cues) {
   return cues.reduce((n, re) => n + (re.test(text) ? 1 : 0), 0);
 }
 
-/* Classify one thought. Returns a stored item - never an activated one. */
+/* Classify one thought. Returns a stored item - never an activated one.
+   Order matters: the strongest, least ambiguous signals are tested first, and
+   anything that reaches the end is marked low-confidence so the interface can
+   offer a correction rather than quietly mislabelling it. */
 function classifyThought(raw, now = new Date()) {
   const text = raw.trim();
   const t = text.toLowerCase();
@@ -527,32 +569,46 @@ function classifyThought(raw, now = new Date()) {
     action: score(t, CUES.action),
     idea: score(t, CUES.idea),
     decision: score(t, CUES.decision),
-    reflection: score(t, CUES.reflection)
+    reflection: score(t, CUES.reflection),
+    appointment: score(t, APPOINTMENT),
+    makeable: score(t, MAKEABLE)
   };
+  const imperative = IMPERATIVE.test(t);
+  const needsDoing = NEEDS_DOING.test(t);
+  const ideaOpener = IDEA_OPENER.test(t);
 
-  let kind, deadlineKind = null, needsConfirmation = false;
+  let kind, deadlineKind = null, needsConfirmation = false, confidence = 'high';
 
-  if (/\?\s*$/.test(text) && s.decision === 0 && s.idea === 0) {
+  if (/\?\s*$/.test(text) && !s.decision && !s.idea && !imperative) {
     kind = 'question';
-  } else if (s.decision > 0) {
+  } else if (s.decision) {
     kind = 'decision';
-  } else if (s.realDeadline > 0 || s.promise > 0) {
+  } else if (ideaOpener || (s.idea && s.idea >= s.action) ||
+             (s.makeable && !imperative && !needsDoing && !s.action && !s.intention)) {
+    kind = 'idea';
+  } else if (s.appointment && !imperative) {
+    // "meeting with Tom Thursday" is a commitment; "book the dentist" is still
+    // just a thing to do, so an instruction stays an instruction.
+    // Someone else is expecting you. That is a commitment whether or not a
+    // date was said out loud.
     kind = 'commitment';
-    // A date is only real when something outside the user imposes it.
     deadlineKind = when ? 'real' : null;
-    needsConfirmation = !when;     // Morrow asks rather than inventing one
-  } else if (s.idea > s.action && s.idea > 0) {
-    kind = 'idea';
-  } else if (s.intention > 0 && s.idea === 0) {
+    needsConfirmation = !when;
+  } else if (s.realDeadline || s.promise) {
+    kind = 'commitment';
+    deadlineKind = when ? 'real' : null;    // a date is real only if imposed
+    needsConfirmation = !when;              // otherwise Morrow asks, never invents
+  } else if (imperative || needsDoing || s.action || s.intention) {
     kind = 'action';
     deadlineKind = when ? 'intention' : null;
-  } else if (s.action > 0) {
-    kind = 'action';
-    deadlineKind = when ? 'intention' : null;
-  } else if (s.idea > 0) {
-    kind = 'idea';
-  } else {
+    // "buy milk" is plainly a thing to do; "sort the thing out" is a guess.
+    confidence = (imperative || needsDoing || s.action) ? 'high' : 'medium';
+  } else if (s.reflection) {
     kind = 'reflection';
+  } else {
+    // Genuinely unclear. Keep it, say so, and let the user correct it.
+    kind = 'reflection';
+    confidence = 'low';
   }
 
   const mode = inferMode(t);
@@ -566,6 +622,7 @@ function classifyThought(raw, now = new Date()) {
     deadline: when && deadlineKind
       ? { date: when.date, kind: deadlineKind, phrase: when.phrase } : null,
     needsConfirmation: needsConfirmation,
+    confidence: confidence,
     mode: mode,
     energy: mode ? ENERGY_BY_MODE[mode] : 'medium',
     minutes: inferMinutes(t, kind),
@@ -822,17 +879,25 @@ function heard(text) {
 /* --------------------------------------------------------------- intents */
 
 const INTENTS = [
-  { name: 'now', re: /(what (makes sense|should i do|can i do|fits)|what now|what's next|whats next)/i },
-  { name: 'attention', re: /(what actually needs|needs my attention|what's urgent|whats urgent)/i },
-  { name: 'forgetting', re: /(what am i forgetting|open loops|anything hanging|loose ends)/i },
-  { name: 'thinkAloud', re: /(let me think out loud|brain ?dump|thinking out loud|can i ramble)/i },
-  { name: 'capture', re: /^(capture|save|remember)( this)?( idea| thought)?[:,]?\s*/i },
-  { name: 'ideas', re: /(show me( the)?( best)? ideas|ideas i('ve| have) had|idea garden|best ideas)/i },
-  { name: 'help', re: /^(help|what can you do)\b/i }
+  { name: 'greeting', re: /^(hi|hey|hello|yo|morning|good morning|afternoon|evening|hiya|sup)\b[\s!.,]*$/i },
+  { name: 'now', re: /(what (makes sense|should i (do|work on|start|pick)|do i do|can i do|fits|is worth)|what now|what'?s next|whats next|what'?s on|whats on|suggest something|give me something|any suggestions|options\??$|i'?m ready|where do i start)/i },
+  { name: 'attention', re: /(what actually needs|needs my attention|what'?s urgent|whats urgent|anything urgent|anything important|any deadlines|what'?s due|whats due|what needs doing)/i },
+  { name: 'forgetting', re: /(what am i forgetting|what have i forgotten|open loops|anything hanging|loose ends|anything outstanding)/i },
+  { name: 'thinkAloud', re: /(let me think out loud|brain ?dump|thinking out loud|can i ramble|listen for a bit|let me talk)/i },
+  { name: 'capture', re: /^(capture|save|remember|note|jot down)( this)?( idea| thought| down)?[:,]?\s*/i },
+  { name: 'ideas', re: /((show|tell) me (the |my |some )?(best )?ideas|my ideas|what ideas|ideas i'?(ve| have) had|idea garden|best ideas|any ideas)/i },
+  { name: 'help', re: /^(help|what can you do|how does this work|what do you do|how do i use)\b/i }
 ];
+
+// A short question that matches nothing above is still a question. Filing it
+// as material is the wrong answer - Morrow should admit it missed.
+const ASKING = /^(what|when|where|who|why|how|which|can you|could you|do you|are there|is there|any\b)/i;
 
 const MODE_WORDS = {
   design: 'designing', designing: 'designing', drawing: 'designing', visual: 'designing',
+  creative: 'designing', arty: 'designing', scrappy: 'organizing', social: 'communicating',
+  chatty: 'communicating', focused: 'writing', wordy: 'writing', curious: 'researching',
+  boring: 'admin', dull: 'admin',
   brainstorm: 'brainstorming', brainstorming: 'brainstorming', ideating: 'brainstorming',
   write: 'writing', writing: 'writing', research: 'researching', researching: 'researching',
   organise: 'organizing', organize: 'organizing', organizing: 'organizing', tidying: 'organizing',
@@ -846,7 +911,9 @@ function updateContextFrom(text) {
   const t = text.toLowerCase();
   let touched = false;
 
-  const modeMatch = t.match(/(?:i feel like|mood for|i want to)\s+([a-z]+)/);
+  const modeMatch = t.match(/(?:i feel like|feel like|mood for|i want to|up for)\s+([a-z]+)/) ||
+    t.match(/^(?:a\s+)?([a-z]+)(?:\s+kind of)?\s+(?:day|mood|session)\b/) ||
+    t.match(/\b(?:feeling|feel)\s+([a-z]+)/);
   if (modeMatch && MODE_WORDS[modeMatch[1]]) {
     mem.context.mode = MODE_WORDS[modeMatch[1]];
     touched = true;
@@ -1013,11 +1080,22 @@ function respondIdeas(query) {
 function captureDump(text, announce) {
   announce = announce !== false;
   const items = classifyBrainDump(text);
-  if (!items.length) return [];
+  if (!items.length) {
+    if (announce) say("I heard you, but there wasn't anything in that to keep.");
+    return [];
+  }
   mem.items.push.apply(mem.items, items);
 
+  const unsure = items.filter(i => i.confidence === 'low');
   const unconfirmed = items.filter(i => i.needsConfirmation)[0];
-  let line = digest(items);
+  // One short remark deserves an answer, not a tally of itself.
+  let line = items.length === 1 ? acknowledge(items[0]) : digest(items);
+
+  if (unsure.length && !unconfirmed) {
+    line += unsure.length === 1
+      ? " I wasn't sure what that one was, so I just kept it."
+      : " I wasn't sure what " + spell(unsure.length) + " of them were, so I just kept them.";
+  }
 
   if (unconfirmed) {
     pending = { kind: 'confirm-deadline', id: unconfirmed.id };
@@ -1026,8 +1104,39 @@ function captureDump(text, announce) {
   } else if (mem.context.energy === 'low' || mem.context.energy === 'resting') {
     line += " Since you're running low, none of it became active work.";
   }
-  if (announce) say(line);
+  if (announce) {
+    say(line, '<p>' + esc(line) + '</p>' + (unsure.length ? correctionHtml(unsure) : ''));
+  }
   return items;
+}
+
+const ACKS = {
+  action: ['Kept as something to do.', 'Noted - a thing to do, not a deadline.', 'On the list, quietly.'],
+  commitment: ['That one sounds like it matters. Kept.', 'Held as a commitment.'],
+  idea: ["Saved as a seed. It doesn't have to become anything.", 'Kept as an idea. No pressure on it.'],
+  reflection: ['Kept.', 'Noted.'],
+  question: ["Kept as an open question - I'll bring it back if it stays open.", 'Filed as a question.'],
+  decision: ["Logged as a decision, so you don't relitigate it later."]
+};
+
+function acknowledge(item) {
+  const options = ACKS[item.kind] || ACKS.reflection;
+  return options[Math.floor(Math.random() * options.length)];
+}
+
+/* Morrow guesses from words alone, so it will sometimes guess wrong. Where it
+   is unsure, the fix is one tap - never a form, and never a silent mislabel. */
+function correctionHtml(items) {
+  return '<div class="options">' + items.map(i =>
+    '<div class="option unsure">' +
+      '<div class="what">' + esc(shorten(i.text, 92)) + '</div>' +
+      '<div class="facts"><span>kept, unsorted</span></div>' +
+      '<div class="moves">' +
+        '<button type="button" data-act="is-action" data-id="' + i.id + '">a thing to do</button>' +
+        '<button type="button" data-act="is-idea" data-id="' + i.id + '">an idea</button>' +
+        '<button type="button" data-act="is-commitment" data-id="' + i.id + '">a real commitment</button>' +
+        '<button type="button" data-act="is-thought" data-id="' + i.id + '">just thinking</button>' +
+      '</div></div>').join('') + '</div>';
 }
 
 function handleConfirmDeadline(text) {
@@ -1084,6 +1193,15 @@ function handle(raw) {
   const intents = detectIntents(text);
   const contextChanged = updateContextFrom(text);
 
+  if (intents.indexOf('greeting') !== -1) {
+    const opener = pressingDeadlines(mem, 7).length
+      ? "Hello. One real date is close - say \u201cwhat needs my attention\u201d when you want it."
+      : mem.items.length
+        ? "Hello. Everything's where you left it. What's on your mind?"
+        : "Hello. Tell me anything - a job, a half-thought, a date you can't miss.";
+    return say(opener);
+  }
+
   if (intents.indexOf('help') !== -1) {
     return say("Talk to me the way you'd talk to a person. Tell me what you're in the mood " +
       'for, dump everything on your mind, ask what makes sense right now, or ask what ' +
@@ -1120,6 +1238,14 @@ function handle(raw) {
     return respondNow();
   }
 
+  // A question Morrow can't answer is still a question. Say so plainly rather
+  // than filing it away as a thought the user never meant to store.
+  if (ASKING.test(text) || /\?\s*$/.test(text)) {
+    return say("I didn't follow that one. I can tell you what makes sense right " +
+      "now, what actually needs your attention, what you're forgetting, or show " +
+      "you your ideas. Anything else you say, I'll just keep.");
+  }
+
   // Everything else is material. Capture it, sort it, hand back a digest.
   captureDump(text);
 }
@@ -1144,6 +1270,24 @@ function onMove(e) {
   } else if (btn.dataset.act === 'bet') {
     item.stage = 'active'; item.status = 'active';
     say("That's an active bet now. One of very few.");
+  } else if (btn.dataset.act === 'is-action') {
+    item.kind = 'action'; item.confidence = 'high'; item.stage = null; item.status = 'stored';
+    say("Filed as something to do. It'll turn up when it suits you.");
+  } else if (btn.dataset.act === 'is-idea') {
+    item.kind = 'idea'; item.confidence = 'high'; item.stage = 'seed'; item.status = 'seed';
+    say("A seed, then. It doesn't have to become anything.");
+  } else if (btn.dataset.act === 'is-commitment') {
+    item.kind = 'commitment'; item.confidence = 'high'; item.status = 'stored';
+    if (!item.deadline) {
+      item.needsConfirmation = true;
+      pending = { kind: 'confirm-deadline', id: item.id };
+      say('Then I need the date. When is it actually due, or is it open?');
+    } else {
+      say("Held. I'll keep an eye on that one.");
+    }
+  } else if (btn.dataset.act === 'is-thought') {
+    item.kind = 'reflection'; item.confidence = 'high';
+    say('Just a thought. Kept, not tracked.');
   } else if (btn.dataset.act === 'archive') {
     item.status = 'archived'; item.stage = 'archive';
     say('Archived, not deleted. Still there if it comes back around.');
