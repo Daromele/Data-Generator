@@ -6,96 +6,93 @@ energy, and surfaces only what is useful right now.
 
 **Capture freely. Display selectively. Protect what truly matters.**
 
+Morrow is an agent, not an app with a chat box bolted on. Claude does the
+understanding; memory is a set of tools it reads and writes. There is no
+keyword matching anywhere in the codebase — what counts as a real commitment,
+an idea, or thinking aloud is judgement, made fresh each time against the
+instructions in `PERSONA` and the memory it can see.
+
+## Running it
+
+```bash
+npm install
+export ANTHROPIC_API_KEY=sk-ant-...        # or: ant auth login
+node agent.js ~/Projects ~/Design/Assets   # folders are optional
+```
+
+Open http://127.0.0.1:4471. Talk or type — voice and text share one
+conversation, one memory, one context.
+
+Folder arguments are the only file access Morrow ever has. Pass none and the
+file tools are simply off.
+
+| Variable | Default |
+| --- | --- |
+| `ANTHROPIC_API_KEY` | required (or an `ant auth login` profile) |
+| `MORROW_PORT` | `4471` |
+| `MORROW_STORE` | `~/.morrow/memory.json` |
+
 ## What's here
 
 | File | What it is |
 | --- | --- |
-| `index.html` | The whole app. One self-contained file — no build, no dependencies, no network calls. Open it in a browser or publish it as an artifact. |
-| `companion.js` | Optional desktop companion: a localhost service giving Morrow file access to folders you explicitly approve, and nothing else. |
-| `test-engine.js` | `node test-engine.js` — checks classification, the deadline model, recommendations and the idea garden. Runs the engine extracted from `index.html`, so there is only ever one copy of the logic. |
+| `agent.js` | The agent: memory, tools, the folder boundary, the model loop, and the server. |
+| `index.html` | The interface. It decides nothing — it carries what you say to the agent and renders what streams back. |
+| `test-morrow.js` | 28 checks: memory tools, the folder boundary, the approval gate, the server. |
+| `test-loop.js` | 18 checks: the whole agent loop against a stub API — request shape, tool execution, results returned, text streamed. Spends no tokens. |
 
-## Using it
-
-Open `index.html`. Talk or type — voice and text share one memory, one context
-and one transcript. Everything is stored in your browser's local storage;
-nothing is sent anywhere.
-
-Things worth saying:
-
-- *"I feel like designing today."* / *"I have 20 minutes and no brainpower."*
-- *"What makes sense right now?"* — at most three options, never a list.
-- *"What actually needs my attention?"* — only real, external dates.
-- *"What am I forgetting?"* — open loops, including dates Morrow still needs from you.
-- *"Let me think out loud."* — Morrow listens and acknowledges, and only sorts
-  what you said once you say you're done.
-- *"Capture this idea."* — saved as a seed. It doesn't have to become anything.
-- *"Show me the best ideas I've had about the card business."*
-
-## How it decides things
-
-**Two kinds of dates, and only one of them is allowed to create pressure.** A
-date is *real* when something outside you imposes it — taxes, a flight, a bill,
-an appointment, a promise to another person. Those get protected, get the one
-persistent line on screen, and are the only thing coloured. A date you set for
-yourself is an *intention*: guidance, never an overdue counter. If something
-sounds like a real commitment but carries no date, Morrow asks instead of
-inventing one.
-
-**Nothing you say becomes active work on its own.** A brain dump is split into
-separate thoughts and sorted into commitments, possible actions, ideas,
-reflections, questions and decisions. You get a digest — *"I captured six
-thoughts: one idea, two commitments…"* — and everything sits stored until you
-choose otherwise.
-
-**Work is chosen by readiness, not by schedule.** Each stored thing carries
-inferred attributes you never have to maintain: a work mode, an energy level, a
-rough duration, a real deadline if any, whether Morrow can help with it. Low
-energy never surfaces uphill work. When creative preference and a real deadline
-disagree, Morrow names the tension out loud and proposes a trade rather than
-burying either one.
-
-**Ideas grow through stages, quietly**: seed → explore → candidate → active bet
-→ archive. Seeds never appear in recommendations. Occasionally — not often —
-Morrow resurfaces two or three older ideas that look unusually strong next to
-what you're currently working on.
-
-**No dashboard, no counters, no badges.** At most three options at a time, an
-approaching real deadline, whatever you explicitly asked for, and a small
-curated set of ideas when they're worth it. Nothing is ever deleted; archive
-means archived.
-
-## The desktop companion
-
-```
-node companion.js ~/Projects ~/Design/Assets
+```bash
+npm test          # both suites
 ```
 
-It prints a token and listens on `127.0.0.1:4471` only. The boundary is
-enforced in the service, not the interface:
+## How it thinks
 
-- Only paths inside an approved folder are reachable; symlinks are resolved, so
-  a link can't walk out.
-- Reading, listing and searching (by filename or file contents) need no
-  repeated approval.
-- Creating, copying, moving and renaming return a **preview and a token**;
-  nothing happens until that token comes back to `/confirm`. Staged operations
-  expire after ten minutes.
+**Two kinds of dates, and only one may create pressure.** A date is *real*
+only when something outside you imposes it — taxes, bills, appointments,
+flights, applications, client work, a promise to a person. Those are protected
+and get the single persistent line on screen. A date you set yourself is an
+*intention*: guidance, never overdue, never nagged about. If something sounds
+like a real commitment but carries no date, Morrow asks — it will not invent
+one, and it will not promote an intention to real.
+
+**It stores far more than it shows.** Capturing is invisible. A `recall` that
+returns twenty things is context for the model, not output for you; showing
+all twenty is treated as a failure. At most three options at a time.
+
+**It follows your energy** unless a real commitment is genuinely at risk — and
+when creative preference and a real deadline collide, it says so plainly and
+proposes a trade rather than burying either one.
+
+**Ideas stay ideas**: seed → explore → candidate → active bet → archive.
+Nothing is ever deleted; archived means archived.
+
+## The file tools
+
+Reading and searching approved folders need no permission. Anything that
+creates, copies, moves or renames goes through one gate:
+
+- Only paths inside an approved folder resolve. Symlinks are resolved, so a
+  link cannot walk out. This is enforced in code on every call — the model
+  cannot widen it, and the prompt is not what keeps it closed.
+- Every change is shown to you as an exact preview and **waits**. The tool
+  call does not return until you answer, so the model cannot proceed on its
+  own say-so. No answer within ten minutes means no.
 - Existing files are never overwritten.
-- There is no delete operation at all.
-- Nothing leaves the machine.
+- There is no delete operation. Move things aside instead.
 
-| Endpoint | Effect |
-| --- | --- |
-| `POST /roots`, `/list`, `/search`, `/grep`, `/read` | Immediate |
-| `POST /mkdir`, `/copy`, `/move`, `/rename`, `/write` | Returns a preview + token |
-| `POST /confirm`, `/cancel` | Runs or discards a staged operation |
+## Cost
 
-Every request needs the `x-morrow-token` header.
+Every message is a Claude Opus 5 call with adaptive thinking, so this is not
+free to run. The system prompt is marked cacheable and Morrow sends counts
+rather than contents, which keeps the per-turn input small; a short exchange
+is a few cents. Swap `MODEL` in `agent.js` if you want a cheaper model.
 
 ## Where it stops
 
-This first version is deliberately local and self-contained. Not here yet:
-calendar and email integration, escalating reminders as a real deadline
-approaches, proactive check-ins, cross-project reasoning, and a wired-up link
-between the conversation and the companion (the companion runs and enforces its
-own rules; the app does not yet call it).
+No calendar or email integration, no escalating reminders as a real deadline
+approaches, no proactive check-ins, and no packaging as a desktop app — it
+runs from a terminal.
+
+It also cannot be a published artifact. Artifacts are sandboxed against
+external network calls, so a page hosted there cannot reach a model or your
+filesystem; a real agent has to run somewhere it can do both.

@@ -1,11 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Morrow</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a4631f' stroke-width='1.5' stroke-linecap='round'%3e%3cpath d='M12 21c0-6 2-9 6-11'/%3e%3cpath d='M12 21c0-5-1.5-8-5-10'/%3e%3cpath d='M12 21V9'/%3e%3ccircle cx='12' cy='5' r='2.5'/%3e%3c/svg%3e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
-
 <style>
-  /* Light is the base palette. Every colour is a token so both themes resolve
-     as a set - see the two redefinition blocks below. */
   :root {
     --ground:      #e8e9ec;
     --surface:     #f4f5f7;
@@ -13,259 +16,127 @@
     --soft:        #6a6e78;
     --line:        #d3d6dc;
     --line-strong: #bfc4cd;
-    /* The lamp. Reserved for real, externally imposed deadlines and focus
-       rings. Nothing else in the app is allowed to use it. */
+    /* The lamp. Real, externally imposed deadlines and focus rings only. */
     --lamp:        #a4631f;
     --lamp-quiet:  #efe3d6;
 
     --speech: "Newsreader", ui-serif, Georgia, "Iowan Old Style", serif;
     --data: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
-
-    --col: 40rem;
     --step: 0.6rem;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ground:      #14161a;
-      --surface:     #1c1f24;
-      --ink:         #dee0e5;
-      --soft:        #8b909a;
-      --line:        #272b31;
-      --line-strong: #363b43;
-      --lamp:        #d99a5b;
-      --lamp-quiet:  #2b2119;
+      --ground: #14161a; --surface: #1c1f24; --ink: #dee0e5; --soft: #8b909a;
+      --line: #272b31; --line-strong: #363b43; --lamp: #d99a5b; --lamp-quiet: #2b2119;
     }
   }
   :root[data-theme="dark"] {
-    --ground:      #14161a;
-    --surface:     #1c1f24;
-    --ink:         #dee0e5;
-    --soft:        #8b909a;
-    --line:        #272b31;
-    --line-strong: #363b43;
-    --lamp:        #d99a5b;
-    --lamp-quiet:  #2b2119;
+    --ground: #14161a; --surface: #1c1f24; --ink: #dee0e5; --soft: #8b909a;
+    --line: #272b31; --line-strong: #363b43; --lamp: #d99a5b; --lamp-quiet: #2b2119;
   }
 
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
-    margin: 0;
-    background: var(--ground);
-    color: var(--ink);
-    font-family: var(--speech);
-    font-size: 17px;
-    line-height: 1.55;
-    font-weight: 400;
-    -webkit-font-smoothing: antialiased;
-    display: flex;
-    justify-content: center;
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--speech); font-size: 17px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased; display: flex; justify-content: center;
   }
+  #app { width: 100%; max-width: 40rem; height: 100%; display: flex; flex-direction: column; padding: 0 1.25rem; }
 
-  #app {
-    width: 100%;
-    max-width: var(--col);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 0 1.25rem;
-  }
+  header { display: flex; align-items: baseline; gap: 0.75rem; padding: 1.75rem 0 0.6rem; flex: none; }
+  h1 { margin: 0; font-size: 1.15rem; font-weight: 500; letter-spacing: 0.02em; font-variant: small-caps; }
+  .creed { font-family: var(--data); font-size: 0.66rem; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--soft); }
+  #link { margin-left: auto; font-family: var(--data); font-size: 0.62rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); }
+  #link.down { color: var(--lamp); }
 
-  /* ---------------------------------------------------------- masthead */
-
-  header {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    padding: 1.75rem 0 0.6rem;
-    flex: none;
-  }
-  h1 {
-    margin: 0;
-    font-size: 1.15rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    font-variant: small-caps;
-  }
-  .creed {
-    font-family: var(--data);
-    font-size: 0.66rem;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--soft);
-  }
-
-  /* The single persistent note on screen: the nearest real deadline. It is
-     the only element that carries the lamp colour by default. */
+  /* The one persistent line: the nearest real deadline. */
   #whisper {
-    flex: none;
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
-    font-family: var(--data);
-    font-size: 0.72rem;
-    color: var(--lamp);
-    padding: 0.5rem 0 0.55rem 0.7rem;
-    border-left: 2px solid var(--lamp);
-    background: var(--lamp-quiet);
-    border-radius: 0 3px 3px 0;
-    margin-bottom: 0.35rem;
+    flex: none; display: flex; align-items: baseline; gap: 0.6rem;
+    font-family: var(--data); font-size: 0.72rem; color: var(--lamp);
+    padding: 0.5rem 0 0.55rem 0.7rem; border-left: 2px solid var(--lamp);
+    background: var(--lamp-quiet); border-radius: 0 3px 3px 0; margin-bottom: 0.35rem;
   }
   #whisper[hidden] { display: none; }
-  #whisper .when {
-    margin-left: auto;
-    padding-left: 0.75rem;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
+  #whisper .when { margin-left: auto; padding-left: 0.75rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-  /* ------------------------------------------------------------ stream */
-
-  #stream {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 1.1rem 0 0.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.15rem;
-    scrollbar-width: thin;
-    scrollbar-color: var(--line-strong) transparent;
-  }
-  .turn { display: flex; animation: rise 0.42s cubic-bezier(.22,.8,.3,1) both; }
+  #stream { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1.1rem 0 0.5rem;
+    display: flex; flex-direction: column; gap: 1.15rem; }
+  .turn { display: flex; animation: rise 0.4s cubic-bezier(.22,.8,.3,1) both; }
   .turn.said { justify-content: flex-end; }
   @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
-  @media (prefers-reduced-motion: reduce) {
-    .turn { animation: none; }
-    #stream { scroll-behavior: auto; }
-  }
+  @media (prefers-reduced-motion: reduce) { .turn { animation: none; } }
 
-  .body { max-width: 90%; }
+  .body { max-width: 90%; white-space: pre-wrap; }
   .said .body {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 14px 14px 3px 14px;
-    padding: 0.5rem 0.85rem;
-    font-size: 0.95rem;
-    color: var(--soft);
-  }
-  .body p { margin: 0 0 0.6rem; text-wrap: pretty; }
-  .body p:last-child { margin-bottom: 0; }
-  .aside {
-    font-family: var(--data);
-    font-size: 0.74rem;
-    line-height: 1.6;
-    color: var(--soft);
-    margin-top: 0.75rem;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px 14px 3px 14px; padding: 0.5rem 0.85rem;
+    font-size: 0.95rem; color: var(--soft); white-space: pre-wrap;
   }
 
-  /* ----------------------------------------------------------- options */
+  /* What Morrow is doing behind the reply - present, but never loud. */
+  .doing { font-family: var(--data); font-size: 0.66rem; letter-spacing: 0.04em;
+    color: var(--soft); opacity: .8; display: flex; gap: 0.5rem; align-items: baseline; }
+  .doing::before { content: ''; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--soft); flex: none; transform: translateY(-2px); }
+  .thinking::after {
+    content: ''; display: inline-block; width: 0.45em; height: 0.45em; margin-left: 0.15em;
+    border-radius: 50%; background: currentColor; animation: pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
 
-  .options { display: flex; flex-direction: column; gap: var(--step); margin-top: 0.85rem; }
-  .option {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-left: 2px solid var(--line-strong);
-    border-radius: 3px 10px 10px 3px;
-    padding: 0.7rem 0.85rem;
+  .ask {
+    background: var(--surface); border: 1px solid var(--line);
+    border-left: 2px solid var(--lamp); border-radius: 3px 10px 10px 3px;
+    padding: 0.75rem 0.9rem; max-width: 90%;
   }
-  /* A real deadline is the only thing that lights a card up. */
-  .option.dated { border-left-color: var(--lamp); }
-  .option.unsure { border-left-style: dotted; }
-  .option .what { font-size: 0.98rem; }
-  .option .facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.85rem;
-    font-family: var(--data);
-    font-size: 0.68rem;
-    letter-spacing: 0.03em;
-    color: var(--soft);
-    margin-top: 0.4rem;
-    font-variant-numeric: tabular-nums;
+  .ask .why { font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .ask pre {
+    font-family: var(--data); font-size: 0.68rem; line-height: 1.7; color: var(--soft);
+    margin: 0 0 0.7rem; white-space: pre-wrap; word-break: break-all;
+    max-height: 11rem; overflow-y: auto;
   }
-  .option.dated .facts .due { color: var(--lamp); }
-  .moves { display: flex; gap: var(--step); margin-top: 0.7rem; flex-wrap: wrap; }
+  .moves { display: flex; gap: var(--step); flex-wrap: wrap; }
 
   button {
-    font-family: var(--data);
-    font-size: 0.7rem;
-    letter-spacing: 0.02em;
-    color: var(--soft);
-    background: transparent;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    padding: 0.25rem 0.7rem;
-    cursor: pointer;
-    transition: color .15s, border-color .15s;
+    font-family: var(--data); font-size: 0.7rem; color: var(--soft);
+    background: transparent; border: 1px solid var(--line-strong); border-radius: 999px;
+    padding: 0.25rem 0.7rem; cursor: pointer; transition: color .15s, border-color .15s;
   }
-  button:hover { color: var(--ink); border-color: var(--ink); }
+  button:hover:not(:disabled) { color: var(--ink); border-color: var(--ink); }
+  button:disabled { opacity: .4; cursor: default; }
+  .go { color: var(--lamp); border-color: var(--lamp); }
   :focus-visible { outline: 2px solid var(--lamp); outline-offset: 2px; }
 
-  /* ------------------------------------------------- state and composer */
-
-  #state {
-    flex: none;
-    display: flex;
-    gap: var(--step);
-    flex-wrap: wrap;
-    padding-bottom: 0.6rem;
-  }
+  #state { flex: none; display: flex; gap: var(--step); flex-wrap: wrap; padding-bottom: 0.6rem; }
   #state[hidden] { display: none; }
-  .flag {
-    font-family: var(--data);
-    font-size: 0.68rem;
-    color: var(--soft);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 0.2rem 0.65rem;
-  }
+  .flag { font-family: var(--data); font-size: 0.68rem; color: var(--soft);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.65rem; }
 
-  #composer {
-    flex: none;
-    display: flex;
-    align-items: flex-end;
-    gap: var(--step);
-    border-top: 1px solid var(--line);
-    padding: 0.7rem 0 1.1rem;
-  }
-  #input {
-    flex: 1;
-    resize: none;
-    border: 0;
-    outline: none;
-    background: transparent;
-    color: var(--ink);
-    font-family: var(--speech);
-    font-size: 1rem;
-    line-height: 1.5;
-    max-height: 11rem;
-    padding: 0.45rem 0.15rem;
-  }
+  #composer { flex: none; display: flex; align-items: flex-end; gap: var(--step);
+    border-top: 1px solid var(--line); padding: 0.7rem 0 1.1rem; }
+  #input { flex: 1; resize: none; border: 0; outline: none; background: transparent;
+    color: var(--ink); font-family: var(--speech); font-size: 1rem; line-height: 1.5;
+    max-height: 11rem; padding: 0.45rem 0.15rem; }
   #input::placeholder { color: var(--soft); opacity: .75; }
-  .key {
-    flex: none;
-    width: 2.3rem; height: 2.3rem;
-    display: grid; place-items: center;
-    border-radius: 50%;
-    border: 1px solid var(--line-strong);
-    background: transparent;
-    color: var(--soft);
-    cursor: pointer;
-    padding: 0;
-  }
+  .key { flex: none; width: 2.3rem; height: 2.3rem; display: grid; place-items: center;
+    border-radius: 50%; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--soft); cursor: pointer; padding: 0; }
   .key svg { width: 1rem; height: 1rem; }
   .key:hover:not(:disabled) { color: var(--ink); border-color: var(--ink); }
   .key.live { color: var(--lamp); border-color: var(--lamp); }
   .key:disabled { opacity: .3; cursor: default; }
   #send { color: var(--ink); border-color: var(--ink); }
 </style>
-
+</head>
+<body>
 <div id="app">
   <header>
     <h1>Morrow</h1>
     <span class="creed">capture freely · show selectively</span>
+    <span id="link">connecting</span>
   </header>
 
   <div id="whisper" hidden></div>
@@ -293,1009 +164,189 @@
 </div>
 
 <script>
-/* ==== engine ==== */
-/* Morrow - capture, classification, memory and recommendation.
-   Pure functions plus a small store. Also runnable under node; see
-   test-engine.js, which extracts this section straight out of this file. */
+/* The page decides nothing. It carries what the person says to the agent and
+   renders what comes back; every judgement about what any of it means is made
+   by the model on the other end of this stream. */
 
-const MORROW_VERSION = '0.2.0';
-const STORE_KEY = 'morrow.memory.v1';
-
-const emptyMemory = () => ({
-  version: MORROW_VERSION,
-  items: [],          // everything captured, most of it never displayed
-  messages: [],       // the one conversation, shared by text and voice
-  context: {          // what Morrow currently believes about the user's state
-    mode: null,       // designing | brainstorming | writing | ...
-    energy: null,     // high | medium | low | resting
-    minutes: null,    // available time
-    updatedAt: null
-  },
-  observations: [],   // energy and pattern notes
-  people: [],
-  folders: []         // approved folders for the desktop companion
-});
-
-function loadMemory() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return emptyMemory();
-    return Object.assign(emptyMemory(), JSON.parse(raw));
-  } catch (e) {
-    return emptyMemory();     // a private window is not a reason to fail
-  }
-}
-
-function saveMemory(mem) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(mem)); } catch (e) {}
-}
-
-const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-
-/* ------------------------------------------------------------- date sense */
-
-const MONTHS = ['january','february','march','april','may','june','july',
-  'august','september','october','november','december'];
-const DAYS = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-
-const startOfDay = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
-const iso = d => {
-  const x = startOfDay(d);
-  return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') +
-    '-' + String(x.getDate()).padStart(2, '0');
-};
-const daysUntil = dateStr => {
-  if (!dateStr) return null;
-  const ms = startOfDay(new Date(dateStr + 'T00:00:00')) - startOfDay(new Date());
-  return Math.round(ms / 86400000);
-};
-
-// Finds a date mentioned in free text. Returns { date, phrase } or null.
-function findDate(text, now = new Date()) {
-  const t = text.toLowerCase();
-
-  const isoMatch = t.match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
-  if (isoMatch) return { date: isoMatch[0], phrase: isoMatch[0] };
-
-  const monthDay = t.match(new RegExp(
-    '\\b(' + MONTHS.join('|') + ')\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s*(\\d{4}))?'));
-  if (monthDay) {
-    const m = MONTHS.indexOf(monthDay[1]);
-    const day = parseInt(monthDay[2], 10);
-    const year = monthDay[3] ? parseInt(monthDay[3], 10) : now.getFullYear();
-    let d = new Date(year, m, day);
-    if (!monthDay[3] && d < startOfDay(now)) d = new Date(year + 1, m, day);
-    return { date: iso(d), phrase: monthDay[0] };
-  }
-
-  const dayMonth = t.match(new RegExp(
-    '\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?(' + MONTHS.join('|') + ')'));
-  if (dayMonth) {
-    const m = MONTHS.indexOf(dayMonth[2]);
-    const day = parseInt(dayMonth[1], 10);
-    let d = new Date(now.getFullYear(), m, day);
-    if (d < startOfDay(now)) d = new Date(now.getFullYear() + 1, m, day);
-    return { date: iso(d), phrase: dayMonth[0] };
-  }
-
-  if (/\btomorrow\b/.test(t)) {
-    const d = new Date(now); d.setDate(d.getDate() + 1);
-    return { date: iso(d), phrase: 'tomorrow' };
-  }
-  if (/\btonight\b|\btoday\b/.test(t)) return { date: iso(now), phrase: 'today' };
-
-  const inDays = t.match(/\bin\s+(\d{1,3})\s+(day|days|week|weeks|month|months)\b/);
-  if (inDays) {
-    const n = parseInt(inDays[1], 10);
-    const d = new Date(now);
-    if (inDays[2].startsWith('day')) d.setDate(d.getDate() + n);
-    else if (inDays[2].startsWith('week')) d.setDate(d.getDate() + n * 7);
-    else d.setMonth(d.getMonth() + n);
-    return { date: iso(d), phrase: inDays[0] };
-  }
-
-  const weekday = t.match(new RegExp('\\b(?:next\\s+|this\\s+|on\\s+)?(' + DAYS.join('|') + ')\\b'));
-  if (weekday) {
-    const target = DAYS.indexOf(weekday[1]);
-    const d = new Date(now);
-    let delta = (target - d.getDay() + 7) % 7;
-    if (delta === 0 || /next/.test(weekday[0])) delta = delta === 0 ? 7 : delta;
-    d.setDate(d.getDate() + delta);
-    return { date: iso(d), phrase: weekday[0].trim() };
-  }
-
-  const endOf = t.match(/\bend of (the )?(week|month)\b/);
-  if (endOf) {
-    const d = new Date(now);
-    if (endOf[2] === 'week') d.setDate(d.getDate() + (7 - d.getDay()));
-    else d.setMonth(d.getMonth() + 1, 0);
-    return { date: iso(d), phrase: endOf[0] };
-  }
-  return null;
-}
-
-/* -------------------------------------------------------- classification */
-
-const CUES = {
-  realDeadline: [
-    /\btax(es)?\b/, /\bdue\b/, /\bdeadline\b/, /\bappointment\b/, /\bflight\b/,
-    /\bbill\b/, /\binvoice\b/, /\brent\b/, /\brenew(al)?\b/, /\bapplication\b/,
-    /\bsubmit\b/, /\bfile (my|the) \w+/, /\bcourt\b/, /\bpassport\b/, /\bvisa\b/,
-    /\binsurance\b/, /\bclient\b/, /\bpay (my|the|back)\b/, /\baccountant\b/,
-    /\bregistration\b/, /\bmot\b/, /\bcontract\b/, /\bpermit\b/
-  ],
-  promise: [
-    /\bi (promised|told|owe|committed|agreed)\b/, /\bpromised (to|him|her|them)\b/,
-    /\bgot back to\b/, /\bsaid i(?:'| wo)?u?ld\b/, /\bthey(?:'re| are) waiting\b/
-  ],
-  intention: [
-    /\bi(?:'| wan)?d? ?like to\b/, /\bi want to\b/, /\bi'd love to\b/,
-    /\bwould be nice\b/, /\bhoping to\b/, /\baiming to\b/, /\bgoal is\b/,
-    /\bi might\b/, /\bi may\b/, /\bthinking of\b/, /\bat some point\b/,
-    /\bone day\b/, /\beventually\b/
-  ],
-  action: [
-    /\bi (need|have) to\b/, /\bi should\b/, /\bi must\b/, /\bremind me\b/,
-    /\bsort out\b/, /\bfix\b/, /\bcall\b/, /\bemail\b/, /\bbook\b/, /\border\b/,
-    /\bsend\b/, /\bchase\b/, /\bfollow up\b/
-  ],
-  idea: [
-    /\bidea\b/, /\bwhat if\b/, /\bimagine\b/, /\bconcept\b/, /\bwe could\b/,
-    /\bi could (make|build|do|try|design|launch)\b/, /\bit would be cool\b/,
-    /\bthinking about (making|building|starting)\b/, /\blaunch\b/, /\bbrand\b/,
-    /\bproduct\b/, /\bcollection\b/, /\bseries\b/
-  ],
-  decision: [
-    /\bi(?:'ve| have)? decided\b/, /\bi'm not going to\b/, /\bi'm going to stop\b/,
-    /\bno longer\b/, /\bdropping\b/, /\bwe're going with\b/, /\bsettled on\b/
-  ],
-  reflection: [
-    /\bi feel\b/, /\bi'm (exhausted|tired|drained|anxious|stuck|overwhelmed|excited)\b/,
-    /\bi keep\b/, /\bi always\b/, /\bi never\b/, /\bi noticed\b/, /\bhonestly\b/,
-    /\blately\b/, /\bi hate\b/, /\bi love\b/
-  ]
-};
-
-/* People rarely speak in full first-person sentences. Most of what gets typed
-   is two or three words - "book the dentist", "roof needs fixing", "meeting
-   with Tom Thursday" - so these patterns carry as much weight as the cues
-   above. Without them almost everything fell through to "reflection". */
-
-// A bare instruction: the sentence opens with something you do.
-const IMPERATIVE = new RegExp('^(?:' + [
-  'book','buy','call','ring','text','email','send','pay','fix','order','renew',
-  'check','chase','collect','cancel','print','upload','post','submit','file',
-  'schedule','arrange','clean','wash','sort','tidy','finish','write','draft',
-  'update','review','reply','confirm','find','get','grab','pick up','drop off',
-  'return','install','back up','backup','invoice','quote','message','remind',
-  'sign','scan','photograph','measure','pack','ship','deliver','set up','plan',
-  'read','watch','ask','tell','speak to','talk to','look at','look into','sell',
-  'list','edit','fix up','make','build','design','paint','cut','glue','laminate'
-].join('|') + ')\\b', 'i');
-
-// "the roof needs fixing", "copy needs rewriting", "van has to be moved"
-const NEEDS_DOING = /\b(needs?|need|has to be|have to be|must be|wants)\s+(?:to\s+be\s+)?\w+(?:ing|ed|e)?\b/;
-
-// Things another person is expecting you at, which are as binding as a bill.
-const APPOINTMENT = [
-  /\bmeeting\b/, /\bappointment\b/, /\bdentist\b/, /\bdoctor\b/, /\bgp\b/,
-  /\bhospital\b/, /\binterview\b/, /\bviewing\b/, /\bcatch ?up with\b/,
-  /\b(?:lunch|coffee|drinks|dinner|call) with\b/, /\bschool\b/, /\bpick ?up\b/,
-  /\bdrop ?off\b/, /\bwedding\b/, /\bfuneral\b/, /\bmot\b/, /\bservice\b/,
-  /\btrain\b/, /\bferry\b/, /\bcheck ?in\b/
-];
-
-// Terse idea shapes: an offer of a possibility rather than a job.
-const IDEA_OPENER = /^(?:maybe|what about|how about|an? idea|idea:|imagine|possibly|potentially|could do|thinking)\b/i;
-const MAKEABLE = [
-  /\bbox\b/, /\bapp\b/, /\bshop\b/, /\bbrand\b/, /\brange\b/, /\bcollection\b/,
-  /\bseries\b/, /\bbook\b/, /\bcourse\b/, /\bkit\b/, /\bsubscription\b/,
-  /\bnewsletter\b/, /\bpodcast\b/, /\bchannel\b/, /\bbundle\b/, /\btemplate\b/,
-  /\bworkshop\b/, /\bmarket stall\b/, /\bwebsite\b/, /\bline of\b/
-];
-
-const MODE_CUES = {
-  designing: [/design/, /\blayout\b/, /\bmockup\b/, /\bvisual\b/, /\bcolou?r\b/, /\blogo\b/, /\bfigma\b/, /\bcard\b/],
-  brainstorming: [/\bidea\b/, /\bbrainstorm\b/, /\bwhat if\b/, /\bconcept\b/, /\bname\b/, /\bexplore\b/],
-  writing: [/\bwrite\b/, /\bcopy\b/, /\bdraft\b/, /\blisting\b/, /\bdescription\b/, /\bpost\b/, /\bblog\b/],
-  researching: [/\bresearch\b/, /\blook (up|into)\b/, /\bcompare\b/, /\bfind out\b/, /\bread about\b/],
-  organizing: [/\borganis|organiz/, /\btidy\b/, /\bfolder\b/, /\bfiles?\b/, /\brename\b/, /\bsort\b/, /\bbackup\b/],
-  communicating: [/\bcall\b/, /\bemail\b/, /\bmessage\b/, /\breply\b/, /\bchase\b/, /\bring\b/, /\bmeet\b/],
-  admin: [/\btax\b/, /\bbill\b/, /\binvoice\b/, /\bform\b/, /\bpay\b/, /\bpaperwork\b/, /\baccountant\b/, /\bbank\b/, /\bregister\b/]
-};
-
-const ENERGY_BY_MODE = {
-  designing: 'high', brainstorming: 'medium', writing: 'high',
-  researching: 'medium', organizing: 'low', communicating: 'medium',
-  admin: 'low', resting: 'low'
-};
-
-function inferMode(text) {
-  const t = text.toLowerCase();
-  let best = null, bestScore = 0;
-  for (const mode of Object.keys(MODE_CUES)) {
-    const n = MODE_CUES[mode].reduce((acc, re) => acc + (re.test(t) ? 1 : 0), 0);
-    if (n > bestScore) { best = mode; bestScore = n; }
-  }
-  return best;
-}
-
-// A rough duration, so the user never has to maintain one by hand.
-function inferMinutes(text, kind) {
-  const t = text.toLowerCase();
-  const explicit = t.match(/\b(\d{1,3})\s*(min|minute|minutes|hour|hours|hr|hrs)\b/);
-  if (explicit) {
-    const n = parseInt(explicit[1], 10);
-    return /hour|hr/.test(explicit[2]) ? n * 60 : n;
-  }
-  if (/\bquick\b|\bjust\b|\bsend\b|\bcall\b|\breply\b|\bpay\b/.test(t)) return 10;
-  if (kind === 'idea' || kind === 'question') return 15;
-  if (/\bredesign\b|\brebuild\b|\bwrite\b|\bdesign\b/.test(t)) return 90;
-  return 30;
-}
-
-// People talk in run-on sentences; each clause is its own thought.
-const CLAUSE_SPLIT = new RegExp(
-  '(?<=[.!?])\\s+' +
-  "|\\s*[,;]?\\s+(?:and|but|also|and also|then|and then|plus)\\s+(?=i\\b|i'|we\\b|maybe|it\\s|there\\s)" +
-  "|\\s*[,;]\\s+(?=i\\b|i'|we\\b|maybe)" +
-  '|\\n+', 'i');
-
-function splitThoughts(text) {
-  return text
-    .replace(/[ \t]+/g, ' ')
-    .split(CLAUSE_SPLIT)
-    .map(s => (s || '').trim().replace(/^(?:and|but|also|then|plus)\s+/i, ''))
-    .filter(s => s.length > 1);
-}
-
-function score(text, cues) {
-  return cues.reduce((n, re) => n + (re.test(text) ? 1 : 0), 0);
-}
-
-/* Classify one thought. Returns a stored item - never an activated one.
-   Order matters: the strongest, least ambiguous signals are tested first, and
-   anything that reaches the end is marked low-confidence so the interface can
-   offer a correction rather than quietly mislabelling it. */
-function classifyThought(raw, now = new Date()) {
-  const text = raw.trim();
-  const t = text.toLowerCase();
-  const when = findDate(t, now);
-
-  const s = {
-    realDeadline: score(t, CUES.realDeadline),
-    promise: score(t, CUES.promise),
-    intention: score(t, CUES.intention),
-    action: score(t, CUES.action),
-    idea: score(t, CUES.idea),
-    decision: score(t, CUES.decision),
-    reflection: score(t, CUES.reflection),
-    appointment: score(t, APPOINTMENT),
-    makeable: score(t, MAKEABLE)
-  };
-  const imperative = IMPERATIVE.test(t);
-  const needsDoing = NEEDS_DOING.test(t);
-  const ideaOpener = IDEA_OPENER.test(t);
-
-  let kind, deadlineKind = null, needsConfirmation = false, confidence = 'high';
-
-  if (/\?\s*$/.test(text) && !s.decision && !s.idea && !imperative) {
-    kind = 'question';
-  } else if (s.decision) {
-    kind = 'decision';
-  } else if (ideaOpener || (s.idea && s.idea >= s.action) ||
-             (s.makeable && !imperative && !needsDoing && !s.action && !s.intention)) {
-    kind = 'idea';
-  } else if (s.appointment && !imperative) {
-    // "meeting with Tom Thursday" is a commitment; "book the dentist" is still
-    // just a thing to do, so an instruction stays an instruction.
-    // Someone else is expecting you. That is a commitment whether or not a
-    // date was said out loud.
-    kind = 'commitment';
-    deadlineKind = when ? 'real' : null;
-    needsConfirmation = !when;
-  } else if (s.realDeadline || s.promise) {
-    kind = 'commitment';
-    deadlineKind = when ? 'real' : null;    // a date is real only if imposed
-    needsConfirmation = !when;              // otherwise Morrow asks, never invents
-  } else if (imperative || needsDoing || s.action || s.intention) {
-    kind = 'action';
-    deadlineKind = when ? 'intention' : null;
-    // "buy milk" is plainly a thing to do; "sort the thing out" is a guess.
-    confidence = (imperative || needsDoing || s.action) ? 'high' : 'medium';
-  } else if (s.reflection) {
-    kind = 'reflection';
-  } else {
-    // Genuinely unclear. Keep it, say so, and let the user correct it.
-    kind = 'reflection';
-    confidence = 'low';
-  }
-
-  const mode = inferMode(t);
-  return {
-    id: uid(),
-    kind: kind,
-    text: text,
-    createdAt: new Date().toISOString(),
-    status: kind === 'idea' ? 'seed' : 'stored',    // stored is not active
-    stage: kind === 'idea' ? 'seed' : null,
-    deadline: when && deadlineKind
-      ? { date: when.date, kind: deadlineKind, phrase: when.phrase } : null,
-    needsConfirmation: needsConfirmation,
-    confidence: confidence,
-    mode: mode,
-    energy: mode ? ENERGY_BY_MODE[mode] : 'medium',
-    minutes: inferMinutes(t, kind),
-    assistable: /\bfind\b|\bfolder\b|\bfiles?\b|\brename\b|\bsort\b|\borganis|organiz|\bdraft\b|\blook up\b/.test(t),
-    project: null,
-    tags: keywords(text)
-  };
-}
-
-function classifyBrainDump(text, now = new Date()) {
-  return splitThoughts(text).map(s => classifyThought(s, now));
-}
-
-const STOPWORDS = new Set(('a an the i im my me we you it its is are was were be been to of for on in at ' +
-  'and or but so that this these those with about need needs want wants would could should like just ' +
-  'really maybe think thing things do does did done get got make makes have has had am will can').split(' '));
-
-function keywords(text) {
-  const seen = text.toLowerCase().replace(/[^a-z0-9\s']/g, ' ').split(/\s+/)
-    .filter(w => w.length > 3 && !STOPWORDS.has(w));
-  return Array.from(new Set(seen)).slice(0, 8);
-}
-
-const COUNT_WORDS = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
-const spell = n => (n <= 10 ? COUNT_WORDS[n] : String(n));
-
-function digest(items) {
-  const counts = {};
-  items.forEach(i => { counts[i.kind] = (counts[i.kind] || 0) + 1; });
-  const label = {
-    commitment: ['commitment', 'commitments'], action: ['possible action', 'possible actions'],
-    idea: ['idea', 'ideas'], reflection: ['reflection', 'reflections'],
-    question: ['question', 'questions'], decision: ['decision', 'decisions']
-  };
-  const parts = Object.keys(counts).map(k => spell(counts[k]) + ' ' + label[k][counts[k] === 1 ? 0 : 1]);
-  const total = items.length;
-  const list = parts.length > 1
-    ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1]
-    : (parts[0] || 'nothing yet');
-  return 'I captured ' + spell(total) + ' thought' + (total === 1 ? '' : 's') + ': ' + list +
-    '. Nothing was added to active work without your approval.';
-}
-
-/* ------------------------------------------------------------ recommender */
-
-const ENERGY_RANK = { resting: 0, low: 1, medium: 2, high: 3 };
-
-// Real deadlines are the only thing allowed to create pressure.
-function deadlinePressure(item) {
-  if (!item.deadline || item.deadline.kind !== 'real') return 0;
-  const d = daysUntil(item.deadline.date);
-  if (d === null) return 0;
-  if (d < 0) return 100;
-  if (d <= 1) return 90;
-  if (d <= 3) return 70;
-  if (d <= 7) return 45;
-  if (d <= 14) return 25;
-  if (d <= 30) return 10;
-  return 3;
-}
-
-function fitScore(item, ctx) {
-  if (item.status === 'archived' || item.status === 'done' || item.status === 'blocked') return -1;
-  if (item.kind === 'reflection' || item.kind === 'decision') return -1;
-  if (item.kind === 'idea' && item.stage === 'seed') return -1;   // seeds stay quiet
-
-  let s = deadlinePressure(item);
-
-  if (ctx.mode && item.mode === ctx.mode) s += 30;
-  else if (ctx.mode && item.mode) s -= 8;
-
-  if (ctx.energy) {
-    const have = ENERGY_RANK[ctx.energy] === undefined ? 2 : ENERGY_RANK[ctx.energy];
-    const need = ENERGY_RANK[item.energy] === undefined ? 2 : ENERGY_RANK[item.energy];
-    if (need <= have) s += 12 - (have - need) * 3;
-    else s -= (need - have) * 22;        // never push uphill work at a tired person
-  }
-
-  if (ctx.minutes) {
-    if (item.minutes <= ctx.minutes) s += 14;
-    else s -= Math.min(40, (item.minutes - ctx.minutes) / 3);
-  }
-
-  if (item.status === 'active') s += 15;
-  if (item.kind === 'commitment') s += 10;
-  return s;
-}
-
-function recommend(mem, ctx, limit) {
-  ctx = ctx || mem.context;
-  limit = limit || 3;
-  return mem.items
-    .map(i => ({ item: i, s: fitScore(i, ctx) }))
-    .filter(x => x.s > 0)
-    .sort((a, b) => b.s - a.s)
-    .slice(0, limit)
-    .map(x => x.item);
-}
-
-// Real deadlines worth mentioning now, and nothing else.
-function pressingDeadlines(mem, horizonDays) {
-  horizonDays = horizonDays === undefined ? 14 : horizonDays;
-  return mem.items
-    .filter(i => i.deadline && i.deadline.kind === 'real' && i.status !== 'done')
-    .map(i => ({ item: i, days: daysUntil(i.deadline.date) }))
-    .filter(x => x.days !== null && x.days <= horizonDays)
-    .sort((a, b) => a.days - b.days);
-}
-
-// "What am I forgetting?" - unconfirmed dates, stalled commitments, open questions.
-function openLoops(mem) {
-  const now = Date.now();
-  const stale = i => (now - new Date(i.createdAt).getTime()) > 5 * 86400000;
-  return []
-    .concat(mem.items.filter(i => i.needsConfirmation && i.status !== 'done'))
-    .concat(pressingDeadlines(mem, 30).map(x => x.item))
-    .concat(mem.items.filter(i => i.kind === 'commitment' && i.status !== 'done' && stale(i)))
-    .concat(mem.items.filter(i => i.kind === 'question' && i.status !== 'done'))
-    .filter((i, n, arr) => arr.indexOf(i) === n)
-    .slice(0, 5);
-}
-
-/* Occasionally resurface a very small number of unusually relevant ideas. */
-function resurfaceIdeas(mem, limit) {
-  limit = limit || 3;
-  const active = mem.items.filter(i => i.status === 'active' || i.kind === 'commitment');
-  const activeTags = new Set();
-  active.forEach(i => (i.tags || []).forEach(t => activeTags.add(t)));
-  const ideas = mem.items.filter(i =>
-    i.kind === 'idea' && i.status !== 'archived' && i.stage !== 'active');
-  return ideas
-    .map(i => {
-      const overlap = (i.tags || []).filter(t => activeTags.has(t)).length;
-      const ageDays = (Date.now() - new Date(i.createdAt).getTime()) / 86400000;
-      const recurrence = ideas.filter(o => o !== i &&
-        (o.tags || []).some(t => (i.tags || []).indexOf(t) !== -1)).length;
-      return { item: i, s: overlap * 3 + recurrence * 2 + Math.min(ageDays / 7, 3) };
-    })
-    .filter(x => x.s >= 2)
-    .sort((a, b) => b.s - a.s)
-    .slice(0, limit)
-    .map(x => x.item);
-}
-
-function searchIdeas(mem, query) {
-  const terms = keywords(query);
-  if (!terms.length) return [];
-  return mem.items
-    .filter(i => i.kind === 'idea')
-    .map(i => {
-      const hay = (i.text + ' ' + (i.tags || []).join(' ')).toLowerCase();
-      return { item: i, s: terms.filter(t => hay.indexOf(t) !== -1).length };
-    })
-    .filter(x => x.s > 0)
-    .sort((a, b) => b.s - a.s)
-    .slice(0, 5)
-    .map(x => x.item);
-}
-
-const IDEA_STAGES = ['seed', 'explore', 'candidate', 'active', 'archive'];
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { classifyThought, classifyBrainDump, findDate, digest, recommend,
-    pressingDeadlines, openLoops, resurfaceIdeas, searchIdeas, inferMode, daysUntil,
-    emptyMemory, IDEA_STAGES, keywords };
-}
-/* ==== end engine ==== */
-
-/* ==== conversation ==== */
-/* Text and voice share one memory, one context and one transcript. */
-
-const mem = loadMemory();
-const $ = sel => document.querySelector(sel);
-
-let pending = null;      // a question Morrow is waiting on an answer to
+const $ = s => document.querySelector(s);
+const stream = $('#stream');
 let speakAloud = false;
-let painted = 0;         // messages already in the DOM
+let replying = null;      // the assistant bubble currently being streamed into
+let busy = false;
 
-/* -------------------------------------------------------------- painting */
+const el = (tag, cls, text) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+};
 
-const shorten = (t, n) => { n = n || 64; return t.length > n ? t.slice(0, n - 1).trim() + '…' : t; };
-const esc = s => String(s).replace(/[&<>"]/g, c =>
-  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
-const humanDate = d => new Date(d + 'T00:00:00')
-  .toLocaleDateString(undefined, { day: 'numeric', month: 'long' });
-const countWord = n => capitalize(spell(n));
-
-function paint() {
-  const stream = $('#stream');
-  if (painted > mem.messages.length) { stream.innerHTML = ''; painted = 0; }
-  for (let n = painted; n < mem.messages.length; n++) {
-    const m = mem.messages[n];
-    const turn = document.createElement('div');
-    turn.className = 'turn ' + (m.role === 'user' ? 'said' : 'heard');
-    const body = document.createElement('div');
-    body.className = 'body';
-    body.innerHTML = m.html || '<p>' + esc(m.text).replace(/\n/g, '<br>') + '</p>';
-    turn.appendChild(body);
-    stream.appendChild(turn);
-  }
-  painted = mem.messages.length;
+function turn(cls) {
+  const row = el('div', 'turn ' + cls);
+  stream.appendChild(row);
   stream.scrollTop = stream.scrollHeight;
-  paintState();
-  paintWhisper();
-  saveMemory(mem);
+  return row;
 }
 
-function paintState() {
-  const c = mem.context;
+function said(text) {
+  turn('said').appendChild(el('div', 'body', text));
+  stream.scrollTop = stream.scrollHeight;
+}
+
+function heard() {
+  const row = turn('heard');
+  const body = el('div', 'body thinking');
+  row.appendChild(body);
+  return body;
+}
+
+// The waiting bubble is a placeholder, not content: drop it the moment
+// something real takes its place.
+function clearPlaceholder() {
+  if (replying && !replying.textContent) {
+    const row = replying.parentElement;
+    if (row) row.remove();
+  }
+  replying = null;
+}
+
+function doing(label) {
+  clearPlaceholder();
+  const row = turn('heard');
+  row.appendChild(el('div', 'doing', label));
+  stream.scrollTop = stream.scrollHeight;
+}
+
+// Nothing on disk changes without this card being answered.
+function askApproval(a) {
+  const row = turn('heard');
+  const card = el('div', 'ask');
+  card.appendChild(el('div', 'why', a.op));
+  card.appendChild(el('pre', null, (a.preview || []).join('\n')));
+  const moves = el('div', 'moves');
+  const yes = el('button', 'go', 'do it');
+  const no = el('button', null, 'no');
+  const settle = (approved, note) => {
+    yes.disabled = no.disabled = true;
+    fetch('/approve', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token: a.token, approved })
+    });
+    moves.replaceChildren(el('span', 'doing', note));
+  };
+  yes.onclick = () => settle(true, 'done');
+  no.onclick = () => settle(false, 'left alone');
+  moves.append(yes, no);
+  card.appendChild(moves);
+  row.appendChild(card);
+  stream.scrollTop = stream.scrollHeight;
+}
+
+function paintState(ctx) {
   const strip = $('#state');
   const flags = [];
-  if (c.mode) flags.push(c.mode);
-  if (c.energy) flags.push(c.energy + ' energy');
-  if (c.minutes) flags.push(c.minutes + ' min');
-  if (!flags.length) { strip.hidden = true; strip.innerHTML = ''; return; }
-  strip.hidden = false;
-  strip.innerHTML = flags.map(f => '<span class="flag">' + esc(f) + '</span>').join('') +
-    '<button type="button" id="forget">forget this</button>';
-  $('#forget').onclick = () => {
-    mem.context = { mode: null, energy: null, minutes: null, updatedAt: null };
-    paint();
-  };
+  if (ctx && ctx.mode) flags.push(ctx.mode);
+  if (ctx && ctx.energy) flags.push(ctx.energy + ' energy');
+  if (ctx && ctx.minutes) flags.push(ctx.minutes + ' min');
+  strip.replaceChildren(...flags.map(f => el('span', 'flag', f)));
+  strip.hidden = !flags.length;
 }
 
-// The nearest real deadline, and only when it is close enough to matter.
-function paintWhisper() {
+function paintWhisper(deadlines) {
   const w = $('#whisper');
-  const next = pressingDeadlines(mem, 14)[0];
-  if (!next) { w.hidden = true; w.innerHTML = ''; return; }
-  const d = next.days;
-  const when = d < 0 ? Math.abs(d) + (d === -1 ? ' day late' : ' days late') :
-    d === 0 ? 'today' : d === 1 ? 'tomorrow' : d + ' days';
+  const next = (deadlines || [])[0];
+  if (!next) { w.hidden = true; return; }
+  const d = next.in_days;
+  const when = d < 0 ? Math.abs(d) + ' days late' : d === 0 ? 'today' : d === 1 ? 'tomorrow' : d + ' days';
+  w.replaceChildren(el('span', null, next.text), el('span', 'when', when));
   w.hidden = false;
-  w.innerHTML = '<span>' + esc(shorten(next.item.text, 58)) + '</span>' +
-    '<span class="when">' + esc(when) + '</span>';
 }
 
-function say(text, html) {
-  mem.messages.push({ role: 'morrow', text: text, html: html, at: new Date().toISOString() });
-  paint();
-  if (speakAloud && window.speechSynthesis) {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.98;
-    speechSynthesis.speak(u);
-  }
-}
+/* ------------------------------------------------------------- the wire -- */
 
-function heard(text) {
-  mem.messages.push({ role: 'user', text: text, at: new Date().toISOString() });
-  paint();
-}
+function connect() {
+  const es = new EventSource('/stream');
+  const link = $('#link');
 
-/* --------------------------------------------------------------- intents */
+  es.onopen = () => { link.textContent = 'here'; link.classList.remove('down'); };
+  es.onerror = () => { link.textContent = 'not running'; link.classList.add('down'); };
 
-const INTENTS = [
-  { name: 'greeting', re: /^(hi|hey|hello|yo|morning|good morning|afternoon|evening|hiya|sup)\b[\s!.,]*$/i },
-  { name: 'now', re: /(what (makes sense|should i (do|work on|start|pick)|do i do|can i do|fits|is worth)|what now|what'?s next|whats next|what'?s on|whats on|suggest something|give me something|any suggestions|options\??$|i'?m ready|where do i start)/i },
-  { name: 'attention', re: /(what actually needs|needs my attention|what'?s urgent|whats urgent|anything urgent|anything important|any deadlines|what'?s due|whats due|what needs doing)/i },
-  { name: 'forgetting', re: /(what am i forgetting|what have i forgotten|open loops|anything hanging|loose ends|anything outstanding)/i },
-  { name: 'thinkAloud', re: /(let me think out loud|brain ?dump|thinking out loud|can i ramble|listen for a bit|let me talk)/i },
-  { name: 'capture', re: /^(capture|save|remember|note|jot down)( this)?( idea| thought| down)?[:,]?\s*/i },
-  { name: 'ideas', re: /((show|tell) me (the |my |some )?(best )?ideas|my ideas|what ideas|ideas i'?(ve| have) had|idea garden|best ideas|any ideas)/i },
-  { name: 'help', re: /^(help|what can you do|how does this work|what do you do|how do i use)\b/i }
-];
-
-// A short question that matches nothing above is still a question. Filing it
-// as material is the wrong answer - Morrow should admit it missed.
-const ASKING = /^(what|when|where|who|why|how|which|can you|could you|do you|are there|is there|any\b)/i;
-
-const MODE_WORDS = {
-  design: 'designing', designing: 'designing', drawing: 'designing', visual: 'designing',
-  creative: 'designing', arty: 'designing', scrappy: 'organizing', social: 'communicating',
-  chatty: 'communicating', focused: 'writing', wordy: 'writing', curious: 'researching',
-  boring: 'admin', dull: 'admin',
-  brainstorm: 'brainstorming', brainstorming: 'brainstorming', ideating: 'brainstorming',
-  write: 'writing', writing: 'writing', research: 'researching', researching: 'researching',
-  organise: 'organizing', organize: 'organizing', organizing: 'organizing', tidying: 'organizing',
-  admin: 'admin', paperwork: 'admin', calls: 'communicating', talking: 'communicating',
-  communicating: 'communicating', resting: 'resting', rest: 'resting', nothing: 'resting'
-};
-
-const detectIntents = text => INTENTS.filter(i => i.re.test(text)).map(i => i.name);
-
-function updateContextFrom(text) {
-  const t = text.toLowerCase();
-  let touched = false;
-
-  const modeMatch = t.match(/(?:i feel like|feel like|mood for|i want to|up for)\s+([a-z]+)/) ||
-    t.match(/^(?:a\s+)?([a-z]+)(?:\s+kind of)?\s+(?:day|mood|session)\b/) ||
-    t.match(/\b(?:feeling|feel)\s+([a-z]+)/);
-  if (modeMatch && MODE_WORDS[modeMatch[1]]) {
-    mem.context.mode = MODE_WORDS[modeMatch[1]];
-    touched = true;
-  }
-
-  if (/no brainpower|no brain|exhausted|wiped|drained|low energy|knackered|fried|tired/.test(t)) {
-    mem.context.energy = 'low'; touched = true;
-  } else if (/resting|need a break|done for (the day|today)/.test(t)) {
-    mem.context.energy = 'resting'; touched = true;
-  } else if (/full of energy|feeling sharp|wired|buzzing|fresh/.test(t)) {
-    mem.context.energy = 'high'; touched = true;
-  }
-
-  const time = t.match(/\b(\d{1,3})\s*(min|minute|minutes|hour|hours|hrs?)\b/);
-  if (time) {
-    const n = parseInt(time[1], 10);
-    mem.context.minutes = /hour|hr/.test(time[2]) ? n * 60 : n;
-    touched = true;
-  }
-
-  if (touched) {
-    mem.context.updatedAt = new Date().toISOString();
-    mem.observations.push({ at: mem.context.updatedAt, mode: mem.context.mode, energy: mem.context.energy });
-    if (mem.observations.length > 200) mem.observations.shift();
-  }
-  return touched;
-}
-
-/* ------------------------------------------------------------- responses */
-
-function factsFor(i) {
-  const facts = [];
-  if (i.minutes) facts.push('<span>' + i.minutes + ' min</span>');
-  if (i.mode) facts.push('<span>' + esc(i.mode) + '</span>');
-  if (i.deadline && i.deadline.kind === 'real') {
-    const d = daysUntil(i.deadline.date);
-    facts.push('<span class="due">' +
-      (d < 0 ? Math.abs(d) + ' days late' : d === 0 ? 'due today' : 'due in ' + d + ' days') +
-      '</span>');
-  } else if (i.deadline && i.deadline.kind === 'intention') {
-    facts.push('<span>hoping for ' + esc(humanDate(i.deadline.date)) + '</span>');
-  }
-  return facts.join('');
-}
-
-function optionsHtml(items) {
-  return '<div class="options">' + items.map(i => {
-    const real = i.deadline && i.deadline.kind === 'real';
-    return '<div class="option' + (real ? ' dated' : '') + '">' +
-      '<div class="what">' + esc(shorten(i.text, 92)) + '</div>' +
-      '<div class="facts">' + factsFor(i) + '</div>' +
-      '<div class="moves">' +
-        '<button type="button" data-act="start" data-id="' + i.id + '">start this</button>' +
-        '<button type="button" data-act="later" data-id="' + i.id + '">not now</button>' +
-      '</div></div>';
-  }).join('') + '</div>';
-}
-
-function respondNow() {
-  const ctx = mem.context;
-  const picks = recommend(mem, ctx, 3);
-  const pressing = pressingDeadlines(mem, 7);
-
-  if (!picks.length && !pressing.length) {
-    return say(ctx.energy === 'low' || ctx.energy === 'resting'
-      ? 'Nothing needs you right now. Resting is a legitimate answer today.'
-      : "Nothing stored is a good fit for this moment. We can leave it there, or you can talk and I'll listen.");
-  }
-
-  // Creative preference against a real deadline: name the tension out loud
-  // rather than manufacturing urgency or quietly burying the creative option.
-  const clash = pressing.filter(p => p.days <= 7 && ctx.mode && p.item.mode !== ctx.mode)[0];
-  if (clash && picks.length) {
-    const low = ctx.energy === 'low' || ctx.energy === 'resting';
-    const line = capitalize(ctx.mode) + (low ? ' is where your head is today. ' : ' fits your energy today. ') +
-      shorten(clash.item.text, 46) + " doesn't, but leaving it much longer makes " +
-      (clash.days <= 0 ? 'it late' : 'the ' + humanDate(clash.item.deadline.date) + ' date risky') +
-      '. Fifteen minutes on the blocker, then the rest of the session is yours.';
-    return say(line, '<p>' + esc(line) + '</p>' + optionsHtml(picks.slice(0, 2)));
-  }
-
-  const lead = summaryLead(ctx, picks.length);
-  const held = blockedByEnergy(ctx);
-  say(held ? lead + ' ' + held : lead,
-    '<p>' + esc(lead) + '</p>' + optionsHtml(picks) +
-    (held ? '<p class="aside">' + esc(held) + '</p>' : ''));
-}
-
-function summaryLead(ctx, n) {
-  const parts = [];
-  if (ctx.mode && (ctx.energy === 'low' || ctx.energy === 'resting')) {
-    parts.push(capitalize(ctx.mode) + ' mood, not much fuel');
-  } else if (ctx.energy === 'low') parts.push("You're running low");
-  else if (ctx.mode) parts.push("You're in a " + ctx.mode + ' mood');
-  if (ctx.minutes) parts.push((parts.length ? 'and ' : 'With ') + ctx.minutes + ' minutes');
-  return (parts.length ? parts.join(', ') + '. ' : '') +
-    (n === 1 ? 'One thing fits' : spell(n) + ' things fit') + ' right now.';
-}
-
-// When the mood has work waiting but the energy for it isn't there, say so
-// plainly rather than pretending the work doesn't exist.
-function blockedByEnergy(ctx) {
-  if (!ctx.mode || !(ctx.energy === 'low' || ctx.energy === 'resting')) return null;
-  const held = mem.items.filter(i => i.mode === ctx.mode && i.energy === 'high' &&
-    i.status !== 'done' && i.status !== 'archived');
-  if (!held.length) return null;
-  return "There's " + ctx.mode + " work waiting, but it wants more than you've got today. It'll keep.";
-}
-
-function respondAttention() {
-  const pressing = pressingDeadlines(mem, 21);
-  if (!pressing.length) {
-    return say('Nothing external is pressing. Everything else can wait for the right mood.');
-  }
-  const spoken = pressing.slice(0, 3).map(p =>
-    shorten(p.item.text, 56) + ', ' +
-    (p.days < 0 ? Math.abs(p.days) + ' days late' : p.days === 0 ? 'today' : p.days + ' days away')
-  ).join('. ');
-  say('Only real dates count here. ' + spoken + '.',
-    '<p>Only real dates count here.</p>' + optionsHtml(pressing.slice(0, 3).map(p => p.item)));
-}
-
-function respondForgetting() {
-  const loops = openLoops(mem);
-  if (!loops.length) return say('Nothing is hanging that I can see. No hidden pile.');
-  const needs = loops.filter(i => i.needsConfirmation).length;
-  const text = countWord(loops.length) + ' open loop' + (loops.length === 1 ? '' : 's') +
-    (needs ? ', and ' + spell(needs) + ' still need' + (needs === 1 ? 's' : '') + ' a real date from you.' : '.');
-  say(text, '<p>' + esc(text) + '</p>' + optionsHtml(loops.slice(0, 3)));
-}
-
-function timeAgo(isoStr) {
-  const d = Math.floor((Date.now() - new Date(isoStr)) / 86400000);
-  return d <= 0 ? 'today' : d === 1 ? 'yesterday' :
-    d < 30 ? d + ' days ago' : Math.round(d / 30) + ' months ago';
-}
-
-function respondIdeas(query) {
-  const found = query ? searchIdeas(mem, query) : resurfaceIdeas(mem, 3);
-  if (!found.length) {
-    return say(query ? 'Nothing captured on that yet.'
-      : 'No idea is asking for attention right now. They are safe where they are.');
-  }
-  const text = query
-    ? countWord(found.length) + ' idea' + (found.length === 1 ? '' : 's') + ' on that.'
-    : countWord(found.length) + ' older idea' + (found.length === 1 ? '' : 's') +
-      ' still look' + (found.length === 1 ? 's' : '') +
-      " unusually strong next to what you're working on. Want to revisit one?";
-  const cards = found.map(i =>
-    '<div class="option">' +
-      '<div class="what">' + esc(shorten(i.text, 92)) + '</div>' +
-      '<div class="facts"><span>' + esc(i.stage || 'seed') + '</span>' +
-        '<span>captured ' + esc(timeAgo(i.createdAt)) + '</span></div>' +
-      '<div class="moves">' +
-        '<button type="button" data-act="promote" data-id="' + i.id + '">explore</button>' +
-        '<button type="button" data-act="bet" data-id="' + i.id + '">active bet</button>' +
-        '<button type="button" data-act="archive" data-id="' + i.id + '">archive</button>' +
-      '</div></div>').join('');
-  say(text, '<p>' + esc(text) + '</p><div class="options">' + cards + '</div>');
-}
-
-/* -------------------------------------------------------------- captures */
-
-function captureDump(text, announce) {
-  announce = announce !== false;
-  const items = classifyBrainDump(text);
-  if (!items.length) {
-    if (announce) say("I heard you, but there wasn't anything in that to keep.");
-    return [];
-  }
-  mem.items.push.apply(mem.items, items);
-
-  const unsure = items.filter(i => i.confidence === 'low');
-  const unconfirmed = items.filter(i => i.needsConfirmation)[0];
-  // One short remark deserves an answer, not a tally of itself.
-  let line = items.length === 1 ? acknowledge(items[0]) : digest(items);
-
-  if (unsure.length && !unconfirmed) {
-    line += unsure.length === 1
-      ? " I wasn't sure what that one was, so I just kept it."
-      : " I wasn't sure what " + spell(unsure.length) + " of them were, so I just kept them.";
-  }
-
-  if (unconfirmed) {
-    pending = { kind: 'confirm-deadline', id: unconfirmed.id };
-    line += ' One of them sounds like a real commitment. Does "' +
-      shorten(unconfirmed.text, 46) + '" have an actual date, or is it open?';
-  } else if (mem.context.energy === 'low' || mem.context.energy === 'resting') {
-    line += " Since you're running low, none of it became active work.";
-  }
-  if (announce) {
-    say(line, '<p>' + esc(line) + '</p>' + (unsure.length ? correctionHtml(unsure) : ''));
-  }
-  return items;
-}
-
-const ACKS = {
-  action: ['Kept as something to do.', 'Noted - a thing to do, not a deadline.', 'On the list, quietly.'],
-  commitment: ['That one sounds like it matters. Kept.', 'Held as a commitment.'],
-  idea: ["Saved as a seed. It doesn't have to become anything.", 'Kept as an idea. No pressure on it.'],
-  reflection: ['Kept.', 'Noted.'],
-  question: ["Kept as an open question - I'll bring it back if it stays open.", 'Filed as a question.'],
-  decision: ["Logged as a decision, so you don't relitigate it later."]
-};
-
-function acknowledge(item) {
-  const options = ACKS[item.kind] || ACKS.reflection;
-  return options[Math.floor(Math.random() * options.length)];
-}
-
-/* Morrow guesses from words alone, so it will sometimes guess wrong. Where it
-   is unsure, the fix is one tap - never a form, and never a silent mislabel. */
-function correctionHtml(items) {
-  return '<div class="options">' + items.map(i =>
-    '<div class="option unsure">' +
-      '<div class="what">' + esc(shorten(i.text, 92)) + '</div>' +
-      '<div class="facts"><span>kept, unsorted</span></div>' +
-      '<div class="moves">' +
-        '<button type="button" data-act="is-action" data-id="' + i.id + '">a thing to do</button>' +
-        '<button type="button" data-act="is-idea" data-id="' + i.id + '">an idea</button>' +
-        '<button type="button" data-act="is-commitment" data-id="' + i.id + '">a real commitment</button>' +
-        '<button type="button" data-act="is-thought" data-id="' + i.id + '">just thinking</button>' +
-      '</div></div>').join('') + '</div>';
-}
-
-function handleConfirmDeadline(text) {
-  const item = mem.items.filter(i => i.id === pending.id)[0];
-  pending = null;
-  if (!item) return;
-  const when = findDate(text);
-  if (when) {
-    item.deadline = { date: when.date, kind: 'real', phrase: when.phrase };
-    item.needsConfirmation = false;
-    say('Held: ' + humanDate(when.date) + ". I'll protect that one and tell you before it gets tight.");
-  } else if (/^(no|nope|open|not really|no date|whenever|flexible)\b/i.test(text.trim())) {
-    item.needsConfirmation = false;
-    item.deadline = null;
-    say('Then it stays a commitment without a date. No countdown, no nagging.');
-  } else {
-    captureDump(text);
-  }
-  paint();
-}
-
-/* --------------------------------------------------------------- routing */
-
-/* Thinking aloud: listen first, classify only once the user is finished. */
-const thinkAloud = {
-  active: false,
-  buffer: [],
-  start: function () { this.active = true; this.buffer = []; },
-  collect: function (text) {
-    if (/\b(that's it|thats it|i'm done|im done|done|finished|that's everything|thats everything)\b/i.test(text)
-        && text.split(/\s+/).length < 8) {
-      return this.finish();
+  es.addEventListener('ready', e => {
+    const s = JSON.parse(e.data);
+    stream.replaceChildren();
+    for (const m of s.transcript || []) {
+      if (m.role === 'user') said(typeof m.content === 'string' ? m.content : '');
+      else if (typeof m.content === 'string') turn('heard').appendChild(el('div', 'body', m.content));
     }
-    this.buffer.push(text);
-    const acks = ['Mm.', 'Go on.', 'With you.', 'Noted.', 'Keep going.'];
-    say(acks[this.buffer.length % acks.length]);
-  },
-  finish: function () {
-    this.active = false;
-    const text = this.buffer.join('. ');
-    this.buffer = [];
-    if (!text) return say("Nothing to sort. That's fine too.");
-    captureDump(text);
-  }
-};
-
-function handle(raw) {
-  const text = (raw || '').trim();
-  if (!text) return;
-  heard(text);
-
-  if (pending && pending.kind === 'confirm-deadline') return handleConfirmDeadline(text);
-
-  const intents = detectIntents(text);
-  const contextChanged = updateContextFrom(text);
-
-  if (intents.indexOf('greeting') !== -1) {
-    const opener = pressingDeadlines(mem, 7).length
-      ? "Hello. One real date is close - say \u201cwhat needs my attention\u201d when you want it."
-      : mem.items.length
-        ? "Hello. Everything's where you left it. What's on your mind?"
-        : "Hello. Tell me anything - a job, a half-thought, a date you can't miss.";
-    return say(opener);
-  }
-
-  if (intents.indexOf('help') !== -1) {
-    return say("Talk to me the way you'd talk to a person. Tell me what you're in the mood " +
-      'for, dump everything on your mind, ask what makes sense right now, or ask what ' +
-      "you're forgetting. I keep everything and show almost none of it.");
-  }
-
-  if (intents.indexOf('thinkAloud') !== -1) {
-    thinkAloud.start();
-    return say("Go ahead. I'm listening, not filing. Tell me when you're done.");
-  }
-  if (thinkAloud.active) return thinkAloud.collect(text);
-
-  if (intents.indexOf('capture') !== -1) {
-    const body = text.replace(INTENTS.filter(i => i.name === 'capture')[0].re, '');
-    const items = captureDump(body || text, false);
-    const first = items.filter(i => i.kind === 'idea')[0] || items[0];
-    if (first && first.kind !== 'idea') {
-      first.kind = 'idea'; first.stage = 'seed'; first.status = 'seed';
+    paintState(s.context);
+    paintWhisper(s.deadlines);
+    if (!(s.transcript || []).length) {
+      turn('heard').appendChild(el('div', 'body',
+        "I'm here. Tell me what's on your mind, or what you're in the mood for. " +
+        'I keep everything and show you almost none of it.'));
     }
-    return say("Saved as a seed. It doesn't have to become anything.");
-  }
+    stream.scrollTop = stream.scrollHeight;
+  });
 
-  if (intents.indexOf('ideas') !== -1) {
-    const about = text.match(/about (.+)$/i);
-    return respondIdeas(about ? about[1] : null);
-  }
-  if (intents.indexOf('forgetting') !== -1) return respondForgetting();
-  if (intents.indexOf('attention') !== -1) return respondAttention();
-  if (intents.indexOf('now') !== -1) return respondNow();
+  es.addEventListener('text', e => {
+    const { delta } = JSON.parse(e.data);
+    if (!replying) replying = heard();
+    replying.classList.remove('thinking');
+    replying.textContent += delta;
+    stream.scrollTop = stream.scrollHeight;
+  });
 
-  // A short statement of mood, energy or time is a request for a suggestion.
-  if (contextChanged && text.split(/\s+/).length < 16) {
-    paint();
-    return respondNow();
-  }
+  es.addEventListener('tool', e => {
+    const t = JSON.parse(e.data);
+    const words = {
+      remember: 'kept', recall: 'looked back', revise_item: 'updated',
+      note_state: 'noted how you are', find_files: 'searched your folders',
+      read_file: 'read', change_files: 'file changes'
+    };
+    doing((words[t.name] || t.name) + (t.detail ? ' · ' + t.detail : ''));
+  });
 
-  // A question Morrow can't answer is still a question. Say so plainly rather
-  // than filing it away as a thought the user never meant to store.
-  if (ASKING.test(text) || /\?\s*$/.test(text)) {
-    return say("I didn't follow that one. I can tell you what makes sense right " +
-      "now, what actually needs your attention, what you're forgetting, or show " +
-      "you your ideas. Anything else you say, I'll just keep.");
-  }
+  es.addEventListener('approval', e => { clearPlaceholder(); askApproval(JSON.parse(e.data)); });
+  es.addEventListener('state', e => paintState(JSON.parse(e.data)));
+  es.addEventListener('error', e => {
+    try { doing('trouble: ' + JSON.parse(e.data).message); } catch (err) {}
+  });
 
-  // Everything else is material. Capture it, sort it, hand back a digest.
-  captureDump(text);
+  es.addEventListener('done', e => {
+    const { text, deadlines } = JSON.parse(e.data);
+    if (deadlines) paintWhisper(deadlines);
+    if (replying && replying.textContent) replying.classList.remove('thinking');
+    else clearPlaceholder();
+    replying = null;
+    busy = false;
+    $('#send').disabled = false;
+    if (speakAloud && text && window.speechSynthesis) {
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.98;
+      speechSynthesis.speak(u);
+    }
+  });
 }
 
-/* ---------------------------------------------------------- item actions */
-
-function onMove(e) {
-  const btn = e.target.closest('button[data-act]');
-  if (!btn) return;
-  const item = mem.items.filter(i => i.id === btn.dataset.id)[0];
-  if (!item) return;
-  if (btn.dataset.act === 'start') {
-    item.status = 'active';
-    say("Going. I'll keep everything else out of the way.");
-  } else if (btn.dataset.act === 'later') {
-    item.status = 'stored';
-    item.snoozedAt = new Date().toISOString();
-    say('Left where it was. No penalty.');
-  } else if (btn.dataset.act === 'promote') {
-    item.stage = item.stage === 'seed' ? 'explore' : 'candidate';
-    say('Moved to ' + item.stage + '. Worth a short session, nothing more.');
-  } else if (btn.dataset.act === 'bet') {
-    item.stage = 'active'; item.status = 'active';
-    say("That's an active bet now. One of very few.");
-  } else if (btn.dataset.act === 'is-action') {
-    item.kind = 'action'; item.confidence = 'high'; item.stage = null; item.status = 'stored';
-    say("Filed as something to do. It'll turn up when it suits you.");
-  } else if (btn.dataset.act === 'is-idea') {
-    item.kind = 'idea'; item.confidence = 'high'; item.stage = 'seed'; item.status = 'seed';
-    say("A seed, then. It doesn't have to become anything.");
-  } else if (btn.dataset.act === 'is-commitment') {
-    item.kind = 'commitment'; item.confidence = 'high'; item.status = 'stored';
-    if (!item.deadline) {
-      item.needsConfirmation = true;
-      pending = { kind: 'confirm-deadline', id: item.id };
-      say('Then I need the date. When is it actually due, or is it open?');
-    } else {
-      say("Held. I'll keep an eye on that one.");
-    }
-  } else if (btn.dataset.act === 'is-thought') {
-    item.kind = 'reflection'; item.confidence = 'high';
-    say('Just a thought. Kept, not tracked.');
-  } else if (btn.dataset.act === 'archive') {
-    item.status = 'archived'; item.stage = 'archive';
-    say('Archived, not deleted. Still there if it comes back around.');
-  }
-  paint();
+function send(text) {
+  if (!text.trim() || busy) return;
+  said(text.trim());
+  busy = true;
+  $('#send').disabled = true;
+  replying = heard();
+  fetch('/say', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ text: text.trim() })
+  }).catch(() => {
+    doing('Morrow is not running. Start it in a terminal and reload.');
+    busy = false;
+    $('#send').disabled = false;
+  });
 }
 
-/* ------------------------------------------------------------------ voice */
+/* ---------------------------------------------------------------- voice -- */
 
 function setupVoice() {
   const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1310,75 +361,49 @@ function setupVoice() {
   rec.interimResults = false;
   rec.lang = navigator.language || 'en-GB';
   let listening = false;
-
   const stop = () => { listening = false; mic.classList.remove('live'); };
   rec.onresult = ev => {
-    const said = Array.prototype.map.call(ev.results, r => r[0].transcript).join(' ').trim();
-    if (said) handle(said);
+    const heardText = Array.prototype.map.call(ev.results, r => r[0].transcript).join(' ').trim();
+    if (heardText) send(heardText);
   };
   rec.onend = stop;
   rec.onerror = stop;
-
   mic.onclick = () => {
     if (listening) return rec.stop();
     listening = true;
     mic.classList.add('live');
-    speakAloud = true;              // speak in, spoken back; same memory either way
+    speakAloud = true;                 // spoken to, spoken back
     $('#speak').classList.add('live');
-    try { rec.start(); } catch (err) { stop(); }
+    try { rec.start(); } catch (e) { stop(); }
   };
 }
 
-/* ------------------------------------------------------------------- boot */
+/* ----------------------------------------------------------------- boot -- */
 
-// Mood and energy describe a moment, not a setting. Anything older than a few
-// hours is forgotten rather than held against the user.
-function expireContext() {
-  const at = mem.context.updatedAt;
-  if (at && Date.now() - new Date(at).getTime() > 6 * 3600 * 1000) {
-    mem.context = { mode: null, energy: null, minutes: null, updatedAt: null };
-  }
-}
-
-function boot() {
-  expireContext();
-  const form = $('#composer');
-  const input = $('#input');
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const v = input.value;
-    input.value = '';
-    input.style.height = 'auto';
-    handle(v);
-  });
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
-  });
-  input.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 176) + 'px';
-  });
-  $('#stream').addEventListener('click', onMove);
-  $('#speak').addEventListener('click', function () {
-    speakAloud = !speakAloud;
-    this.classList.toggle('live', speakAloud);
-    if (!speakAloud && window.speechSynthesis) speechSynthesis.cancel();
-  });
-  setupVoice();
-
-  if (!mem.messages.length) {
-    say("I'm here. Tell me what's on your mind, or what you're in the mood for. " +
-      'I keep everything and show you almost none of it.');
-  } else {
-    paint();
-    if (pressingDeadlines(mem, 3).length) respondAttention();
-    else if (resurfaceIdeas(mem, 3).length && Math.random() < 0.3) respondIdeas(null);
-  }
-  input.focus();
-}
-
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-else boot();
-/* ==== end conversation ==== */
+const form = $('#composer');
+const input = $('#input');
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const v = input.value;
+  input.value = '';
+  input.style.height = 'auto';
+  send(v);
+});
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+});
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 176) + 'px';
+});
+$('#speak').addEventListener('click', function () {
+  speakAloud = !speakAloud;
+  this.classList.toggle('live', speakAloud);
+  if (!speakAloud && window.speechSynthesis) speechSynthesis.cancel();
+});
+setupVoice();
+connect();
+input.focus();
 </script>
+</body>
+</html>
