@@ -1,0 +1,120 @@
+# Known pitfalls
+
+Read this **before diagnosing a bug**. Nearly every defect found in this family
+so far is below, with its remedy. Each one shipped at least once.
+
+## JavaScript
+
+**`null >= 0` is `true`.** An undated record matched every due bucket, so
+"Overdue" listed everything. Remedy: `matchesDueBucket()` rejects null
+explicitly before comparing. Any comparison against an optional date needs a
+null branch.
+
+**A renamed helper still satisfies a substring check.** An audit testing
+`"escapeHtml" not in html` passed against a file where it had been renamed to
+`escapeHtml_DISABLED`. Remedy: test for a *definition*
+(`(?:const|let|var|function)\s+escapeHtml\s*[=(]`) plus a call-site count.
+
+**Braces in parameter defaults break naive brace matching.**
+`saveData(options = {})` and `writeBackupFile({ announce = false })` defeated a
+body extractor that searched for the first `{`. Remedy: walk the parameter list
+with paren counting first, then find the body brace.
+
+**Apostrophes in single-quoted JS strings.** `'Couldn\\'t'` truncated a whole
+script block silently. Remedy: double-quoted strings for copy, and
+`node --check` every emitted script.
+
+## CSS and print
+
+**`@page :first { margin: 0 }` emitted unconditionally** printed cover-less
+documents edge to edge. Remedy: emit it only when `coverHtml` exists.
+
+**A named `@page wide`** for landscape forced a break at every orientation
+switch: 8 pages became 18. Remedy: one orientation per document; decide with
+`needsLandscape()` for the whole thing.
+
+**Omitting `size:` from `@page`** leaves Chrome's Layout control free and the
+document reflows. Remedy: always name the size; it pins the control.
+
+**Inline styles beat `auto` margins.** `style="margin-top:26px"` overrode
+`.note{margin-top:auto}`, so footnotes stopped pinning to the page bottom. This
+recurred several times across decks and guides. Remedy: when something refuses
+to sit where the class says, grep for an inline style on that element first.
+
+**`object-fit:cover` on a wrong-orientation box** crops a landscape page into a
+sliver. Remedy: size containers to the real aspect ratio; default to `contain`.
+
+**Paired card+label grids drift** if built as two separate grids. Remedy: one
+flex-column item per pair, then grid the items.
+
+**Grid item counts that don't divide by the column count** leave an orphan cell
+that looks broken. 6 items → 3×2 or 6×1.
+
+## Icons and assets
+
+**Phosphor icon names that don't exist render as blank boxes, silently.**
+`ph-room` and `ph-plus-bold` both shipped as empty squares. Remedy: check every
+name against the font's glyph list.
+
+**`cdn.tailwindcss.com`** is a runtime compiler and needs the network. Remedy:
+precompile; the build guard refuses the file otherwise.
+
+## Storage
+
+**localStorage throws in private mode.** An unwrapped call killed startup for
+anyone in a private window. Remedy: the non-throwing `storage` wrapper with an
+in-memory mirror.
+
+**localStorage's 5 MB ceiling** is reached within weeks once attachments
+appear. Remedy: records in IndexedDB.
+
+**Quota failures that only log to the console** lose hours of work silently.
+Remedy: `onStoreFailure()` opens a modal with a backup offer.
+
+**Replace-on-import destroys the other device's half.** Remedy: merge by
+fingerprint, and `remapReferences()` so entity pointers follow the new ids —
+without it a merge quietly reassigns records to the wrong person.
+
+**A backup without settings** restores the data and loses the setup. Remedy:
+`settingsPayload()`, minus the PIN hash, backup bookkeeping and snapshots.
+
+## Testing
+
+**A fixture that compares a list with itself** passes forever and measures
+nothing (the snowball/avalanche sort). Remedy: run every new test against the
+unfixed code and confirm it fails.
+
+**A hand-guessed expected value** wastes a debugging session when it is the
+expectation that is wrong, not the code ($54.99 vs the correct $58.98). Remedy:
+compute expectations by an independent method.
+
+**Validating ten edits and writing once** loses all ten when the seventh
+assertion fails. Remedy: persist after each replacement.
+
+## Claims
+
+**"Works on phones and tablets" is false.** iPhone and iPad Safari will not
+open a downloaded HTML file. Remedy: "Works on Windows and Mac computers."
+This had to be corrected across five files of an already-written listing kit.
+
+**"PWA" / "installable" is impossible** from `file://` — no secure origin, no
+service worker. Do not claim it.
+
+**"Encrypted" is false** of a PIN screen. Say it stops a shoulder-surfer.
+
+**Delivery and feature claims must match across every slide and the listing.**
+Inconsistency between slide 2 and slide 8 is noticed.
+
+## Process
+
+**Unpushed commits die with the container.** About 60 commits across six
+projects were lost when a container was reclaimed. Committing is not saving.
+Remedy: push, and if pushing is blocked say so loudly and early rather than
+accumulating work that cannot survive — and send the built files to the user as
+they are produced.
+
+**Editing `dist/`** is discarded by the next build. Work in `src/`.
+
+**Retrofitting eight subsystems into an old hand-written app** can cost more
+than porting its domain content onto the shipped engine. On the Emergency Vault
+the port was faster and reached 0 blockers immediately.
