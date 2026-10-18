@@ -122,7 +122,7 @@
         ],
         [
           "Optional sync",
-          "Encrypted with a private code only you have"
+          "Computer, phone and tablet, encrypted"
         ]
       ]
     },
@@ -135,16 +135,16 @@
           "One HTML file for Windows and Mac computers"
         ],
         [
+          "Phone & tablet access",
+          "A private link and your access code"
+        ],
+        [
           "Quick-start guide",
           "Short steps with pictures"
         ],
         [
           "Walkthrough video",
           "See it working in under a minute"
-        ],
-        [
-          "Free updates",
-          "Restore your backup into the new version"
         ]
       ]
     }
@@ -168,7 +168,7 @@
     ],
     "promise": "Plan lessons, log attendance and grades, and print an official high school transcript, all from one private file on your computer.",
     "more_than": "More than a homeschool spreadsheet: it adds up hours and credits, works out GPA, checks your required days and prints finished documents.",
-    "what_you_get": "The Homeschool Hub HTML planner · a quick-start guide · a walkthrough video",
+    "what_you_get": "The Homeschool Hub HTML planner · phone and tablet access with your code · a quick-start guide · a walkthrough video",
     "tabs": [
       "Overview",
       "Lesson Plans",
@@ -192,12 +192,12 @@
       "Tracks your required instructional days against your own state's rule",
       "Search, filters and column picker on every list",
       "Automatic backup to a file you choose (Chrome and Edge)",
-      "Optional sync between your computers, encrypted with a private code"
+      "Optional sync between your computer, phone and tablet, encrypted with a private code"
     ],
     "perfect_for": "Homeschooling families who need tidy records and a transcript without a subscription.",
     "before_buying": [
       "Works on Windows and Mac computers in Chrome, Edge, Firefox or Safari",
-      "Not designed for phones or tablets",
+      "Also on your phone or tablet: a private web link and access code come with your download",
       "Digital download, no physical item",
       "Tracks the numbers you enter; it does not give legal or educational advice",
       "Due to the nature of digital files, no refunds"
@@ -255,6 +255,14 @@
       "image": "screen-settings"
     },
     {
+      "icon": "phone",
+      "title": "On your phone or tablet",
+      "lines": [
+        "Open dbd-apps.pages.dev/homeschool-hub, enter the access code from START_HERE once.",
+        "Then Share → Add to Home Screen. Turn on sync to share records with your computer."
+      ]
+    },
+    {
       "icon": "print",
       "title": "Print the transcript",
       "lines": [
@@ -267,8 +275,8 @@
       "icon": "sync",
       "title": "Optional: sync your computers",
       "lines": [
-        "Settings → Sync Across Devices → Turn On Sync, then enter the code on your other computer.",
-        "Encrypted with your private code. Attached files stay on each computer."
+        "Settings → Sync Across Devices → Turn On Sync, then enter the sync code on your other device.",
+        "Encrypted with your private code. Attached files stay on each device."
       ]
     },
     {
@@ -279,5 +287,25 @@
         "Your records are not inside the app file, so a new version never loses them."
       ]
     }
-  ]
+  ],
+  "hosted_url": "https://dbd-apps.pages.dev/homeschool-hub/",
+  "start_here": {
+    "steps": [
+      [
+        "Add your students",
+        "Student Roster, then Add Student"
+      ],
+      [
+        "Fill it in as you teach",
+        "Lessons, attendance and grades"
+      ]
+    ],
+    "routine_title": "Each week",
+    "routine": [
+      "Log the week's attendance (Quick Log Week)",
+      "Check off lessons and add grades",
+      "Back up, or let automatic backup do it"
+    ],
+    "footer": "Tracks what you enter; not legal or educational advice"
+  }
 }

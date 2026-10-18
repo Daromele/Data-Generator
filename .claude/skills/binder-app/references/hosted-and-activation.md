@@ -1,4 +1,41 @@
-# Hosted copy and the activation code (add-on)
+# Hosted copy and the access code
+
+## Built, and now part of every binder kit
+
+The phone copy is no longer a someday add-on. It is how both shops deliver now
+(the user's product model, shared with JPS): **the app on a computer, the app
+on phones and tablets, and backups are free with purchase**; sync is optional.
+
+| Piece | Where |
+|---|---|
+| Site builder | `scripts/build_hosted.py` -> `hosting/site/<slug>/` (git-ignored) |
+| Product list | `hosting/apps.json` — slug, kit, built app, short name, line icon |
+| Access gate | `assets/hosting/_middleware.js` -> `hosting/functions/` (Cloudflare Pages Functions) |
+| Codes | `hosting/codes.json` (SHA-256, committed), `hosting/ACCESS_CODES.txt` (plain, **git-ignored**) |
+| Gate test | `scripts/gate_test.mjs` |
+| Icons | `scripts/hosted_icons.js` -> `hosting/icons/<slug>/` (committed, drawn once) |
+| Deploy | `.github/workflows/deploy-dbd-apps.yml` -> Cloudflare Pages **dbd-apps**, `https://dbd-apps.pages.dev/<slug>/` |
+| Buyer sheet | `scripts/start_here.py` -> one-page **START_HERE.pdf** with the link and the code |
+
+**One code per product**, not per order (the JPS model, already in use for 14
+JPS apps): every buyer of Homeschool Hub gets the same code in START_HERE.pdf.
+The gate is server-side — the page and its files are not served without the
+cookie, and the plain code never ships in the site. To retire a leaked code,
+delete the product's hash from `codes.json`, rebuild locally, and ship a new
+START_HERE to future buyers (existing buyers then need the new code).
+
+**ACCESS_CODES.txt is the user's master list** and does not live in git. Ask
+for it before building a buyer kit; append any new code to it and hand the file
+back. `make_kits.py --codes` refuses to build a hosted product's kit without it.
+
+**Deploy needs one secret** in the repo that runs the workflow:
+`CLOUDFLARE_API_TOKEN` (the JPS one lives in Dashboard-Creator; Data-Generator
+needs its own copy). The sandbox cannot reach `*.pages.dev`: ask the user to
+check the live link on their phone.
+
+The rest of this page is the reasoning behind it.
+
+## Original notes (add-on)
 
 **Only when asked.** The download is the product. A hosted copy is a second
 delivery of the same app, for the buyer who wants it on a phone or installed,

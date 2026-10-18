@@ -130,11 +130,15 @@ ships independently.
    the difference between safe to sell and finished.
 9. **Novice review** — `scripts/novice_check.js`, then the manual checklist in
    `references/novice-review.md`. Fix everything before the photos are taken.
-10. **Package it** — six commands produce the photos, video, demo, buyer kit
-   zip and listing kit zip. `references/packaging.md` § The pipeline
-11. **Add-ons, if asked** — sync between devices (`scripts/add_sync.py`,
-    tested by `scripts/sync_flow.mjs`), a hosted copy behind an activation code.
-    Never by default. `references/sync.md`, `references/hosted-and-activation.md`
+10. **Host it** — add the binder to `hosting/apps.json`, run
+   `scripts/build_hosted.py` (new access code) and `scripts/gate_test.mjs`.
+   Phones and tablets get it through this copy. `references/hosted-and-activation.md`
+11. **Package it** — six commands produce the photos, video, demo, buyer kit
+   zip (with START_HERE.pdf carrying the access code) and listing kit zip.
+   `references/packaging.md` § The pipeline
+12. **Sync** — `scripts/add_sync.py`, tested by `scripts/sync_flow.mjs`. Optional
+    for the buyer (off until turned on); it is what makes the phone copy and the
+    computer copy the same binder. `references/sync.md`
 
 Re-run the audit after each step. Zero blockers is the point at which an app is
 safe to sell.
@@ -315,5 +319,8 @@ not use from here.
 | `scripts/make_photos.js` | 1500x1200 listing photos from `kit.json` and the screenshots. |
 | `scripts/make_video.js` | The three-step walkthrough video. Needs ffmpeg. |
 | `scripts/make_demo.py` / `demo_check.js` | The free demo (nothing saves, exports upsell, print watermarked) and its safety check. |
-| `scripts/make_kits.py` | The buyer kit zip and the listing kit zip, with `Listing_Text.txt`. |
+| `scripts/make_kits.py` | The buyer kit zip (app, START_HERE.pdf, LICENSE, guide) and the listing kit zip, with `Listing_Text.txt`. Needs `--codes`. |
+| `scripts/build_hosted.py` | The hosted phone/tablet copy of each binder behind its access code (`hosting/`). |
+| `scripts/start_here.py` | START_HERE.pdf: one page with the phone link and the access code. |
+| `scripts/gate_test.mjs` | Checks the access gate: locked, wrong code refused, right code remembered. |
 | `scripts/package_skill.sh` | Packages this skill as a `.skill` file for upload. |

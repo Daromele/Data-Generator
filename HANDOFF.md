@@ -92,9 +92,10 @@ verify_binder.js      6 passed, 0 failed (run against the Vault)
   5 MB room.
 - **Five fixed themes** (indigo, teal, emerald, rose, amber) with fixed
   accents. A product picks a default; it never gets its own palette. Enforced.
-- **Device claim**: Windows and Mac computers, **not** phones or tablets. iOS
-  Safari will not open a downloaded `.html`. Never claim PWA/installable for
-  the download — `file://` is not a secure origin.
+- **Device claim** (updated session 2): the *file* is for Windows and Mac
+  computers; phones and tablets use the **hosted copy** at
+  `dbd-apps.pages.dev/<slug>/` with the product's access code from
+  START_HERE.pdf (same model as JPS). Never "app store app".
 - **A PIN is a privacy screen, not encryption.** Never invite a buyer to store
   a credential.
 - **The demo must not cap the printed document.** It is the reason to buy.
@@ -117,6 +118,11 @@ verify_binder.js      6 passed, 0 failed (run against the Vault)
 - Kits: `apps/homeschool-hub/kits/Homeschool_Hub_Buyer_Kit.zip` and
   `Homeschool_Hub_Listing_Kit.zip`. Config in `apps/homeschool-hub/kit.json`;
   fill its `[ADD ...]` fields and re-run `make_kits.py`.
+
+- **Phone access + START_HERE.pdf** (the JPS model): `build_hosted.py`,
+  `start_here.py`, `gate_test.mjs`, workflow `deploy-dbd-apps.yml`. Homeschool
+  Hub has its code (in the user's ACCESS_CODES.txt, never in git). **Deploy is
+  blocked until the user adds the `CLOUDFLARE_API_TOKEN` secret to this repo.**
 
 ## Open / next
 

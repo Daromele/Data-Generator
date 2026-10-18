@@ -223,22 +223,22 @@ METHODS = r'''
                             </div>`;
                 const card = body => `<div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm" id="sync-card">${head}<div class="p-6 space-y-5">${body}</div></div>`;
                 if (!this.sync.on) return card(`
-                                <p class="text-sm text-slate-500 leading-relaxed">Keep this planner the same on your other computers. Everything is encrypted on this device with a private code only you have &mdash; nobody else can read it, including us. Attached files stay on the computer they were added on.</p>
+                                <p class="text-sm text-slate-500 leading-relaxed">Keep this planner the same on your computer, phone and tablet. Everything is encrypted on this device with a private code only you have &mdash; nobody else can read it, including us. Attached files stay on the device they were added on.</p>
                                 <div class="flex flex-col sm:flex-row gap-3">
                                     <button data-sync="on" class="flex-1 px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm transition-colors shadow-md font-bold flex items-center justify-center gap-2"><i class="ph ph-cloud-arrow-up text-lg"></i> Turn On Sync</button>
                                 </div>
                                 <form id="sync-join-form" class="space-y-2">
-                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Already syncing on another computer? Enter its code</label>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Already syncing on another device? Enter its code</label>
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         <input name="code" autocomplete="off" spellcheck="false" placeholder="K7QM-3XRA-9PLW-T4ZD" class="flex-1 w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white number-font">
-                                        <button class="${btn}"><i class="ph ph-link text-lg"></i> Link This Computer</button>
+                                        <button class="${btn}"><i class="ph ph-link text-lg"></i> Link This Device</button>
                                     </div>
-                                    <p class="text-xs text-slate-400">Find the code in Settings on the other computer. Both copies are combined; nothing is replaced.</p>
+                                    <p class="text-xs text-slate-400">Find the code in Settings on the other device. Both copies are combined; nothing is replaced.</p>
                                 </form>`);
                 return card(`
-                                <p class="text-sm text-slate-500 leading-relaxed">On. Your changes are sent as soon as you save. Other computers pick them up within a minute, straight away when you switch back to the planner, or with Sync Now.</p>
+                                <p class="text-sm text-slate-500 leading-relaxed">On. Your changes are sent as soon as you save. Other devices pick them up within a minute, straight away when you switch back to the planner, or with Sync Now.</p>
                                 <div class="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                    <div class="min-w-0"><div class="number-font text-lg font-bold text-slate-900 dark:text-white tracking-wider">${escapeHtml(this.sync.code)}</div><div class="text-xs text-slate-500">Enter this code on your other computers. Keep it private: anyone with it can see and change your records.</div></div>
+                                    <div class="min-w-0"><div class="number-font text-lg font-bold text-slate-900 dark:text-white tracking-wider">${escapeHtml(this.sync.code)}</div><div class="text-xs text-slate-500">Enter this code on your other devices. Keep it private: anyone with it can see and change your records.</div></div>
                                     <button data-sync="copy" class="${btn}"><i class="ph ph-copy text-lg"></i> Copy</button>
                                 </div>
                                 <div class="flex items-center justify-between gap-3"><div class="text-sm"><span class="font-bold text-slate-700 dark:text-slate-200">Status</span> <span id="sync-state" class="text-slate-500">${escapeHtml(this.syncStateText())}</span></div><button data-sync="now" class="${btn}"><i class="ph ph-arrows-clockwise text-lg"></i> Sync Now</button></div>
@@ -259,7 +259,7 @@ METHODS = r'''
                 if (document.getElementById('sync-devices') !== el) return;
                 const ago = t => { if (!t) return 'Not synced yet'; const m = Math.round((Date.now() - new Date(t)) / 6e4); return m < 2 ? 'Synced just now' : m < 60 ? `Synced ${m} min ago` : m < 1440 ? `Synced ${Math.round(m / 60)} h ago` : `Synced ${Math.round(m / 1440)} days ago`; };
                 const small = 'px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold';
-                el.innerHTML = list.map(d => `<div class="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700"><div class="min-w-0"><div class="text-sm font-bold text-slate-800 dark:text-white">${escapeHtml(d.name)}</div><div class="text-xs text-slate-500">${d.me ? 'This computer' : ago(d.lastSeen)}</div></div>${d.me ? `<button data-sync="rename" class="${small}">Rename</button>` : `<button data-sync="remove" data-id="${escapeHtml(d.id)}" data-name="${escapeHtml(d.name)}" class="${small}">Remove</button>`}</div>`).join('')
+                el.innerHTML = list.map(d => `<div class="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700"><div class="min-w-0"><div class="text-sm font-bold text-slate-800 dark:text-white">${escapeHtml(d.name)}</div><div class="text-xs text-slate-500">${d.me ? 'This device' : ago(d.lastSeen)}</div></div>${d.me ? `<button data-sync="rename" class="${small}">Rename</button>` : `<button data-sync="remove" data-id="${escapeHtml(d.id)}" data-name="${escapeHtml(d.name)}" class="${small}">Remove</button>`}</div>`).join('')
                     || '<p class="text-sm text-slate-400">Couldn’t load the list. Check your connection.</p>';
             }
 
@@ -275,26 +275,26 @@ METHODS = r'''
                         this.data.sync = doc.sync; this.syncPrev = null;
                         this.saveData({ skipSnapshot: true });
                         await s.turnOn(); done();
-                        this.showToast('Sync is on. Enter the code on your other computers.');
+                        this.showToast('Sync is on. Enter the code on your other devices.');
                     } else if (action === 'now') { await s.syncNow(); done(); }
                     else if (action === 'copy') {
                         try { await navigator.clipboard.writeText(s.code); this.showToast('Sync code copied'); }
                         catch (err) { this.showToast(s.code, 'info'); }
                     } else if (action === 'rename') {
-                        const n = prompt('Name this computer', s.deviceName);
+                        const n = prompt('Name this device', s.deviceName);
                         if (n && n.trim()) { await s.renameDevice(n); this.syncDevices(); }
                     } else if (action === 'remove') {
                         this.openConfirm(`Remove “${b.dataset.name}”?`, 'It stops syncing the next time it opens and keeps its own copy. Anyone who still has the code can link again: change the code to stop that.', 'Remove', 'bg-rose-600 hover:bg-rose-700 text-white',
                             async () => { await s.removeDevice(b.dataset.id); this.syncDevices(); this.showToast('Device removed'); });
                     } else if (action === 'change') {
-                        this.openConfirm('Change the sync code?', 'Your records move to a new code. Every other computer stops syncing until you enter the new code on it.', 'Change Code', 'bg-primary-600 hover:bg-primary-700 text-white',
-                            async () => { await s.changeCode(); done(); this.showToast('New code ready. Enter it on your other computers.'); });
+                        this.openConfirm('Change the sync code?', 'Your records move to a new code. Every other device stops syncing until you enter the new code on it.', 'Change Code', 'bg-primary-600 hover:bg-primary-700 text-white',
+                            async () => { await s.changeCode(); done(); this.showToast('New code ready. Enter it on your other devices.'); });
                     } else if (action === 'delete') {
-                        this.openConfirm('Delete the synced copy?', 'It is removed from the sync service and sync turns off on every computer. Each computer keeps its own records.', 'Delete Synced Copy', 'bg-rose-600 hover:bg-rose-700 text-white',
+                        this.openConfirm('Delete the synced copy?', 'It is removed from the sync service and sync turns off on every device. Each device keeps its own records.', 'Delete Synced Copy', 'bg-rose-600 hover:bg-rose-700 text-white',
                             async () => { await s.deleteRemote(); done(); this.showToast('Synced copy deleted. Your records are still here.'); });
                     } else if (action === 'off') {
-                        this.openConfirm('Turn off sync on this computer?', 'Your records stay here, and your other computers keep syncing with each other.', 'Turn Off', 'bg-rose-600 hover:bg-rose-700 text-white',
-                            () => { s.turnOff(); done(); this.showToast('Sync is off on this computer'); });
+                        this.openConfirm('Turn off sync on this device?', 'Your records stay here, and your other devices keep syncing with each other.', 'Turn Off', 'bg-rose-600 hover:bg-rose-700 text-white',
+                            () => { s.turnOff(); done(); this.showToast('Sync is off on this device'); });
                     }
                 } catch (err) { done(); this.showToast(s.status.message || err.message || 'Sync could not finish. Try again.', 'error'); }
             }
@@ -322,7 +322,7 @@ rep('            window.app = new ProductivityApp();',
                     app.showToast(r.found ? 'Linked. Your records are combined.' : 'Linked, but nothing was saved under that code yet, so this copy was uploaded. Check the code if you expected records.', r.found ? 'success' : 'info');
                 } catch (err) {
                     app.renderSettings();
-                    app.showToast(/16 letters/.test(err.message) ? err.message : (app.sync.status.message || 'This computer could not be linked. Try again.'), 'error');
+                    app.showToast(/16 letters/.test(err.message) ? err.message : (app.sync.status.message || 'This device could not be linked. Try again.'), 'error');
                 }
             });
             new MutationObserver(() => { if (document.getElementById('sync-devices') && !document.getElementById('sync-devices').dataset.filled) { document.getElementById('sync-devices').dataset.filled = '1'; window.app.syncDevices(); } })

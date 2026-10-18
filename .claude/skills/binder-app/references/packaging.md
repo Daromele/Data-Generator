@@ -24,7 +24,8 @@ NODE_PATH=$(npm root -g) node $S/make_photos.js $K $A shots photos    # 1500x120
 NODE_PATH=$(npm root -g) node $S/make_video.js  $K $A shots video.mp4 # 3 steps, ~22 s, H.264
 python3 $S/make_demo.py $A $K demo.html                               # nothing saves, exports upsell, print watermarked
 NODE_PATH=$(npm root -g) node $S/demo_check.js demo.html              # proves the demo is safe to publish
-python3 $S/make_kits.py $K $A shots photos video.mp4 demo.html kits   # both zips + Listing_Text.txt
+python3 $S/build_hosted.py .                                          # phone copy + access code (first time)
+python3 $S/make_kits.py $K $A shots photos video.mp4 demo.html kits --codes hosting/ACCESS_CODES.txt
 ```
 
 `make_kits.py` writes `<Product>_Buyer_Kit.zip` (the app, START_HERE,
@@ -116,7 +117,11 @@ still for the deck.
 Both ship in the download zip, as plain `.txt` — a buyer who cannot open the
 app must still be able to read them.
 
-**`START_HERE.txt`**
+**`START_HERE.pdf`** — this replaced the .txt. One Letter page from
+`scripts/start_here.py`: header, three step cards, the phone card with the
+hosted link and the **access code** in a dashed box beside a routine card, a
+"keep your records safe" table, the help row. It must fit one page (checked).
+The text below is the old .txt source, kept for wording only.
 
 ```
 <PRODUCT NAME>
@@ -185,9 +190,11 @@ Every section cut has improved it.
 
 Only claims that have been verified:
 
-- "Works on Windows and Mac computers" — **not** phones or tablets. iOS Safari
-  will not open a downloaded `.html` file. This has had to be corrected across
-  a whole listing kit once already.
+- "Works on Windows and Mac computers" for the **file**. iOS Safari will not
+  open a downloaded `.html` file. Phones and tablets are true **only** through
+  the hosted copy with its access code ("a private web link and access code
+  come with your download"); `make_kits.py` refuses phone claims for a kit
+  without `hosted_url`. Never "app store app".
 - "Works offline" — true, and worth saying plainly.
 - Auto-backup is Chrome and Edge on desktop; manual backup everywhere else.
 - A PIN is a privacy screen, **not** encryption.

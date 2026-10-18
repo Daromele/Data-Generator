@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Builds the two zips a product ships with, from kit.json and the generated parts.
 
-    python3 make_kits.py kit.json App.html SHOTS_DIR PHOTOS_DIR VIDEO.mp4 DEMO.html OUT_DIR
+    python3 make_kits.py kit.json App.html SHOTS_DIR PHOTOS_DIR VIDEO.mp4 DEMO.html OUT_DIR --codes hosting/ACCESS_CODES.txt
 
 OUT_DIR/
   <Product>_Buyer_Kit.zip          what the buyer downloads from Etsy (3_Digital_File)
-      <file>.html  START_HERE.txt  LICENSE.txt  <Product>_Quick_Start_Guide.html
+      <file>.html  START_HERE.pdf (with the phone link and ACCESS CODE)  LICENSE.txt
+      <Product>_Quick_Start_Guide.html
   <Product>_Listing_Kit/           what the seller uploads
       1_Photos/  2_Video/  3_Digital_File/  4_Extras/  Listing_Text.txt
   <Product>_Listing_Kit.zip
@@ -18,9 +19,13 @@ Placeholders like [ADD YOUR DEMO LINK] are kept and listed at the end.
 """
 import base64, html, io, json, pathlib, re, shutil, sys, zipfile
 
-if len(sys.argv) != 8:
+argv = sys.argv[1:]
+codes_file = None
+if '--codes' in argv:
+    i = argv.index('--codes'); codes_file = argv[i + 1]; argv = argv[:i] + argv[i + 2:]
+if len(argv) != 7:
     sys.exit(__doc__)
-kit_p, app_p, shots, photos, video, demo, out = map(pathlib.Path, sys.argv[1:])
+kit_p, app_p, shots, photos, video, demo, out = map(pathlib.Path, argv)
 kit = json.loads(kit_p.read_text(encoding='utf-8'))
 L = kit['listing']
 name = kit['product']
@@ -36,48 +41,18 @@ if len(L['title']) > 140: problems.append(f"title is {len(L['title'])} chars (ma
 if len(L['tags']) != 13: problems.append(f"{len(L['tags'])} tags (need 13)")
 problems += [f'tag "{t}" is over 20 chars' for t in L['tags'] if len(t) > 20]
 blob = json.dumps(kit).lower()
-for bad in ('pwa', 'installable', 'works on phones', 'iphone app', 'android app'):
-    if bad in blob: problems.append(f'claim "{bad}": a downloaded file does not run on phones')
+hosted = bool(kit.get('hosted_url'))
+for bad in ('pwa', 'app store', 'iphone app', 'android app') + (() if hosted else ('works on phones', 'phone', 'tablet')):
+    if bad in blob: problems.append(f'claim "{bad}": ' + ('not an app-store app' if hosted else 'a downloaded file does not run on phones; add a hosted copy (build_hosted.py) first'))
+codes = dict(l.strip().split(': ', 1) for l in open(codes_file) if ': ' in l) if codes_file else {}
+if hosted and kit['slug'] not in codes:
+    problems.append(f'no access code for {kit["slug"]}: pass --codes hosting/ACCESS_CODES.txt (ask the user for it; it is not in git)')
 if 'sync' in blob and not has_sync: problems.append('the listing mentions sync but the app has none')
 if problems:
     sys.exit('Refusing to build:\n  ' + '\n  '.join(problems))
 
 # ---- buyer files ------------------------------------------------------------
-START = f"""{name.upper()}
-Thank you for your purchase.
-
-OPENING IT
-  Double-click {app_name}. It opens in your web browser.
-  Works on Windows and Mac computers, in Chrome, Edge, Firefox or Safari.
-  Not designed for phones or tablets.
-  Bookmark the tab so you can find it again.
-  New here? Open {safe}_Quick_Start_Guide.html first.
-
-WHERE YOUR RECORDS LIVE
-  On this computer, in this browser. Nothing is uploaded. We never see it.
-  That also means: if you clear your browser data, it is gone.
-
-BACK UP -- PLEASE READ
-  Settings > Download Backup. Keep the file somewhere safe. Do it today.
-  In Chrome and Edge you can link a backup file once (Settings > Automatic
-  Backup) and it saves itself from then on.
-{'''
-SYNC (OPTIONAL)
-  Settings > Sync Across Devices keeps your computers the same. It is
-  encrypted on your computer with a private code only you have. Attached
-  files stay on the computer they were added on. Off until you turn it on.
-''' if has_sync else ''}
-GETTING A NEW VERSION
-  Open the new file, then Settings > Restore Backup.
-  Your records are not stored inside the app file, so a new version never
-  loses them -- as long as you have a backup.
-
-PRINTING
-  Click Print and choose what to include. Save as PDF or print on paper.
-
-HELP
-  {email}  ·  {shop}
-"""
+# START_HERE is a one-page PDF now (start_here.py), built into the zip below.
 
 LICENSE = f"""{name} -- LICENSE
 
@@ -157,7 +132,12 @@ out.mkdir(parents=True, exist_ok=True)
 buyer_zip = out / f'{safe}_Buyer_Kit.zip'
 with zipfile.ZipFile(buyer_zip, 'w', zipfile.ZIP_DEFLATED) as z:
     z.write(app_p, app_name)
-    z.writestr('START_HERE.txt', START)
+    sh_pdf = out / 'START_HERE.pdf'
+    r = __import__('subprocess').run([sys.executable, str(pathlib.Path(__file__).with_name('start_here.py')), str(kit_p), str(app_p), str(sh_pdf)]
+                                     + (['--codes', codes_file] if codes_file else []), capture_output=True, text=True)
+    if r.returncode:
+        sys.exit('START_HERE.pdf: ' + r.stderr.strip())
+    z.write(sh_pdf, 'START_HERE.pdf'); sh_pdf.unlink()
     z.writestr('LICENSE.txt', LICENSE)
     z.writestr(f'{safe}_Quick_Start_Guide.html', GUIDE)
 
@@ -225,7 +205,7 @@ BEFORE YOU PUBLISH
   [ ] You opened the buyer zip on a computer and the app loads
   [ ] The first photo reads clearly as a small square thumbnail
 """
-holes = sorted(set(re.findall(r'\[(?:ADD|SET)[^\]]*\]', TEXT + START)))
+holes = sorted(set(re.findall(r'\[(?:ADD|SET)[^\]]*\]', TEXT + json.dumps(kit, ensure_ascii=False))))
 if holes:
     TEXT += '\nSTILL TO FILL IN\n' + '\n'.join('  ' + h for h in holes) + '\n'
 

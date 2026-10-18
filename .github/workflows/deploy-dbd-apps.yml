@@ -1,0 +1,23 @@
+# Publishes every hosted binder, installable and behind its access code, to Cloudflare Pages:
+# https://dbd-apps.pages.dev/<slug>/   (list in hosting/apps.json; codes hashed in hosting/codes.json)
+# Needs the repository secret CLOUDFLARE_API_TOKEN (Cloudflare: My Profile > API Tokens > "Edit Cloudflare Workers"
+# template, or a token with Account > Cloudflare Pages > Edit).
+name: Deploy DBD apps
+on:
+  push:
+    paths: ['apps/*.html', 'apps/*/kit.json', 'hosting/**', '.claude/skills/binder-app/assets/hosting/**', '.claude/skills/binder-app/scripts/build_hosted.py', '.github/workflows/deploy-dbd-apps.yml']
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env: { CLOUDFLARE_API_TOKEN: '${{ secrets.CLOUDFLARE_API_TOKEN }}', CLOUDFLARE_ACCOUNT_ID: b8694802a36c8fe84be4a527a36ee810 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Build the hosted site (never makes new codes here)
+        run: python3 .claude/skills/binder-app/scripts/build_hosted.py . --deploy
+      - name: Check the access gate
+        run: node .claude/skills/binder-app/scripts/gate_test.mjs .
+      - run: npx -y wrangler@3 pages project create dbd-apps --production-branch=main || true
+      - run: cd hosting && npx -y wrangler@3 pages deploy site --project-name=dbd-apps --branch=main --commit-dirty=true
