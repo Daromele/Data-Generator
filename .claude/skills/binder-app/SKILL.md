@@ -50,6 +50,13 @@ refunds. `scripts/audit_binder.py` checks all eight statically; the three marked
 8. **A real print engine** — builds a document with a cover page and a picker,
    never just re-styles the screen (runtime)
 
+And one rule that is not about safety but about the family:
+
+9. **Identical where it should be** — the same five themes, the same semantic
+   palette, the same three typefaces, the same components, the same structure.
+   `scripts/check_house_style.py` enforces it; `references/design-system.md`
+   explains it. A product gets its own *content*, never its own look.
+
 A shipped binder scores **0 blockers, 1 major, 0 minor**. The one major is the
 Google Fonts fallback, which is accepted across the range: the app works offline
 regardless, only the typeface changes.
@@ -76,7 +83,8 @@ that leaks its PIN hash is a blocker.
 ## Workflow: auditing
 
 ```bash
-python3 scripts/audit_binder.py path/to/App.html
+python3 scripts/audit_binder.py path/to/App.html        # the eight standards
+python3 scripts/check_house_style.py path/to/App.html   # the ninth: sameness
 NODE_PATH=$(npm root -g) node scripts/verify_binder.js path/to/App.html --shots /tmp/shots
 ```
 
@@ -111,9 +119,14 @@ ships independently.
    `references/print-engine.md`, `assets/print-engine.js`, `assets/print-stylesheet.css`
 6. **Restore quality** — merge, duplicate detection, settings in the backup.
 7. **Product polish** — onboarding, demo data anchored to today, due-date
-   filters, column picker. `assets/due-dates.js`, `references/product-and-listing.md`
-8. **Add-ons, if asked** — sync between devices. Last, and never by default.
-   `references/sync.md`
+   filters, column picker. `assets/due-dates.js`, `references/feature-catalog.md`
+8. **Finish it** — walk `references/feature-catalog.md` line by line. That is
+   the difference between safe to sell and finished.
+9. **Package it** — demo, mockups, video, START_HERE, LICENSE, listing.
+   `references/packaging.md`
+10. **Add-ons, if asked** — sync between devices, a hosted copy behind an
+    activation code. Last, and never by default. `references/sync.md`,
+    `references/hosted-and-activation.md`
 
 Re-run the audit after each step. Zero blockers is the point at which an app is
 safe to sell.
@@ -247,7 +260,10 @@ Read when the workflow points at them, not before:
 | `references/calculations.md` | Any computed number the buyer will rely on |
 | `references/sync.md` | **Add-on, only when asked** — sync between devices |
 | `references/pitfalls.md` | **Before fixing a bug** — check whether it is a known one |
-| `references/product-and-listing.md` | Onboarding, guides, listing copy, mockups, Etsy realities |
+| `references/feature-catalog.md` | **The definition of done** — every screen, before shipping |
+| `references/packaging.md` | Demo, mockups, video, START_HERE, LICENSE, listing copy |
+| `references/lessons.md` | **Once per product** — taste and working style, so corrections are not repeated |
+| `references/hosted-and-activation.md` | **Add-on, only when asked** — a hosted copy for phones, behind an activation code |
 
 ## Assets
 
@@ -269,6 +285,12 @@ reimplementing; every file is syntax-checked.
 | `assets/sync/binder-sync.js` | Sync client: code, encryption, unit merge. Copy unchanged |
 | `assets/sync/worker/` | The Cloudflare Worker that holds the encrypted blob |
 
+## Exports
+
+`exports/jps/` holds material written for the sibling `sellable-html-app`
+skill — the print engine above all, which that family does not have. Copy, do
+not use from here.
+
 ## Scripts
 
 | Script | What |
@@ -276,3 +298,4 @@ reimplementing; every file is syntax-checked.
 | `scripts/audit_binder.py` | Static audit against the eight standards. Exits 1 on blockers. |
 | `scripts/verify_binder.js` | Runtime checks in a real browser. Needs Playwright. |
 | `scripts/build.py` | Inlines every asset; refuses to build a file that reaches the network. |
+| `scripts/check_house_style.py` | Enforces the fixed themes, palette, typefaces and dark pairs. Exits 1 on blockers. |
