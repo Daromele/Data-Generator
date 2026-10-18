@@ -1,9 +1,9 @@
-# Rename per shop. The room id is derived on the device, so two products can
-# share one worker without colliding -- but separate shops should deploy
-# separate workers so the infrastructure, billing and logs stay separate.
-name = "binder-sync"
+# The deployed worker the binder apps use, shared with the JPS apps. The room
+# id is derived on the device from the app key, so products cannot collide.
+# This is a LIVE service for both shops: a change here affects both.
+name = "jps-sync"
 main = "index.mjs"
-account_id = "<your-cloudflare-account-id>"   # not secret, but per-shop
+account_id = "b8694802a36c8fe84be4a527a36ee810"   # not secret
 compatibility_date = "2025-09-01"
 
 [[durable_objects.bindings]]

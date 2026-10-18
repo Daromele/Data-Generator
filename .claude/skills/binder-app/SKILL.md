@@ -156,7 +156,8 @@ Then:
    - the output filename in `build.py`
 
 3. **Write `SECTIONS`.** This is the hour that generates most of the app.
-   `references/architecture.md`, `assets/config-example.js`
+   `references/architecture.md`, `assets/config-example.js`. Any screen you
+   hand-build beside it follows `references/design-system.md`.
 
 4. **Build the calculations**, if any. Get these right — a plausible but wrong
    number is the defect most likely to reach a buyer unnoticed.
@@ -239,6 +240,7 @@ Read when the workflow points at them, not before:
 | File | When |
 |---|---|
 | `references/architecture.md` | Writing SECTIONS, adding a module or field type |
+| `references/design-system.md` | **Before any UI** — colour, type, components, dark mode |
 | `references/data-safety.md` | Storage, backup, restore, merge, snapshots, save failures |
 | `references/print-engine.md` | Anything about printing, PDFs or document output |
 | `references/build-and-offline.md` | Setting up the build, vendoring, offline problems |

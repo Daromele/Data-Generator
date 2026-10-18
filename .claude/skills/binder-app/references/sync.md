@@ -55,12 +55,34 @@ copy — say this where they first see the code, not in a FAQ.
   top-level value) with when it last changed. Newest stamp wins per unit;
   deletions travel as tombstones. Records need no `updatedAt` of their own.
 
-The salt string inside `binder-sync.js` is left exactly as shipped so the file
-stays byte-identical to its upstream copy and upstream fixes apply cleanly.
-Products are separated by the `app` key, which feeds both the salt and the room
-id — two products can share a worker without any chance of collision. Separate
-shops should still deploy separate workers, so billing, logs and outages stay
-separate; the account id in `wrangler.toml` is a per-shop placeholder.
+**The binder apps share the existing JPS worker:**
+
+```js
+const SYNC_SERVER = 'https://jps-sync.darowan-rph.workers.dev';
+```
+
+That is safe because the room id is derived on the device from the `app` key,
+so two products cannot land in the same room however many share the server.
+The salt string inside `binder-sync.js` is left exactly as shipped, so the file
+stays byte-identical to its upstream copy and upstream fixes apply cleanly —
+do not "rebrand" it; changing the salt forks the crypto and strands anyone
+already synced.
+
+What a shared worker does mean:
+
+- **Give every binder a distinct, permanent `app` key** (`emergency-vault`,
+  `home-management`, `homeschool-hub`). Never change one after release — it
+  changes the room and every linked device loses sight of the others.
+- **One free tier covers both shops.** Cloudflare Workers allows roughly 100k
+  requests a day; each open app polls once a minute. That is a few dozen
+  concurrent users across everything. If the binders take off, the two shops
+  are now sharing one ceiling — watch it, and the paid plan is about $5/month.
+- **An outage hits both shops at once.** Worth knowing before a listing says
+  sync is a feature.
+
+The worker source is kept in `assets/sync/worker/` so the binder side can read
+and redeploy it, but it is **the same deployment** — treat a change to it as a
+change to a live JPS service, not a binder-local edit.
 
 ## Binder-specific rules
 

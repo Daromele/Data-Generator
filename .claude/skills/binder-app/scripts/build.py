@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ("fonts.googleapis.com", "fonts.gstatic.com")
 # Set this to the sync worker's host for a product that ships sync; leave it
 # None and any sync host in the file fails the build -- which is exactly how an
 # accidentally reintroduced CDN looks, and the same check catches both.
-SYNC_HOST = None                          # e.g. "binder-sync.example.workers.dev"
+SYNC_HOST = None                          # "jps-sync.darowan-rph.workers.dev"
 
 
 def build_tailwind():
