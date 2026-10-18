@@ -7942,12 +7942,12 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     avgGrade = (totalScore / grades.length).toFixed(1);
                 }
 
-                // Credits come from completed courses -- the same figure the
-                // transcript prints. Grades only carry the legacy field, which
+                // Credits come from courses -- the same rule and figure the
+                // transcript prints (everything except planned courses). Grades only carry the legacy field, which
                 // modern files leave at 0, so the tile used to read 0.00 beside
                 // a transcript full of credits.
                 const doneCourses = (this.data.courses || []).filter(c =>
-                    String(c.status).includes('Completed') &&
+                    !String(c.status).includes('Planned') &&
                     this.recordMatchesStudent(c, this.dashboardStudentFilter) &&
                     (!String(this.dashboardFilter).startsWith('ay_') || c.academic_year === String(this.dashboardFilter).slice(3)));
                 if (doneCourses.length) totalCredits = doneCourses.reduce((s, c) => s + (parseFloat(c.credits) || 0), 0);
@@ -8123,7 +8123,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors group" onclick="window.app.navigateTo('grades')">
                             <div class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ph-certificate text-lg group-hover:scale-110 transition-transform text-blue-500"></i> Credits Earned</div>
                             <div class="text-3xl font-bold text-slate-900 dark:text-white number-font">${creditsText}</div>
-                            <div class="text-xs text-slate-400 mt-2">${String(this.dashboardFilter).startsWith('ay_') ? 'From courses completed this year' : 'From completed courses'}</div>
+                            <div class="text-xs text-slate-400 mt-2">${String(this.dashboardFilter).startsWith('ay_') ? 'On this year\'s transcript' : 'On the transcript'}</div>
                         </div>`);
                 }
                 if (!this.hiddenSections.includes('expenses')) {
@@ -10814,10 +10814,10 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     if (ay) dateDisplayStr = ay.name;
                 }
 
-                const edName = this.educatorLine() || 'Primary Educator';
+                const edName = this.educatorLine();
 
                 let subtitleHtml = `<p style="font-size: 16px; color: #818cf8; margin-bottom: 10px; font-weight: bold;">Academic Period: ${escapeHtml(dateDisplayStr)}</p>`;
-                subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Educator(s): ${escapeHtml(edName)}</p>`;
+                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Educator(s): ${escapeHtml(edName)}</p>`;
                 subtitleHtml += `<p style="font-size: 16px; color: #a5b4fc; margin-bottom: 40px; margin-top: -20px;">${studentsToPrint.length === 1 ? 'Student: ' + escapeHtml(this.studentName(studentsToPrint[0])) : escapeHtml(this.printStudentLabel(studentName))}</p>`;
 
                 const coverHtml = `
@@ -10860,7 +10860,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                                 <p style="font-size: 16px; color: #475569; margin: 0;"><strong>Student Name:</strong> ${escapeHtml(this.studentName(studentId))}</p>
                                 ${student && student.grade ? `<p style="font-size: 14px; color: #64748b; margin: 5px 0 0 0;"><strong>Grade Level:</strong> ${escapeHtml(student.grade)}</p>` : ''}
                                 <p style="font-size: 14px; color: #64748b; margin: 5px 0 0 0;"><strong>Academic Period:</strong> ${escapeHtml(dateDisplayStr)}</p>
-                                <p style="font-size: 14px; color: #64748b; margin: 5px 0 0 0;"><strong>Educator(s):</strong> ${escapeHtml(edName)}</p>
+                                ${edName ? `<p style="font-size: 14px; color: #64748b; margin: 5px 0 0 0;"><strong>Educator(s):</strong> ${escapeHtml(edName)}</p>` : ''}
                             </div>`;
 
                     if (courses.length === 0) {
@@ -10958,7 +10958,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     : this.activeYear();
                 const periodLabel = ay ? ay.name : 'All Records';
                 const cfg = complianceConfig();
-                const edName = this.educatorLine() || 'Primary Educator';
+                const edName = this.educatorLine();
 
                 const coverHtml = `
                     <div class="cover-page">
@@ -10966,7 +10966,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                         <h1>Report Card${students.length > 1 ? 's' : ''}</h1>
                         <p style="font-size: 16px; color: #818cf8; margin-bottom: 10px; font-weight: bold;">${escapeHtml(periodLabel)}</p>
                         <p style="font-size: 15px; color: #a5b4fc; margin: 0 0 10px 0;">${escapeHtml(this.printStudentLabel(entity))}</p>
-                        <p style="font-size: 16px; color: #c7d2fe; margin-top: 20px;">Educator(s): ${escapeHtml(edName)}</p>
+                        ${edName ? `<p style="font-size: 16px; color: #c7d2fe; margin-top: 20px;">Educator(s): ${escapeHtml(edName)}</p>` : ''}
                         <div style="margin-top: auto; padding-top: 40px;"><p style="font-size: 14px; color: #a5b4fc; margin: 0;">Generated: ${escapeHtml(new Date().toLocaleDateString())}</p></div>
                     </div>`;
 
@@ -11042,7 +11042,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                                 <h1 style="font-family: 'Merriweather', serif; font-size: 28px; color: #1e293b; margin: 0 0 8px 0;">Report Card</h1>
                                 <p style="font-size: 16px; color: #475569; margin: 0;"><strong>${escapeHtml(student.name || this.studentName(studentId))}</strong>${student.grade ? ' &middot; ' + escapeHtml(student.grade) : ''}</p>
                                 <p style="font-size: 13px; color: #64748b; margin: 6px 0 0 0;">${escapeHtml(periodLabel)}${ay ? ` (${escapeHtml(formatDate(ay.start_date))} &ndash; ${escapeHtml(formatDate(ay.end_date))})` : ''}</p>
-                                <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">Educator(s): ${escapeHtml(edName)}</p>
+                                ${edName ? `<p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">Educator(s): ${escapeHtml(edName)}</p>` : ''}
                             </div>
 
                             <h3 style="margin-top: 0;">Academic Progress</h3>
@@ -11304,7 +11304,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 
                 let edName = this.profile.userName || '';
                 if (this.profile.userName2) edName += (edName ? ' & ' : '') + this.profile.userName2;
-                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Educator(s): ${edName}</p>`;
+                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Educator(s): ${escapeHtml(edName)}</p>`;
 
                 let coverHtml = `
                     <div class="cover-page">
@@ -11365,7 +11365,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 
                 let edName = this.profile.userName || '';
                 if (this.profile.userName2) edName += (edName ? ' & ' : '') + this.profile.userName2;
-                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Educator(s): ${edName}</p>`;
+                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Educator(s): ${escapeHtml(edName)}</p>`;
 
                 let coverHtml = `
                     <div class="cover-page">
