@@ -91,6 +91,27 @@ compute expectations by an independent method.
 **Validating ten edits and writing once** loses all ten when the seventh
 assertion fails. Remedy: persist after each replacement.
 
+## Sync (only in apps that have it)
+
+**Forgetting `units.track` in `syncIn()`** makes two devices undo each other's
+validation tidying forever — the screen re-renders every 1.5 s. Remedy: after
+validation, track the difference so the tidy-up counts as this device's change.
+
+**Re-iding a record during a sync merge** makes it appear twice permanently and
+breaks every entity pointer at it. `freshId()` and `remapReferences()` belong to
+the file-import path only; sync merges by id.
+
+**Syncing attachments** blows the 5 MB room with a single scan. Remedy: sync
+metadata, keep files per device, and say so in the UI, the guide and the listing.
+
+**Syncing the PIN hash** puts one person's lock screen on their spouse's laptop.
+Remedy: build the skip list from `SETTINGS_EXCLUDE`, and assert the payload's
+contents in a test — the audit treats a leak here as a blocker.
+
+**A `SCHEMA_VERSION` bump with two devices linked** lets the stale device push an
+old document over a new one. Remedy: refuse an incoming payload below the local
+version and tell the buyer to update the other device.
+
 ## Claims
 
 **"Works on phones and tablets" is false.** iPhone and iPad Safari will not

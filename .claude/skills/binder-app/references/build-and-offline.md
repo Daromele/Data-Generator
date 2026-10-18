@@ -31,6 +31,17 @@ at a host outside `ALLOWED_HOSTS` and **raises `SystemExit`** if it finds one.
 A build that would reach the network does not produce a file. This is the only
 mechanism that reliably prevents an offline regression; a checklist does not.
 
+The guard runs three passes: assets loaded by a tag, URLs in **call position**
+(`fetch`, `sendBeacon`, `new Worker`, an assigned `.src`), and any CDN host
+anywhere in the file. It deliberately ignores URLs that are *data* — a shop
+link in the footer, `khanacademy.org` in a Homeschool url field — because a
+binder stores URLs as records and failing those would train people to disable
+the guard.
+
+A product that ships the sync add-on declares its host in `SYNC_HOST`. An
+undeclared host fails the build whether it is a sync server or a CDN; that is
+the same signal and should be treated the same way. See `sync.md`.
+
 `ALLOWED_HOSTS` is just Google Fonts. The `<link>` stays as a progressive
 enhancement — online, the intended typeface; offline, the system stack. That is
 the "1 major" every shipped binder scores, and it is accepted across the range.

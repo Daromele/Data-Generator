@@ -102,6 +102,28 @@ def audit(html):
         add("minor", "Automatic backup",
             "No linked backup file, so the owner must remember to download by hand.",
             "Offer File System Access API auto-backup where supported.")
+    # 9. sync, only when the app ships it. Absent sync is not a finding --
+    #    it is an add-on, and most binders should not have one.
+    if re.search(r'BinderSync\.create|JPSSync\.create', html):
+        if re.search(r'PINHash|pinHash', html) and not re.search(
+                r'skip\s*[:=][^;]{0,400}PINHash', html, re.S):
+            add("BLOCKER", "Sync privacy",
+                "Sync is on and the PIN hash is not in the skip list, so one "
+                "person's lock screen travels to every linked device.",
+                "Build the skip list from SETTINGS_EXCLUDE and verify the "
+                "payload in a test.")
+        if not re.search(r'units\.track', html):
+            add("MAJOR", "Sync change tracking",
+                "Sync merges without unit stamps, so the newest edit does not "
+                "reliably win and two devices can undo each other.",
+                "Call units.track in save and again in syncIn, after validation.")
+        if re.search(r"type:\s*'attachments'", html) and not re.search(
+                r'syncOut', html):
+            add("MAJOR", "Attachments and sync",
+                "The app stores attachments and syncs, with no syncOut to strip "
+                "them. One scan can exceed the 5 MB room.",
+                "Sync attachment metadata only; keep files on each device and "
+                "say so in the UI.")
     return findings
 
 

@@ -1,6 +1,6 @@
 ---
 name: binder-app
-description: Build, upgrade, audit or spin off the Designs by Darowan family of offline single-file HTML "binder" apps — planners, trackers, record keepers and dashboards sold as Etsy digital downloads, where the buyer fills the app in over months and prints a professional document. Use whenever the user mentions building or fixing an HTML planner/tracker/binder/vault/dashboard product, porting one to a new niche, making an app work offline, adding backup/restore or print/PDF output, or getting such an app ready to sell — even phrased loosely as "fix my app", "make a tracker for X", "why does my printout look wrong", or "same as the homeschool one but for Y".
+description: Build, upgrade, audit or spin off the Designs by Darowan family of offline single-file HTML "binder" apps — planners, trackers, record keepers and dashboards sold as Etsy digital downloads, where the buyer fills the app in over months and prints a professional document. Use whenever the user mentions building or fixing an HTML planner/tracker/binder/vault/dashboard product, porting one to a new niche, making an app work offline, adding backup/restore, sync between devices, or print/PDF output, or getting such an app ready to sell — even phrased loosely as "fix my app", "make a tracker for X", "why does my printout look wrong", or "same as the homeschool one but for Y".
 ---
 
 # Binder apps
@@ -54,6 +54,23 @@ A shipped binder scores **0 blockers, 1 major, 0 minor**. The one major is the
 Google Fonts fallback, which is accepted across the range: the app works offline
 regardless, only the typeface changes.
 
+### Add-ons are not part of the standard
+
+**Sync between devices** is the one add-on built for this family. It is off by
+default, added only when the user asks for it on a specific product, and the
+app stays fully usable without it. The listing keeps saying the data lives on
+the buyer's computer; sync adds "optional, encrypted with a private code".
+
+A binder is a vault — filled in rarely, in bursts, and relied on later — so
+sync is judged on whether a month-old burst survives a merge, not on latency.
+Three things decide whether it is safe: attachments sync as metadata only (one
+scan can exceed the 5 MB room), the PIN hash and snapshots never leave the
+device, and sync never re-ids a record. `references/sync.md`.
+
+The build guard and the audit both know about this: an undeclared network host
+fails the build whether it is a CDN or a sync server, and a sync-enabled app
+that leaks its PIN hash is a blocker.
+
 ---
 
 ## Workflow: auditing
@@ -95,6 +112,8 @@ ships independently.
 6. **Restore quality** — merge, duplicate detection, settings in the backup.
 7. **Product polish** — onboarding, demo data anchored to today, due-date
    filters, column picker. `assets/due-dates.js`, `references/product-and-listing.md`
+8. **Add-ons, if asked** — sync between devices. Last, and never by default.
+   `references/sync.md`
 
 Re-run the audit after each step. Zero blockers is the point at which an app is
 safe to sell.
@@ -224,6 +243,7 @@ Read when the workflow points at them, not before:
 | `references/print-engine.md` | Anything about printing, PDFs or document output |
 | `references/build-and-offline.md` | Setting up the build, vendoring, offline problems |
 | `references/calculations.md` | Any computed number the buyer will rely on |
+| `references/sync.md` | **Add-on, only when asked** — sync between devices |
 | `references/pitfalls.md` | **Before fixing a bug** — check whether it is a known one |
 | `references/product-and-listing.md` | Onboarding, guides, listing copy, mockups, Etsy realities |
 
@@ -244,6 +264,8 @@ reimplementing; every file is syntax-checked.
 | `assets/entity-layer.js` | The entity: filtering and per-entity document sections |
 | `assets/escaping-and-helpers.js` | `escapeHtml`, `sha256`, date and money formatting |
 | `assets/config-example.js` | A complete real `SECTIONS` + `NAV_GROUPS` + `THEMES` |
+| `assets/sync/binder-sync.js` | Sync client: code, encryption, unit merge. Copy unchanged |
+| `assets/sync/worker/` | The Cloudflare Worker that holds the encrypted blob |
 
 ## Scripts
 

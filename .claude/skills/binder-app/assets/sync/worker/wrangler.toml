@@ -1,0 +1,15 @@
+# Rename per shop. The room id is derived on the device, so two products can
+# share one worker without colliding -- but separate shops should deploy
+# separate workers so the infrastructure, billing and logs stay separate.
+name = "binder-sync"
+main = "index.mjs"
+account_id = "<your-cloudflare-account-id>"   # not secret, but per-shop
+compatibility_date = "2025-09-01"
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "Room"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Room"]
