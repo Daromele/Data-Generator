@@ -114,7 +114,9 @@ verify_binder.js      6 passed, 0 failed (run against the Vault)
 5. Netlify demos; fill `[ADD YOUR DEMO LINK]` / `[ADD YOUR VIDEO LINK]`.
 6. Port the custom dashboard date filter (This month / Last month / custom) to
    the other binders.
-7. Fix Homeschool Hub's one stray `purple` class.
+7. ~~Fix Homeschool Hub's one stray `purple` class.~~ Done — and its fonts are
+   now vendored inline. `apps/Homeschool_Hub_Binder.html` scores 0/0/0 on both
+   audits and passes `verify_binder.js` 6/6 offline.
 8. Copy `exports/jps/print-engine.md` into the JPS skill, and patch its device
    claim and restore-by-merge note.
 
