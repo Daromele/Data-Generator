@@ -299,3 +299,4 @@ not use from here.
 | `scripts/verify_binder.js` | Runtime checks in a real browser. Needs Playwright. |
 | `scripts/build.py` | Inlines every asset; refuses to build a file that reaches the network. |
 | `scripts/check_house_style.py` | Enforces the fixed themes, palette, typefaces and dark pairs. Exits 1 on blockers. |
+| `scripts/package_skill.sh` | Packages this skill as a `.skill` file for upload. |
