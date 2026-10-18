@@ -150,6 +150,23 @@ child.
 
 ## Wiring it in
 
+**On the shared engine, use the script:**
+
+```bash
+python3 scripts/add_sync.py App.html --app <permanent-key>      # e.g. homeschool-hub
+NODE_PATH=$(npm root -g) node scripts/sync_flow.mjs App.html    # 16 checks, two browsers, in-memory server
+```
+
+`add_sync.py` inlines the client, aliases `BinderSync`, hooks `saveData()`,
+folds synced settings (`dw*` minus the skip list) into the document so
+educator names and compliance figures travel, adds the Settings card above
+Automatic Backup, and starts sync after the constructor. It fails loudly when an
+engine anchor moved. `sync_flow.mjs` covers every item under Testing below and
+asserts on the payload itself; it has been proven to fail on a PIN leak.
+Homeschool Hub (`--app homeschool-hub`) is the first binder with it.
+
+**By hand**, for an engine the script does not fit:
+
 1. Inline `assets/sync/binder-sync.js` in a `<script>` before the app script.
    Copy it unchanged.
 2. Create the controller once, and `start()` after load:

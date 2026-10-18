@@ -57,9 +57,10 @@ And one rule that is not about safety but about the family:
    `scripts/check_house_style.py` enforces it; `references/design-system.md`
    explains it. A product gets its own *content*, never its own look.
 
-A shipped binder scores **0 blockers, 1 major, 0 minor**. The one major is the
-Google Fonts fallback, which is accepted across the range: the app works offline
-regardless, only the typeface changes.
+A shipped binder scores **0 blockers, 0 major, 0 minor** on both audits, passes
+`verify_binder.js`, and has no blocker in `novice_check.js`. (Older binders
+score 1 major for the Google Fonts `<link>`; inline the fonts when you next
+touch them — `references/build-and-offline.md`.)
 
 ### Add-ons are not part of the standard
 
@@ -86,7 +87,12 @@ that leaks its PIN hash is a blocker.
 python3 scripts/audit_binder.py path/to/App.html        # the eight standards
 python3 scripts/check_house_style.py path/to/App.html   # the ninth: sameness
 NODE_PATH=$(npm root -g) node scripts/verify_binder.js path/to/App.html --shots /tmp/shots
+NODE_PATH=$(npm root -g) node scripts/novice_check.js path/to/App.html --shots /tmp/novice
 ```
+
+The last one is the **novice review**: a first-time buyer's walk through every
+screen, empty and with demo data. Then look at its screenshots yourself with the
+checklist in `references/novice-review.md` — the script cannot judge wording.
 
 The static audit finds most defects in seconds. The verifier catches the three
 that only appear when the file runs: whether it renders with no network, whether
@@ -122,11 +128,13 @@ ships independently.
    filters, column picker. `assets/due-dates.js`, `references/feature-catalog.md`
 8. **Finish it** — walk `references/feature-catalog.md` line by line. That is
    the difference between safe to sell and finished.
-9. **Package it** — demo, mockups, video, START_HERE, LICENSE, listing.
-   `references/packaging.md`
-10. **Add-ons, if asked** — sync between devices, a hosted copy behind an
-    activation code. Last, and never by default. `references/sync.md`,
-    `references/hosted-and-activation.md`
+9. **Novice review** — `scripts/novice_check.js`, then the manual checklist in
+   `references/novice-review.md`. Fix everything before the photos are taken.
+10. **Package it** — six commands produce the photos, video, demo, buyer kit
+   zip and listing kit zip. `references/packaging.md` § The pipeline
+11. **Add-ons, if asked** — sync between devices (`scripts/add_sync.py`,
+    tested by `scripts/sync_flow.mjs`), a hosted copy behind an activation code.
+    Never by default. `references/sync.md`, `references/hosted-and-activation.md`
 
 Re-run the audit after each step. Zero blockers is the point at which an app is
 safe to sell.
@@ -260,6 +268,7 @@ Read when the workflow points at them, not before:
 | `references/calculations.md` | Any computed number the buyer will rely on |
 | `references/sync.md` | **Add-on, only when asked** — sync between devices |
 | `references/pitfalls.md` | **Before fixing a bug** — check whether it is a known one |
+| `references/novice-review.md` | **Before packaging** — the first-time-buyer review and its rules |
 | `references/feature-catalog.md` | **The definition of done** — every screen, before shipping |
 | `references/packaging.md` | Demo, mockups, video, START_HERE, LICENSE, listing copy |
 | `references/lessons.md` | **Once per product** — taste and working style, so corrections are not repeated |
@@ -299,4 +308,12 @@ not use from here.
 | `scripts/verify_binder.js` | Runtime checks in a real browser. Needs Playwright. |
 | `scripts/build.py` | Inlines every asset; refuses to build a file that reaches the network. |
 | `scripts/check_house_style.py` | Enforces the fixed themes, palette, typefaces and dark pairs. Exits 1 on blockers. |
+| `scripts/novice_check.js` | First-time-buyer walk of every screen, empty and demo. Exits 1 on blockers. |
+| `scripts/add_sync.py` | Add-on: wires sync into a binder on the shared engine. |
+| `scripts/sync_flow.mjs` | Two browsers syncing through the real server code, in memory. |
+| `scripts/capture_screens.js` | Listing screenshots, theme shots, and every printed document as PDF + page PNGs. |
+| `scripts/make_photos.js` | 1500x1200 listing photos from `kit.json` and the screenshots. |
+| `scripts/make_video.js` | The three-step walkthrough video. Needs ffmpeg. |
+| `scripts/make_demo.py` / `demo_check.js` | The free demo (nothing saves, exports upsell, print watermarked) and its safety check. |
+| `scripts/make_kits.py` | The buyer kit zip and the listing kit zip, with `Listing_Text.txt`. |
 | `scripts/package_skill.sh` | Packages this skill as a `.skill` file for upload. |

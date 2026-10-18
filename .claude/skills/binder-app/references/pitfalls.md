@@ -112,6 +112,34 @@ contents in a test — the audit treats a leak here as a blocker.
 old document over a new one. Remedy: refuse an incoming payload below the local
 version and tell the buyer to update the other device.
 
+**`BinderSync` is undefined.** The client file is byte-identical to the JPS one
+and exports `window.JPSSync`. `add_sync.py` adds `window.BinderSync =
+window.JPSSync` after it; hand wiring must do the same.
+
+**A sync test that only checks the other device misses a leak.** The merge's
+skip list keeps the PIN off the second device even when it is *sent*. Assert on
+`syncOut()` itself — `sync_flow.mjs` does, and fails on a deliberately leaky
+build.
+
+## Novice findings (Homeschool Hub, first review)
+
+**A KPI reading a legacy field.** "Credits Earned" summed `grades.credits`, a
+field modern files leave at 0, so it read 0.00 beside a transcript full of
+credits. Remedy: compute a tile from the same records and rule as the document
+it mirrors, and say so under the number ("On the transcript").
+
+**Zeros on a brand-new planner.** "0%" average and "0.00" credits read as
+failing. Remedy: a dash until there is something to count, and "Nothing
+scheduled yet" instead of "Out of 0 scheduled".
+
+**A placeholder printed on an official document.** With no educator name the
+transcript printed "Educator(s): Primary Educator". Remedy: omit the line.
+
+**Unescaped values outside tables.** Settings inputs (`value="${name}"`) and two
+cover pages (`Educator(s): ${edName}`) skipped `escapeHtml`. The runtime
+escaping check types into record fields only; grep templates for
+`${this.profile` and `${edName` too.
+
 ## Claims
 
 **"Works on phones and tablets" is false.** iPhone and iPad Safari will not

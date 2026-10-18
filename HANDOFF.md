@@ -101,6 +101,23 @@ verify_binder.js      6 passed, 0 failed (run against the Vault)
 - Dashboard difference kept on purpose: JPS leads with a hero number (daily
   app); a binder leads with what's due and what's missing (vault).
 
+## Done since (session 2, 2026-10-18)
+
+- Ported from `sellable-html-app`: **sync tooling** (`add_sync.py`,
+  `sync_flow.mjs`), a **novice review** (`novice_check.js` +
+  `references/novice-review.md`), and the **kit pipeline** (`capture_screens.js`,
+  `make_photos.js`, `make_video.js`, `make_demo.py`, `demo_check.js`,
+  `make_kits.py`). See SKILL.md workflow steps 9–11 and packaging.md § The pipeline.
+- Fonts now inlined; the standard is 0/0/0, no accepted major.
+- **Homeschool Hub** (`apps/Homeschool_Hub_Binder.html`): fonts inlined, sync added
+  (`--app homeschool-hub`, never change it), credits tile fixed (read a legacy
+  field), dashes for empty tiles, escaping fixed on settings inputs and two cover
+  pages, no "Primary Educator" placeholder on documents. 0/0/0 on both audits,
+  verify 6/6, novice 0/0/0, sync_flow 16/16, demo_check all pass.
+- Kits: `apps/homeschool-hub/kits/Homeschool_Hub_Buyer_Kit.zip` and
+  `Homeschool_Hub_Listing_Kit.zip`. Config in `apps/homeschool-hub/kit.json`;
+  fill its `[ADD ...]` fields and re-run `make_kits.py`.
+
 ## Open / next
 
 1. **Rebuild `src/app.html` from the Emergency Vault.** Highest value. The

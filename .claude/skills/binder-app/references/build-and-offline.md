@@ -42,10 +42,14 @@ A product that ships the sync add-on declares its host in `SYNC_HOST`. An
 undeclared host fails the build whether it is a sync server or a CDN; that is
 the same signal and should be treated the same way. See `sync.md`.
 
-`ALLOWED_HOSTS` is just Google Fonts. The `<link>` stays as a progressive
-enhancement — online, the intended typeface; offline, the system stack. That is
-the "1 major" every shipped binder scores, and it is accepted across the range.
-If you want 0 major, base64 the woff2 and delete the link.
+**Fonts are inlined.** Inter (variable), JetBrains Mono (variable) and
+Merriweather 300/400/700/300-italic, latin subset, from `@fontsource`, as
+base64 woff2 in one `<style id="binder-fonts">` (~260 KB). The print document
+reuses that same block (`document.getElementById('binder-fonts').textContent`)
+instead of an `@import`, so printouts match offline too. Homeschool Hub was the
+first to ship this and now scores 0/0/0; the old Google Fonts `<link>` is no
+longer accepted for new work. Vendor with `npm pack @fontsource-variable/inter
+@fontsource-variable/jetbrains-mono @fontsource/merriweather`.
 
 ## Vendoring
 

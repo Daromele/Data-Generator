@@ -64,8 +64,8 @@ as often as it is read on screen.
 
 ## Type
 
-Three faces, loaded from Google Fonts with a system fallback (the accepted
-"1 major" in the audit):
+Three faces, inlined as base64 woff2 in `<style id="binder-fonts">`
+(`build-and-offline.md`), so screen and print match with the network cut:
 
 | Face | Class | Where |
 |---|---|---|

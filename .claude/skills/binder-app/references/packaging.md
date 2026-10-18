@@ -12,6 +12,32 @@ step feeds the next. Per product the kit is:
   Listing_Text.txt   in the order Etsy asks for it
 ```
 
+### The pipeline
+
+Every piece below is generated from the real built app and one config file,
+`apps/<product>/kit.json` (copy `apps/homeschool-hub/kit.json`):
+
+```bash
+S=.claude/skills/binder-app/scripts; K=apps/<product>/kit.json; A=apps/<Product>.html
+NODE_PATH=$(npm root -g) node $S/capture_screens.js $A shots          # every screen, themes, doc pages + PDFs
+NODE_PATH=$(npm root -g) node $S/make_photos.js $K $A shots photos    # 1500x1200 JPGs, hero checked for the square crop
+NODE_PATH=$(npm root -g) node $S/make_video.js  $K $A shots video.mp4 # 3 steps, ~22 s, H.264
+python3 $S/make_demo.py $A $K demo.html                               # nothing saves, exports upsell, print watermarked
+NODE_PATH=$(npm root -g) node $S/demo_check.js demo.html              # proves the demo is safe to publish
+python3 $S/make_kits.py $K $A shots photos video.mp4 demo.html kits   # both zips + Listing_Text.txt
+```
+
+`make_kits.py` writes `<Product>_Buyer_Kit.zip` (the app, START_HERE,
+LICENSE, the quick-start guide) and `<Product>_Listing_Kit.zip` (the folder
+below). It refuses a title over 140 characters, a tag over 20, anything but 13
+tags, phone/PWA claims, and a sync claim for an app without sync; it lists
+every `[ADD ...]` placeholder still open. The listing text opens with the
+title and tags, then the description to paste, then the rest in Etsy's order
+— the seller copies the whole listing from one file.
+
+Run `novice_check.js` and look at the screenshots **before** this: the photos
+show whatever the app shows.
+
 Name every file for its product — `etsy-mockup-home-management.html`, not
 `etsy-mockup.html`. A shop with six binders accumulates identical filenames
 within a week.
