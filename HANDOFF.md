@@ -1,0 +1,142 @@
+# Handoff — binder-app skill work
+
+Written 2026-10-18. Everything described here is **pushed**; nothing of value
+lives only in the old session's container.
+
+## Where things are
+
+| | |
+|---|---|
+| Repo | `Daromele/Data-Generator` |
+| Branch | `claude/webapp-loading-yj4erg` |
+| PR | #2 (draft) — https://github.com/Daromele/Data-Generator/pull/2 |
+| Head | `4a2d84f` |
+| The work | `.claude/skills/binder-app/` — 33 files |
+
+The skill is also installed on the account as `anthropic-skills:binder-app`,
+so a new session can invoke it by name. **The repo copy is the source of
+truth**; the installed copy is a snapshot. After changing the skill, re-run
+`sh .claude/skills/binder-app/scripts/package_skill.sh` and re-upload, or the
+two drift apart.
+
+## What this is
+
+Two Etsy shops, both selling single-file offline HTML apps:
+
+- **DBD / Designs by Darowan** (this user) — "binder" apps: Homeschool Hub,
+  Home Management Binder, Ultimate Mom Binder, Emergency Vault, Personal
+  Finance Planner. A *vault*: store data, extract polished printed PDFs.
+- **JPS Digital Pages** — the `sellable-html-app` skill, a different user and
+  a different product shape: an *active* app used daily.
+
+They share an owner's attention and now share practices. The user is explicit
+that convergence is fine: *"i dont mind if jps and binder get similar as we
+make tweaks because there is a difference in their ultimate function."*
+
+## How this skill came to exist
+
+A container was reclaimed and **~60 unpushed commits across six app projects
+were lost**. Only two built HTML files survived, as uploads. The skill is the
+engine recovered from them and written down so it cannot be lost again.
+
+Two of the user's standing instructions contributed: "don't worry about
+pushing to github in this session" and "stop checking, trying or reporting"
+GitHub. Both were about a connection problem, not about the separate risk that
+unpushed work dies with the machine. **Pushing works now and should continue
+after every meaningful chunk.**
+
+## The skill, file by file
+
+```
+SKILL.md                  8 standards + a 9th (sameness); audit/upgrade/spin-off workflows
+references/
+  architecture.md         SECTIONS as the generator, the entity, 12 field types
+  design-system.md        5 fixed themes, measured type scale, exact component classes
+  data-safety.md          storage, save honesty, snapshots, merge restore
+  print-engine.md         the document builder — the product's reason to exist
+  build-and-offline.md    vendoring, the 3-pass build guard, the verified device table
+  calculations.md         test-first, month-by-month money, demo data that proves things
+  pitfalls.md             ~30 real defects with remedies — READ BEFORE DEBUGGING
+  feature-catalog.md      the definition of done, A–P
+  packaging.md            demo, mockups, video, START_HERE, LICENSE, listing copy
+  lessons.md              taste and working style — read once per product
+  sync.md                 ADD-ON: sync between devices
+  hosted-and-activation.md ADD-ON: hosted copy for phones behind an activation code
+assets/                   10 engine modules + sync client + Cloudflare Worker
+scripts/
+  audit_binder.py         the 8 standards, static. Exits 1 on blockers
+  check_house_style.py    the 9th: fixed themes, palette, fonts, dark pairs
+  verify_binder.js        Playwright: offline, escaping, print pagination
+  build.py                inlines assets; refuses a file that reaches the network
+  package_skill.sh        snapshot the skill as a .skill file
+exports/jps/              material to copy INTO the JPS skill (print engine + 2 patches)
+```
+
+Known-good baseline, both surviving apps:
+
+```
+audit_binder.py       0 blockers, 1 major, 0 minor   (the major is the Google Fonts fallback, accepted)
+check_house_style.py  Vault 0/0/0 · Homeschool 1 major (one stray `purple` class — real, unfixed)
+verify_binder.js      6 passed, 0 failed (run against the Vault)
+```
+
+## Decisions already made — do not relitigate
+
+- **Sync shares the existing JPS worker**, `https://jps-sync.darowan-rph.workers.dev`.
+  Rooms derive on-device from the `app` key, so products cannot collide. Every
+  binder needs a distinct, permanent `app` key. One free tier and one outage
+  surface now cover both shops.
+- **`binder-sync.js` stays byte-identical to upstream.** Changing the salt
+  forks the crypto and strands anyone already synced.
+- **Attachments do not sync** — metadata only; a single scan can exceed the
+  5 MB room.
+- **Five fixed themes** (indigo, teal, emerald, rose, amber) with fixed
+  accents. A product picks a default; it never gets its own palette. Enforced.
+- **Device claim**: Windows and Mac computers, **not** phones or tablets. iOS
+  Safari will not open a downloaded `.html`. Never claim PWA/installable for
+  the download — `file://` is not a secure origin.
+- **A PIN is a privacy screen, not encryption.** Never invite a buyer to store
+  a credential.
+- **The demo must not cap the printed document.** It is the reason to buy.
+- Dashboard difference kept on purpose: JPS leads with a hero number (daily
+  app); a binder leads with what's due and what's missing (vault).
+
+## Open / next
+
+1. **Rebuild `src/app.html` from the Emergency Vault.** Highest value. The
+   skill tells you to "fork the closest shipped product" but can only hand you
+   built HTML, so forking is copy-and-adapt rather than one command. JPS has
+   `assets/starter.html` + `new_app.js`; this is the gap.
+2. **Rebuild the six lost app projects** from the delivered files.
+3. **Legacy & End of Life Planner** and **Digital Meal Planner** still need
+   seven of the eight standards.
+4. **Emergency Vault listing kit** — deck, guide, listing text, callouts, demo.
+5. Netlify demos; fill `[ADD YOUR DEMO LINK]` / `[ADD YOUR VIDEO LINK]`.
+6. Port the custom dashboard date filter (This month / Last month / custom) to
+   the other binders.
+7. Fix Homeschool Hub's one stray `purple` class.
+8. Copy `exports/jps/print-engine.md` into the JPS skill, and patch its device
+   claim and restore-by-merge note.
+
+## Working with this user
+
+Full list in `references/lessons.md`. The short version:
+
+- Reviews on **screenshots**. Works but looks wrong = not done.
+- Expects another 25% after "almost there" — a pass over every screen.
+- Fix small things you notice without asking; list them in the summary.
+- Wants **concise** answers and a contrasting view only when there is one.
+- Works **product by product**.
+- Every listing/guide revision has been "make it shorter".
+
+## Files that may still be in the user's downloads
+
+Three mockup decks, three guides, listing texts, nine callout PNG/SVGs, two
+demo zips, `Emergency_Vault.html`, `Personal_Finance_Planner.html`,
+`Homeschool_Hub_Binder.html`. Worth asking for before rebuilding anything.
+
+## Uploads available to the old session only
+
+`Emergency_Vault.html`, `Homeschool_Hub_Binder.html` and
+`sellable-html-app.skill` were uploads. A new session will not have them —
+**re-upload the two HTML files** if the next task needs the engine source.
