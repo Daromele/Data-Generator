@@ -4775,6 +4775,11 @@ html .text-emerald-600,html .text-emerald-500{color:var(--j-ok)}html .text-rose-
 .jps-pal i{flex:1;border-radius:3px}.jps-pal span{position:absolute;left:0;right:0;bottom:2px;font:600 9px "DM Sans",sans-serif;text-transform:capitalize;color:#555}
 .jps-pal:hover{transform:translateY(-1px)}.jps-pal.on{outline:2px solid var(--j-ink);outline-offset:2px}
 @media print{html body{background:#fff!important}}
+
+/* JPS dark themes (add_dark_themes.py) */
+html.dark[data-dark="night"]{--j-paper:#141218!important;--j-card:#1C1A21!important;--j-sunk:#232028!important;--j-ink:#EDEAF2!important;--j-ink2:#B4AEBF!important;--j-ink3:#8B8498!important;--j-rule:#2A2731!important;--j-rule2:#3A3644!important;--j-accent:#C3A9E8!important;--j-bold:#221C2C!important;--j-bold2:#1A1522!important;--j-onbold:#EDE7F5!important;--j-onbolddim:#A79BBA!important;--j-pop:#F0B98F!important;--j-popink:#2A1708!important;--theme-50:#292234!important;--theme-100:#352C44!important;--theme-200:#4A3D63!important;--theme-300:#D6C6EE!important;--theme-400:#C3A9E8!important;--theme-500:#9A7DD0!important;--theme-600:#7656AE!important;--theme-700:#634894!important;--theme-800:#4F3A77!important;--theme-900:#221C2C!important;}
+html.dark[data-dark="midnight"]{--j-paper:#0C1720!important;--j-card:#14232D!important;--j-sunk:#1B2D38!important;--j-ink:#F0F7F7!important;--j-ink2:#BDCDD1!important;--j-ink3:#97AEB6!important;--j-rule:#29414D!important;--j-rule2:#3B5864!important;--j-accent:#9DB8F5!important;--j-bold:#0B303D!important;--j-bold2:#092632!important;--j-onbold:#EFF9F7!important;--j-onbolddim:#ACCDCC!important;--j-pop:#F5C382!important;--j-popink:#2B1A07!important;--theme-50:#1E2D46!important;--theme-100:#2A3D5E!important;--theme-200:#3A5078!important;--theme-300:#BCD0F8!important;--theme-400:#9DB8F5!important;--theme-500:#5F86D6!important;--theme-600:#3A63B4!important;--theme-700:#30549A!important;--theme-800:#27457F!important;--theme-900:#0B303D!important;}
+.jps-pal.dark span{color:#ddd}
 </style>
 </head>
 <body class="app-canvas text-slate-800 dark:text-slate-200 h-screen flex overflow-hidden transition-colors selection:bg-primary-500 selection:text-white">
@@ -5915,6 +5920,7 @@ window.BinderSync = window.JPSSync;
 
         // JPS Digital Pages palettes (jps_skin.py): accent ramp 50..900 + house tokens
         const THEMES = {"kiln": {"50": "#f8f0ed", "100": "#f0e2db", "200": "#e2c4b7", "300": "#d09f8b", "400": "#bd7b5e", "500": "#af5d3a", "600": "#A4471F", "700": "#8d3d1b", "800": "#763316", "900": "#3A2419", "paper": "#FBF8F5", "card": "#FFFFFF", "sunk": "#F4EEE8", "ink": "#221A15", "ink2": "#5E5048", "ink3": "#8C7E75", "rule": "#EEE5DD", "rule2": "#DFD2C6", "accent": "#A4471F", "bold": "#3A2419", "bold2": "#2D1B12", "onbold": "#FBF3EE", "onbolddim": "#CBB3A5", "pop": "#F2B441", "popink": "#2A1F06"}, "ledger": {"50": "#edf4f2", "100": "#dbeae5", "200": "#b7d4cb", "300": "#8bbaaa", "400": "#5e9f8a", "500": "#3a8a70", "600": "#1F7A5C", "700": "#1b694f", "800": "#165842", "900": "#182635", "paper": "#F6F7F5", "card": "#FFFFFF", "sunk": "#EEF1EE", "ink": "#141A1F", "ink2": "#4B5660", "ink3": "#7B858D", "rule": "#E4E8E5", "rule2": "#D2D8D4", "accent": "#1F7A5C", "bold": "#182635", "bold2": "#111C28", "onbold": "#EEF3F7", "onbolddim": "#A6B6C4", "pop": "#E3A73B", "popink": "#2B1C04"}, "sage": {"50": "#eef2f1", "100": "#dee5e3", "200": "#bccbc7", "300": "#93aba4", "400": "#698a81", "500": "#487065", "600": "#2F5D50", "700": "#285045", "800": "#22433a", "900": "#1F4A3E", "paper": "#FAFAF8", "card": "#FFFFFF", "sunk": "#F2F4F1", "ink": "#191B18", "ink2": "#525A50", "ink3": "#7E857C", "rule": "#E8EAE5", "rule2": "#D6DAD2", "accent": "#2F5D50", "bold": "#1F4A3E", "bold2": "#183B31", "onbold": "#F1F6F2", "onbolddim": "#AFC9BC", "pop": "#F2B441", "popink": "#2A1F06"}, "linen": {"50": "#f3f2f0", "100": "#e7e5e1", "200": "#d0cbc3", "300": "#b2aa9e", "400": "#948979", "500": "#7d6f5b", "600": "#6B5B45", "700": "#5c4e3b", "800": "#4d4232", "900": "#45392A", "paper": "#F7F4ED", "card": "#FFFDF8", "sunk": "#F0EBE0", "ink": "#241F17", "ink2": "#5D554A", "ink3": "#8A8174", "rule": "#E9E3D6", "rule2": "#D9D1C1", "accent": "#6B5B45", "bold": "#45392A", "bold2": "#362D21", "onbold": "#F8F4EC", "onbolddim": "#C6B9A3", "pop": "#E8A24A", "popink": "#2B1707"}, "fjord": {"50": "#eef1f4", "100": "#dde4e8", "200": "#bbc8d1", "300": "#91a6b5", "400": "#678498", "500": "#456981", "600": "#2C5470", "700": "#264860", "800": "#203c51", "900": "#1C3C52", "paper": "#F6F8FA", "card": "#FFFFFF", "sunk": "#EDF1F5", "ink": "#151E26", "ink2": "#4C5A66", "ink3": "#7C8994", "rule": "#E4E9EE", "rule2": "#D0D8E0", "accent": "#2C5470", "bold": "#1C3C52", "bold2": "#153042", "onbold": "#EFF5F9", "onbolddim": "#A8C1D2", "pop": "#F0A93C", "popink": "#2A1B04"}, "slate": {"50": "#f0f1f1", "100": "#e0e2e4", "200": "#c2c5c9", "300": "#9ba1a7", "400": "#757d85", "500": "#566069", "600": "#3F4A55", "700": "#364049", "800": "#2d353d", "900": "#2E3841", "paper": "#F8F9FA", "card": "#FFFFFF", "sunk": "#EFF1F3", "ink": "#171A1D", "ink2": "#4E555C", "ink3": "#7D848B", "rule": "#E6E9EC", "rule2": "#D3D8DD", "accent": "#3F4A55", "bold": "#2E3841", "bold2": "#242C34", "onbold": "#F1F3F5", "onbolddim": "#AFB9C2", "pop": "#EFA93F", "popink": "#2A1B04"}, "lavender": {"50": "#f2f0f6", "100": "#e5e0ed", "200": "#cbc2db", "300": "#aa9bc5", "400": "#8a75ae", "500": "#70569c", "600": "#5C3F8F", "700": "#4f367b", "800": "#422d67", "900": "#2E2040", "paper": "#FAF9FC", "card": "#FFFFFF", "sunk": "#F5F2F9", "ink": "#1B1524", "ink2": "#574E66", "ink3": "#8B8298", "rule": "#ECE7F2", "rule2": "#DCD4E7", "accent": "#5C3F8F", "bold": "#2E2040", "bold2": "#241932", "onbold": "#F5F1FA", "onbolddim": "#B6A9C7", "pop": "#F0B98F", "popink": "#3A2214"}, "blush": {"50": "#f5eff2", "100": "#eadfe6", "200": "#d5becc", "300": "#bb96ac", "400": "#a16e8d", "500": "#8c4d73", "600": "#7C3560", "700": "#6b2e53", "800": "#592645", "900": "#63304A", "paper": "#FBF6F8", "card": "#FFFFFF", "sunk": "#F5ECF1", "ink": "#241820", "ink2": "#5F4F58", "ink3": "#8C7A84", "rule": "#F0E4EA", "rule2": "#E0CCD8", "accent": "#7C3560", "bold": "#63304A", "bold2": "#4F2639", "onbold": "#FBF0F5", "onbolddim": "#D3AEC1", "pop": "#E9A85C", "popink": "#2B1707"}};
+        const DARK_THEMES = {"night": {"paper": "#141218", "bold": "#221C2C", "accent": "#C3A9E8", "pop": "#F0B98F"}, "midnight": {"paper": "#0C1720", "bold": "#0B303D", "accent": "#9DB8F5", "pop": "#F5C382"}};
         const DEFAULT_THEME = "sage";
 
         // Sidebar order and headings.
@@ -6259,6 +6265,7 @@ window.BinderSync = window.JPSSync;
             }
 
             initTheme() {
+                document.documentElement.dataset.dark = (DARK_THEMES[storage.get('hbDarkTheme')] ? storage.get('hbDarkTheme') : 'night');
                 const isDark = storage.get('hbDarkMode');
                 if (isDark === 'true') {
                     document.documentElement.classList.add('dark');
@@ -6278,7 +6285,23 @@ window.BinderSync = window.JPSSync;
                 else this.renderGenericSection(this.currentSection);
             }
 
+            // Settings picker: a light card switches dark mode off, a dark card (Night,
+            // Midnight) switches it on with that palette. Same as the JPS apps.
+            pickTheme(t) {
+                const isDark = document.documentElement.classList.contains('dark');
+                if (DARK_THEMES[t]) {
+                    storage.set('hbDarkTheme', t);
+                    document.documentElement.dataset.dark = t;
+                    if (!isDark) return this.toggleDarkMode();
+                    return this.reRenderCurrentSection();
+                }
+                this.setColorTheme(t, false);
+                if (isDark) return this.toggleDarkMode();
+                this.reRenderCurrentSection();
+            }
+
             toggleDarkMode() {
+                document.documentElement.dataset.dark = (DARK_THEMES[storage.get('hbDarkTheme')] ? storage.get('hbDarkTheme') : 'night');
                 const isDark = document.documentElement.classList.contains('dark');
                 if (isDark) {
                     document.documentElement.classList.remove('dark');
@@ -9278,7 +9301,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 // the look, what is hidden, banners, and backup bookkeeping.
                 const P = SETTINGS_PREFIX;
                 const skip = [P + 'PIN', P + 'PINHash', ...SETTINGS_EXCLUDE,
-                    ...['DarkMode', 'ColorTheme', 'HiddenSections', 'SidebarCollapsed',
+                    ...['DarkMode', 'DarkTheme', 'ColorTheme', 'HiddenSections', 'SidebarCollapsed',
                         'BannerEasyMode', 'BannerInsights', 'WelcomeSeen', 'BackupSamples'].map(k => P + k)];
                 return skip.map(k => 'settings/' + k);
             }
@@ -9560,9 +9583,12 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                                     <div class="flex flex-wrap gap-2 justify-end">
                                         ${Object.keys(THEMES).map(t => {
                                             const hexColor = THEMES[t][500];
-                                            const isActive = (THEMES[storage.get('hbColorTheme')] ? storage.get('hbColorTheme') : DEFAULT_THEME) === t;
+                                            const isActive = !document.documentElement.classList.contains('dark') && (THEMES[storage.get('hbColorTheme')] ? storage.get('hbColorTheme') : DEFAULT_THEME) === t;
                                             const ring = isActive ? 'ring-2 ring-offset-2 dark:ring-offset-darkCard ring-slate-400 scale-110' : 'hover:scale-110 opacity-70 hover:opacity-100 border border-slate-200 dark:border-slate-700';
-                                            const c = THEMES[t]; return `<button onclick="window.app.setColorTheme('${t}')" title="${t[0].toUpperCase() + t.slice(1)}" aria-label="${t} theme" class="jps-pal ${isActive ? 'on' : ''}" style="background:${c.paper}"><i style="background:${c.bold}"></i><i style="background:${c.accent}"></i><i style="background:${c.pop}"></i><span>${t}</span></button>`;
+                                            const c = THEMES[t]; return `<button onclick="window.app.pickTheme('${t}')" title="${t[0].toUpperCase() + t.slice(1)}" aria-label="${t} theme" class="jps-pal ${isActive ? 'on' : ''}" style="background:${c.paper}"><i style="background:${c.bold}"></i><i style="background:${c.accent}"></i><i style="background:${c.pop}"></i><span>${t}</span></button>`;
+                                        }).join('')}${Object.keys(DARK_THEMES).map(t => {
+                                            const c = DARK_THEMES[t], isActive = document.documentElement.classList.contains('dark') && document.documentElement.dataset.dark === t;
+                                            return `<button onclick="window.app.pickTheme('${t}')" title="${t[0].toUpperCase() + t.slice(1)} (dark)" aria-label="${t} dark theme" class="jps-pal dark ${isActive ? 'on' : ''}" style="background:${c.paper}"><i style="background:${c.bold}"></i><i style="background:${c.accent}"></i><i style="background:${c.pop}"></i><span>${t}</span></button>`;
                                         }).join('')}
                                     </div>
                                 </div>
