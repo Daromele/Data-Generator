@@ -174,3 +174,15 @@ demo zips, `Emergency_Vault.html`, `Personal_Finance_Planner.html`,
 `Emergency_Vault.html`, `Homeschool_Hub_Binder.html` and
 `sellable-html-app.skill` were uploads. A new session will not have them —
 **re-upload the two HTML files** if the next task needs the engine source.
+
+## Home Management Binder (third JPS binder)
+
+Converted like Emergency Vault (`apps/Home_Management_Binder.html`, prefix `hb`,
+theme `sage`, sync key `home-management`). Fixed: US wording (floors, color,
+jewelry, license plate), old cover title, zero tiles, one-page contacts sheet.
+Engine fixes found on the way, applied to all three binders and the skill:
+- sync compared documents by JSON text, so key order alone re-sent the vault
+  (`same()` now compares canonically)
+- `jps_skin.py` wrapped unquoted font names in double quotes, which broke
+  `style="..."` attributes in printed documents
+- `capture_screens.js` now dismisses the welcome for any prefix
