@@ -7,7 +7,6 @@ step feeds the next. Per product the kit is:
 <Product>/listing-kit/
   1_Photos/          the exported mockup slides, numbered in upload order
   2_Video/           the walkthrough
-  3_Digital_File/    <Product>.zip  -> the app + START_HERE.txt + LICENSE.txt + guide
   4_Extras/          demo link, callout PNG/SVGs, source deck
   Listing_Text.txt   in the order Etsy asks for it
 ```
@@ -38,6 +37,9 @@ title and tags, then the description to paste, then the rest in Etsy's order
 
 Run `novice_check.js` and look at the screenshots **before** this: the photos
 show whatever the app shows.
+
+The buyer zip (app, START_HERE.pdf, guide, LICENSE) ships **separately**, never
+inside the listing packet — the user's rule, so it is never uploaded twice.
 
 Name every file for its product — `etsy-mockup-home-management.html`, not
 `etsy-mockup.html`. A shop with six binders accumulates identical filenames

@@ -193,7 +193,7 @@ ABOUT THIS LISTING
 MATERIALS
   {', '.join(L.get('materials', ['HTML']))}
 
-DIGITAL FILE (3_Digital_File)
+DIGITAL FILE (upload the separate buyer zip)
   {buyer_zip.name}
 
 PRICE & QUANTITY
@@ -213,13 +213,12 @@ if holes:
 kit_dir = out / f'{safe}_Listing_Kit'
 if kit_dir.exists():
     shutil.rmtree(kit_dir)
-for d in ('1_Photos', '2_Video', '3_Digital_File', '4_Extras'):
+for d in ('1_Photos', '2_Video', '4_Extras'):   # no 3_Digital_File: the buyer zip ships on its own (user's rule)
     (kit_dir / d).mkdir(parents=True)
 for p in photos_list:
     shutil.copy(p, kit_dir / '1_Photos' / p.name)
 if video.exists():
     shutil.copy(video, kit_dir / '2_Video' / f'{safe}_Walkthrough.mp4')
-shutil.copy(buyer_zip, kit_dir / '3_Digital_File' / buyer_zip.name)
 if demo.exists():
     shutil.copy(demo, kit_dir / '4_Extras' / f'{safe}_Free_Demo.html')
 for p in sorted(shots.glob('doc-*.pdf')):
