@@ -239,7 +239,7 @@ METHODS = r'''
                                     <p class="text-xs text-slate-400">Find the code in Settings on the other device. Both copies are combined; nothing is replaced.</p>
                                 </form>`);
                 return card(`
-                                <p class="text-sm text-slate-500 leading-relaxed">On. Your changes are sent as soon as you save. Other devices pick them up within a minute, straight away when you switch back to the planner, or with Sync Now.</p>
+                                <p class="text-sm text-slate-500 leading-relaxed">On. Your changes are sent as soon as you save. Other devices pick them up within a minute, straight away when you switch back to the app, or with Sync Now.</p>
                                 <div class="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                     <div class="min-w-0"><div class="number-font text-lg font-bold text-slate-900 dark:text-white tracking-wider">${escapeHtml(this.sync.code)}</div><div class="text-xs text-slate-500">Enter this code on your other devices. Keep it private: anyone with it can see and change your records.</div></div>
                                     <button data-sync="copy" class="${btn}"><i class="ph ph-copy text-lg"></i> Copy</button>

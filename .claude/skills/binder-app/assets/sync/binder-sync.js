@@ -64,7 +64,8 @@
   const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
   const isRecords = a => Array.isArray(a) && a.length > 0 && a.every(r => isObj(r) && r.id != null);
   const stamp = r => (r && (r.updatedAt || r.createdAt)) || '';
-  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const canon = v => Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, canon(v[k])])) : v;
+  const same = (a, b) => JSON.stringify(canon(a)) === JSON.stringify(canon(b));   // key order is not a change
   function pick(a, b) {                                  // the same answer on both devices, even on a tie
     const sa = stamp(a), sb = stamp(b);
     if (sa !== sb) return sa > sb ? a : b;

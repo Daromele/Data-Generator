@@ -1,0 +1,13 @@
+{
+  "product": "Home Management Binder",
+  "slug": "home-management",
+  "file": "Home_Management_Binder.html",
+  "theme": "sage",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://jps-demo.pages.dev/home-management/",
+  "hosted_url": "https://jps-apps.pages.dev/home-management/",
+  "brand": {"name": "JPS Digital Pages", "site": "https://www.jpsdigitalpages.com", "email": "hello@jpsdigitalpages.com",
+            "more_apps": "https://jpsdigitalpages.com/collection/web-applications", "more_label": "more apps and free demos"},
+  "listing": {"promise": "Every room, repair, warranty and policy for your home, in one private file."}
+}

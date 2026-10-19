@@ -73,7 +73,7 @@ s = s[:m.start(2)] + fonts + s[m.end(2):]
 # keep the quote style: a quoted name inside JS stays a valid string ('Inter' -> 'DM Sans')
 def fam(old, new):
     global s
-    s = re.sub(r"""(['"]?)""" + old + r"""\1(?=\s*,|\s*;|\s*\)|\s*})""", lambda m: (m.group(1) or '"') + new + (m.group(1) or '"'), s)
+    s = re.sub(r"""(['"]?)""" + old + r"""\1(?=\s*,|\s*;|\s*\)|\s*})""", lambda m: m.group(1) + new + m.group(1), s)   # unquoted stays unquoted: valid CSS, and safe inside a style="" attribute or a JS string
 fam('Inter', 'DM Sans'); fam('Merriweather', 'Manrope'); fam('JetBrains Mono', 'Manrope')
 
 # 2. THEMES -> the JPS palettes; unknown stored theme falls back to the default

@@ -5183,7 +5183,8 @@ html .text-emerald-600,html .text-emerald-500{color:var(--j-ok)}html .text-rose-
   const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
   const isRecords = a => Array.isArray(a) && a.length > 0 && a.every(r => isObj(r) && r.id != null);
   const stamp = r => (r && (r.updatedAt || r.createdAt)) || '';
-  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const canon = v => Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, canon(v[k])])) : v;
+  const same = (a, b) => JSON.stringify(canon(a)) === JSON.stringify(canon(b));   // key order is not a change
   function pick(a, b) {                                  // the same answer on both devices, even on a tie
     const sa = stamp(a), sb = stamp(b);
     if (sa !== sb) return sa > sb ? a : b;
@@ -10006,7 +10007,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                                     <p class="text-xs text-slate-400">Find the code in Settings on the other device. Both copies are combined; nothing is replaced.</p>
                                 </form>`);
                 return card(`
-                                <p class="text-sm text-slate-500 leading-relaxed">On. Your changes are sent as soon as you save. Other devices pick them up within a minute, straight away when you switch back to the planner, or with Sync Now.</p>
+                                <p class="text-sm text-slate-500 leading-relaxed">On. Your changes are sent as soon as you save. Other devices pick them up within a minute, straight away when you switch back to the app, or with Sync Now.</p>
                                 <div class="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                     <div class="min-w-0"><div class="number-font text-lg font-bold text-slate-900 dark:text-white tracking-wider">${escapeHtml(this.sync.code)}</div><div class="text-xs text-slate-500">Enter this code on your other devices. Keep it private: anyone with it can see and change your records.</div></div>
                                     <button data-sync="copy" class="${btn}"><i class="ph ph-copy text-lg"></i> Copy</button>

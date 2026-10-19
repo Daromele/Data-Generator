@@ -24,13 +24,16 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   gobag: app => app.printGoBagSheet(),                         // Emergency Vault
   medical: app => app.printMedicalSummary('all', 'all'),
   where: app => app.printWhereThingsAre(),
+  inventory: app => app.printInventoryReport('all', 'all'),    // Home Management
+  improvements: app => app.printImprovementsReport('all', 'all'),
+  contacts: app => app.printEmergencySheet(),
 };
 
 (async () => {
   const opts = fs.existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {};
   const browser = await chromium.launch(opts);
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, reducedMotion: 'reduce', offline: true });
-  await ctx.addInitScript(() => { try { localStorage.setItem(Object.keys(localStorage).find(k => /WelcomeSeen$/.test(k)) || 'dwWelcomeSeen', 'true'); } catch (e) {} });
+  await ctx.addInitScript(() => { try { ['dw', 'ev', 'hb'].forEach(p => localStorage.setItem(p + 'WelcomeSeen', 'true')); } catch (e) {} });
   const page = await ctx.newPage();
   page.on('pageerror', e => console.error('page error:', e.message));
   await page.goto('file://' + path.resolve(file));
