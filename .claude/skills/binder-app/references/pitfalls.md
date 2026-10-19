@@ -140,6 +140,27 @@ cover pages (`Educator(s): ${edName}`) skipped `escapeHtml`. The runtime
 escaping check types into record fields only; grep templates for
 `${this.profile` and `${edName` too.
 
+## Fork leftovers (Emergency Vault, second JPS conversion)
+
+A binder forked from another keeps the donor's words and links long after its
+own sections are written. Found in the Vault, all invisible to the audits:
+"All Rooms" on every filter (Home binder), a Print & Share blurb and a What's
+New list about sitters, meals and immunisations (Mom binder), "Tell at least
+one room", a cover titled "Family Binder", "Rooms:" on covers, and two dashboard
+tiles opening sections that do not exist (`chores`, `events`). `novice_check.js`
+now fails on dead navigateTo/openModal targets; still read every screenshot and
+every printed page for donor wording.
+
+**A "last reviewed" date shown as overdue.** The Vault listed medical records
+"200 days overdue" because it treated the date of the last review as a due
+date. A past-tense field ("reviewed", "last serviced") needs a `due` that adds
+the interval.
+
+**British wording in a US listing.** The family binders were written in British
+English with a British demo household (solicitor, GP surgery, stopcock, MOT, NHS
+111, 999, UK phone numbers). Converting for JPS means the demo data and option
+lists too, not just colour/color.
+
 ## Claims
 
 **"Works on phones and tablets" is false.** iPhone and iPad Safari will not

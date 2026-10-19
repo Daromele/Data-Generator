@@ -21,6 +21,9 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   compliance: app => app.printCompliance('all', 'all'),
   binder: app => app.generateFullBinder('all', 'all', false),
   reportcard: app => app.generateReportCards('all', 'all'),
+  gobag: app => app.printGoBagSheet(),                         // Emergency Vault
+  medical: app => app.printMedicalSummary('all', 'all'),
+  where: app => app.printWhereThingsAre(),
 };
 
 (async () => {

@@ -122,6 +122,14 @@ async function emptyForms(page, errors) {
   await page.waitForFunction(() => window.app && window.app.data, null, { timeout: 15000 });
   await page.waitForTimeout(600);
 
+  // Every navigateTo / openModal target must be a real section (forks leave old ones behind).
+  const dead = await page.evaluate(() => {
+    const src = document.documentElement.outerHTML + [...document.scripts].map(x => x.textContent).join('');
+    const keys = new Set([...Object.keys(SECTIONS), 'settings', 'dashboard']);
+    return [...new Set([...src.matchAll(/(?:navigateTo|openModal)\('(\w+)'/g)].map(m => m[1]))].filter(k => !keys.has(k));
+  });
+  if (dead.length) add('BLOCKER', 'dead links', `Buttons open screens that do not exist: ${dead.join(', ')}`, 'Point them at a real section or remove them (a fork left them behind).');
+
   // First open: the buyer must be greeted, not dropped into a full planner.
   const greeted = await page.evaluate(() => {
     const el = document.getElementById('onboarding-backdrop');

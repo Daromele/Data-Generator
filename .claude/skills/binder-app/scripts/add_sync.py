@@ -226,7 +226,7 @@ METHODS = r'''
                             </div>`;
                 const card = body => `<div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm" id="sync-card">${head}<div class="p-6 space-y-5">${body}</div></div>`;
                 if (!this.sync.on) return card(`
-                                <p class="text-sm text-slate-500 leading-relaxed">Keep this planner the same on your computer, phone and tablet. Everything is encrypted on this device with a private code only you have &mdash; nobody else can read it, including us. Attached files stay on the device they were added on.</p>
+                                <p class="text-sm text-slate-500 leading-relaxed">Keep your records the same on your computer, phone and tablet. Everything is encrypted on this device with a private code only you have &mdash; nobody else can read it, including us. Attached files stay on the device they were added on.</p>
                                 <div class="flex flex-col sm:flex-row gap-3">
                                     <button data-sync="on" class="flex-1 px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm transition-colors shadow-md font-bold flex items-center justify-center gap-2"><i class="ph ph-cloud-arrow-up text-lg"></i> Turn On Sync</button>
                                 </div>

@@ -6331,7 +6331,7 @@ window.BinderSync = window.JPSSync;
                         { id: 'ev_p1', task: 'Call Sarah, then Grandma and Grandpa', priority: '\ud83d\udd34 Immediately', owner: 'ev_m2', contact: 'Grandma and Grandpa', phone: '(555) 555-0148', review_due: at(120), notes: 'They live ten minutes away and can collect the children.' },
                         { id: 'ev_p2', task: 'Give Ella her EpiPen if she has eaten nuts', priority: '\ud83d\udd34 Immediately', owner: 'ev_m1', contact: 'Poison Control', phone: '(800) 222-1222', notes: 'One in her bag, one in the kitchen drawer. Then call 911.' },
                         { id: 'ev_p3', task: 'Turn off the water at the main valve', priority: '\ud83d\udfe1 Within 24 hours', contact: 'Ashworth Heating', phone: '(555) 555-0170', notes: 'The main valve is under the kitchen sink, at the back on the left.' },
-                        { id: 'ev_p4', task: 'Tell the schools', priority: '\ud83d\udfe1 Within 24 hours', owner: 'ev_m1', contact: 'St. Mary’s Elementary', phone: '(555) 555-0122', notes: 'Absence line before 9am. Northgate High is 01234 555 330.' },
+                        { id: 'ev_p4', task: 'Tell the schools', priority: '\ud83d\udfe1 Within 24 hours', owner: 'ev_m1', contact: 'St. Mary’s Elementary', phone: '(555) 555-0122', notes: 'Absence line before 9am. Northgate High is (555) 555-0133.' },
                         { id: 'ev_p5', task: 'Contact the attorney about the will', priority: '\ud83d\udfe2 Within a week', contact: 'Hartley & Co', phone: '(555) 555-0190', review_due: at(45), notes: 'The will is in the safety deposit box, not the house.' },
                         { id: 'ev_p6', task: 'Notify the 401(k) provider', priority: '\u26aa When settled', contact: 'Summit Retirement', phone: '(800) 555-0101', notes: 'Policy paperwork is in the study filing cabinet, top drawer.' }
                     ],
@@ -7885,14 +7885,14 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 // KPI cards
                 let kpiCards = [];
                 kpiCards.push(`
-                    <div class="bg-gradient-to-br ${overdue.length ? 'from-rose-500 to-rose-600 dark:from-rose-600 dark:to-rose-800 border-rose-400 dark:border-rose-700' : 'from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-800 border-primary-400 dark:border-primary-700'} p-6 rounded-2xl border shadow-md text-white flex flex-col justify-between group cursor-pointer" onclick="window.app.navigateTo('chores')">
+                    <div class="bg-gradient-to-br ${overdue.length ? 'from-rose-500 to-rose-600 dark:from-rose-600 dark:to-rose-800 border-rose-400 dark:border-rose-700' : 'from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-800 border-primary-400 dark:border-primary-700'} p-6 rounded-2xl border shadow-md text-white flex flex-col justify-between group cursor-pointer" onclick="window.app.navigateTo('protocol')">
                         <div class="text-white/70 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ${overdue.length ? 'ph-warning-circle' : 'ph-check-circle'} text-lg"></i> Needs Attention</div>
                         <div class="text-3xl font-bold number-font">${vaultEmpty ? '&mdash;' : overdue.length + dueSoon.length}</div>
                         <div class="text-xs text-white/70 mt-2">${vaultEmpty ? 'Nothing added yet' : `${overdue.length} overdue &middot; ${dueSoon.length} due within ${DUE_SOON_DAYS} days`}</div>
                     </div>`);
                 if (!this.hiddenSections.includes('events')) {
                     kpiCards.push(`
-                        <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors group" onclick="window.app.navigateTo('events')">
+                        <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors group" onclick="(document.getElementById('coming-up')||{}).scrollIntoView?.({behavior:'smooth',block:'start'})">
                             <div class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ph-calendar-check text-lg group-hover:scale-110 transition-transform text-blue-500"></i> This Week</div>
                             <div class="text-3xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty ? '&mdash;' : thisWeek.length}</div>
                             <div class="text-xs text-slate-400 mt-2">Things happening in seven days</div>
@@ -7949,7 +7949,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2"><i class="ph ph-bell-ringing text-primary-500"></i> Coming Up</h3>
+                                    <h3 id="coming-up" class="font-bold text-slate-900 dark:text-white flex items-center gap-2"><i class="ph ph-bell-ringing text-primary-500"></i> Coming Up</h3>
                                     <p class="text-xs text-slate-500 mt-0.5">Everything overdue or falling due in the next ${DUE_SOON_DAYS} days.</p>
                                 </div>
                                 <button onclick="window.app.openPrintModal(false, null, true)" class="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline whitespace-nowrap">Print the sheet</button>
@@ -9370,7 +9370,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             </div>`;
                 const card = body => `<div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm" id="sync-card">${head}<div class="p-6 space-y-5">${body}</div></div>`;
                 if (!this.sync.on) return card(`
-                                <p class="text-sm text-slate-500 leading-relaxed">Keep this planner the same on your computer, phone and tablet. Everything is encrypted on this device with a private code only you have &mdash; nobody else can read it, including us. Attached files stay on the device they were added on.</p>
+                                <p class="text-sm text-slate-500 leading-relaxed">Keep your records the same on your computer, phone and tablet. Everything is encrypted on this device with a private code only you have &mdash; nobody else can read it, including us. Attached files stay on the device they were added on.</p>
                                 <div class="flex flex-col sm:flex-row gap-3">
                                     <button data-sync="on" class="flex-1 px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm transition-colors shadow-md font-bold flex items-center justify-center gap-2"><i class="ph ph-cloud-arrow-up text-lg"></i> Turn On Sync</button>
                                 </div>
@@ -10083,7 +10083,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 if (entity && entity !== 'all') {
                     const ids = this.printMemberIds(entity);
                     processed = processed.filter(i => {
-                        // In the Rooms section itself, only the selected members belong.
+                        // In the Household section itself, only the selected members belong.
                         // Elsewhere a record with no room (an expense, a weekly
                         // utility account) is shared and stays in.
                         if (sectionKey === 'members') return ids.includes(i.id);
@@ -10250,7 +10250,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             ${row('Conditions', rec.conditions)}
                             ${row('Medications', rec.medications)}
                             ${row('Doctor', rec.doctor)}
-                            ${row('Surgery phone', rec.doctor_phone)}
+                            ${row('Doctor\u2019s office phone', rec.doctor_phone)}
                             ${row('Directive on file', rec.directive)}
                             ${row('Directive kept', rec.directive_location)}
                             ${row('Last reviewed', rec.reviewed ? formatDate(rec.reviewed) : '')}
@@ -10472,16 +10472,16 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     if (prop) dateDisplayStr = prop.name;
                 }
 
-                let subtitleHtml = `<p style="font-size: 16px; color: #818cf8; margin-bottom: 10px; font-weight: bold;">Date Range: ${escapeHtml(dateDisplayStr)} | Rooms: ${escapeHtml(this.printMemberLabel(entity))}</p>`;
+                let subtitleHtml = `<p style="font-size: 16px; color: #818cf8; margin-bottom: 10px; font-weight: bold;">Date Range: ${escapeHtml(dateDisplayStr)} | People: ${escapeHtml(this.printMemberLabel(entity))}</p>`;
                 
                 let edName = this.profile.userName || '';
                 if (this.profile.userName2) edName += (edName ? ' & ' : '') + this.profile.userName2;
-                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Owner(s): ${edName}</p>`;
+                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Owner(s): ${escapeHtml(edName)}</p>`;
 
                 let coverHtml = `
                     <div class="cover-page">
                         <div style="font-size: 80px; margin-bottom: 24px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">💛</div>
-                        <h1>Family Binder</h1>
+                        <h1>Emergency Vault</h1>
                         ${subtitleHtml}
                         <div style="width: 60px; height: 4px; background: #818cf8; margin: 0 auto 40px auto; border-radius: 2px;"></div>
                         <div style="margin-top: auto; padding-top: 40px;">
@@ -10533,11 +10533,11 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     if (prop) dateDisplayStr = prop.name;
                 }
 
-                let subtitleHtml = `<p style="font-size: 16px; color: #818cf8; margin-bottom: 10px; font-weight: bold;">Date Range: ${escapeHtml(dateDisplayStr)} | Rooms: ${escapeHtml(this.printMemberLabel(entity))}</p>`;
+                let subtitleHtml = `<p style="font-size: 16px; color: #818cf8; margin-bottom: 10px; font-weight: bold;">Date Range: ${escapeHtml(dateDisplayStr)} | People: ${escapeHtml(this.printMemberLabel(entity))}</p>`;
                 
                 let edName = this.profile.userName || '';
                 if (this.profile.userName2) edName += (edName ? ' & ' : '') + this.profile.userName2;
-                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Owner(s): ${edName}</p>`;
+                if (edName) subtitleHtml += `<p style="font-size: 16px; color: #c7d2fe; margin-bottom: 40px; margin-top: 20px;">Owner(s): ${escapeHtml(edName)}</p>`;
 
                 let coverHtml = `
                     <div class="cover-page">
