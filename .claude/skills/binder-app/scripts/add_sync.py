@@ -60,8 +60,10 @@ rep('    <!-- Scripts -->\n    <script>\n',
     '    <!-- Scripts -->\n    <script>\n')
 
 # 2. constants beside the other storage constants
-rep("        const SETTINGS_PREFIX = 'dw';\n",
-    "        const SETTINGS_PREFIX = 'dw';\n"
+_pm = re.search(r"        const SETTINGS_PREFIX = '(\w+)';\n", s)
+if not _pm:
+    sys.exit("Anchor not found: const SETTINGS_PREFIX = '..';")
+rep(_pm.group(0), _pm.group(0) +
     f"        const SYNC_APP = '{a.app}';            // room salt: never change after release\n"
     f"        const SYNC_SERVER = '{a.server}';\n")
 
@@ -98,14 +100,15 @@ METHODS = r'''
             syncSkipList() {
                 // Never leaves this device: the PIN (a lock on THIS browser),
                 // the look, what is hidden, banners, and backup bookkeeping.
-                const skip = ['dwPIN', 'dwPINHash', ...SETTINGS_EXCLUDE,
-                    'dwDarkMode', 'dwColorTheme', 'dwHiddenSections', 'dwSidebarCollapsed',
-                    'dwBannerEasyMode', 'dwBannerInsights', 'dwWelcomeSeen', 'dwBackupSamples'];
+                const P = SETTINGS_PREFIX;
+                const skip = [P + 'PIN', P + 'PINHash', ...SETTINGS_EXCLUDE,
+                    ...['DarkMode', 'ColorTheme', 'HiddenSections', 'SidebarCollapsed',
+                        'BannerEasyMode', 'BannerInsights', 'WelcomeSeen', 'BackupSamples'].map(k => P + k)];
                 return skip.map(k => 'settings/' + k);
             }
 
             syncedSetting(k) {
-                return k && k.startsWith(SETTINGS_PREFIX) && !k.startsWith('dwViewMode_') &&
+                return k && k.startsWith(SETTINGS_PREFIX) && !k.startsWith(SETTINGS_PREFIX + 'ViewMode_') &&
                     !this.syncSkipList().includes('settings/' + k);
             }
 

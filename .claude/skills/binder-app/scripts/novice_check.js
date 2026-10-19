@@ -74,6 +74,8 @@ async function walk(page, pass, errors) {
     if (pass === 'empty') {
       if (text.length < 40) add('MAJOR', `empty › ${key}`, 'Screen is nearly blank with no data.', 'Add an empty state that says what goes here and offers the Add button.');
       const zeros = (text.match(/(^|\s|·)(0%|0\.0+%?|\$0\.00|£0\.00)(?=\s|·|$)/g) || []).length;
+      const zeroTiles = key === 'dashboard' ? await page.evaluate(() => [...document.querySelectorAll('#main-content .number-font')].filter(e => e.offsetParent && /^\s*0\s*$/.test(e.textContent)).length) : 0;
+      if (zeroTiles > 1) add('MAJOR', 'empty › dashboard', `${zeroTiles} tiles show a bare 0 on a brand-new planner.`, 'Show "—" and a hint ("Nothing added yet") until there is data.');
       if (key === 'dashboard' && zeros > 0) add('MAJOR', 'empty › dashboard', `${zeros} tiles show a zero figure on a brand-new planner.`, 'Show "—" until there is something to count; a zero reads as "you are failing".');
     }
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -136,12 +138,12 @@ async function emptyForms(page, errors) {
   await emptyForms(page, errors);
 
   // The data must survive a reload: a buyer's first fear.
-  await page.evaluate(() => { window.app.data.students = [{ id: 'nvx1', name: 'O’Neil & Sons <test>', grade: '5th Grade' }]; window.app.saveData(); });
+  await page.evaluate(() => { const E = ['students', 'members', 'people', 'household'].find(k => SECTIONS[k]) || Object.keys(SECTIONS).find(k => k !== 'dashboard' && !SECTIONS[k].custom); window.__E = E; window.app.data[E] = [{ id: 'nvx1', name: 'O’Neil & Sons <test>' }]; window.app.saveData(); });
   await page.waitForTimeout(400);
   await page.reload();
   await page.waitForFunction(() => window.app && window.app.data, null, { timeout: 15000 });
   await page.waitForTimeout(500);
-  const kept = await page.evaluate(() => (window.app.data.students || []).some(s => s.id === 'nvx1'));
+  const kept = await page.evaluate(() => Object.values(window.app.data).some(v => Array.isArray(v) && v.some(s => s && s.id === 'nvx1')));
   if (!kept) add('BLOCKER', 'reload', 'A record added before a reload is gone after it.', 'Check the record store flushes before unload.');
 
   await browser.close();

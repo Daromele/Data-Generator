@@ -80,10 +80,14 @@ fam('Inter', 'DM Sans'); fam('Merriweather', 'Manrope'); fam('JetBrains Mono', '
 t0 = s.index('        const THEMES = {')
 t1 = s.index('        };', t0) + len('        };')
 s = s[:t0] + '        // JPS Digital Pages palettes (jps_skin.py): accent ramp 50..900 + house tokens\n        const THEMES = ' + json.dumps(themes) + ';\n        const DEFAULT_THEME = ' + json.dumps(a.default) + ';' + s[t1:]
-rep("const colorTheme = storage.get('dwColorTheme') || 'indigo';",
-    "const colorTheme = THEMES[storage.get('dwColorTheme')] ? storage.get('dwColorTheme') : DEFAULT_THEME;")
-rep("const isActive = (storage.get('dwColorTheme') || 'indigo') === t;",
-    "const isActive = (THEMES[storage.get('dwColorTheme')] ? storage.get('dwColorTheme') : DEFAULT_THEME) === t;")
+m = re.search(r"storage\.get\('(\w+ColorTheme)'\) \|\| '(\w+)'", s)
+if not m:
+    sys.exit("Anchor not found: storage.get('<prefix>ColorTheme') || '<default>'")
+key, old = m.group(1), m.group(2)
+rep(f"const colorTheme = storage.get('{key}') || '{old}';",
+    f"const colorTheme = THEMES[storage.get('{key}')] ? storage.get('{key}') : DEFAULT_THEME;")
+rep(f"const isActive = (storage.get('{key}') || '{old}') === t;",
+    f"const isActive = (THEMES[storage.get('{key}')] ? storage.get('{key}') : DEFAULT_THEME) === t;")
 # Settings picker: palette cards (three bars on the theme's paper) instead of round dots
 rep("""return `<button onclick="window.app.setColorTheme('${t}')" class="w-8 h-8 rounded-full shadow-sm transition-all ${ring}" style="background-color: ${hexColor};"></button>`;""",
     """const c = THEMES[t]; return `<button onclick="window.app.setColorTheme('${t}')" title="${t[0].toUpperCase() + t.slice(1)}" aria-label="${t} theme" class="jps-pal ${isActive ? 'on' : ''}" style="background:${c.paper}"><i style="background:${c.bold}"></i><i style="background:${c.accent}"></i><i style="background:${c.pop}"></i><span>${t}</span></button>`;""")

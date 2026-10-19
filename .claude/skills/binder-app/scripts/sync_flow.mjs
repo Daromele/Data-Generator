@@ -27,22 +27,27 @@ try {
   const device = async () => {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     await ctx.route(/workers\.dev/, cloud);
-    await ctx.addInitScript(() => { try { localStorage.setItem('dwWelcomeSeen', 'true'); } catch (e) {} });
+    await ctx.addInitScript(() => {
+      window.__ent = () => ['students', 'members', 'people', 'household'].find(k => typeof SECTIONS !== 'undefined' && SECTIONS[k]) || Object.keys(SECTIONS).find(k => k !== 'dashboard' && !SECTIONS[k].custom);
+      window.__att = () => Object.keys(SECTIONS).find(k => (SECTIONS[k].fields || []).some(f => f.type === 'attachments'));
+      window.__P = () => (typeof SETTINGS_PREFIX !== 'undefined' ? SETTINGS_PREFIX : 'dw');
+    });
+    await ctx.addInitScript(() => { try { ['dw', 'ev', 'hb', 'mb', 'hs'].forEach(p => localStorage.setItem(p + 'WelcomeSeen', 'true')); } catch (e) {} });
     const p = await ctx.newPage(); p.on('pageerror', e => ok(false, 'pageerror: ' + e.message));
     p.on('dialog', d => d.accept());
     await p.goto(BASE); await p.waitForFunction(() => window.app && window.app.sync);
     await p.evaluate(() => { window.app.closeOnboarding && window.app.closeOnboarding(); window.app.clearAllData(true); });
     await p.waitForTimeout(300); return p;
   };
-  const names = p => p.evaluate(() => (window.app.data.students || []).map(s => s.name).sort().join(','));
-  const add = (p, id, name) => p.evaluate(([id, name]) => { window.app.data.students.push({ id, name, grade: '5th Grade' }); window.app.saveData(); }, [id, name]);
+  const names = p => p.evaluate(() => (window.app.data[__ent()] || []).map(s => s.name).sort().join(','));
+  const add = (p, id, name) => p.evaluate(([id, name]) => { (window.app.data[__ent()] = window.app.data[__ent()] || []).push({ id, name }); window.app.saveData(); }, [id, name]);
   const settings = p => p.evaluate(() => window.app.navigateTo('settings'));
   const now = p => p.evaluate(() => window.app.sync.syncNow());
   const confirmYes = p => p.evaluate(() => { document.getElementById('confirm-action-btn').click(); });
 
   const a = await device(), b = await device();
   await add(a, 'st_a', 'Alpha'); await add(b, 'st_b', 'Beta & O’Neil <B>');
-  await a.evaluate(() => { storage.set('dwPINHash', 'secret-hash-a'); storage.set('dwDarkMode', 'true'); });
+  await a.evaluate(() => { storage.set(__P() + 'PINHash', 'secret-hash-a'); storage.set(__P() + 'DarkMode', 'true'); });
   await settings(a); ok(await a.isVisible('[data-sync="on"]'), 'Settings offers sync');
   await a.click('[data-sync="on"]'); await a.waitForFunction(() => window.app.sync.on && window.app.sync.status.state === 'synced');
   const code = await a.evaluate(() => window.app.sync.code);
@@ -53,24 +58,24 @@ try {
   await b.waitForFunction(() => window.app.sync.on && window.app.sync.status.state === 'synced');
   ok(await names(b) === 'Alpha,Beta & O’Neil <B>', 'second computer gets both records');
   await now(a); ok(await names(a) === 'Alpha,Beta & O’Neil <B>', 'first computer gets the second one’s record');
-  ok(await a.evaluate(() => { const o = JSON.stringify(window.app.syncOut()); return !o.includes('secret-hash-a') && !o.includes('dwDarkMode') && !o.includes('dwSnapshot'); }), 'what is sent holds no PIN hash, theme or snapshots');
-  ok(await b.evaluate(() => storage.get('dwPINHash') !== 'secret-hash-a' && storage.get('dwDarkMode') !== 'true'), 'PIN hash and theme stay on their computer');
+  ok(await a.evaluate(() => { const o = JSON.stringify(window.app.syncOut()); return !o.includes('secret-hash-a') && !o.includes(__P() + 'DarkMode') && !o.includes(__P() + 'Snapshot'); }), 'what is sent holds no PIN hash, theme or snapshots');
+  ok(await b.evaluate(() => storage.get(__P() + 'PINHash') !== 'secret-hash-a' && storage.get(__P() + 'DarkMode') !== 'true'), 'PIN hash and theme stay on their computer');
 
-  await a.evaluate(() => { window.app.data.students.find(s => s.id === 'st_a').name = 'Alpha2'; window.app.saveData(); });
-  await b.evaluate(() => { window.app.data.students = window.app.data.students.filter(s => s.id !== 'st_b'); window.app.saveData(); });
+  await a.evaluate(() => { window.app.data[__ent()].find(s => s.id === 'st_a').name = 'Alpha2'; window.app.saveData(); });
+  await b.evaluate(() => { window.app.data[__ent()] = window.app.data[__ent()].filter(s => s.id !== 'st_b'); window.app.saveData(); });
   await now(a); await now(b); await now(a);
   ok(await names(a) === 'Alpha2' && await names(b) === 'Alpha2', 'an edit and a delete on different computers combine');
 
-  await b.evaluate(() => { storage.set('dwUserName', 'Sam Educator'); });
+  await b.evaluate(() => { storage.set(__P() + 'UserName', 'Sam Educator'); });
   await b.waitForTimeout(1200); await now(b); await now(a);
-  ok(await a.evaluate(() => storage.get('dwUserName') === 'Sam Educator' && window.app.profile.userName === 'Sam Educator'), 'educator name (a setting) syncs');
+  ok(await a.evaluate(() => storage.get(__P() + 'UserName') === 'Sam Educator' && window.app.profile.userName === 'Sam Educator'), 'educator name (a setting) syncs');
 
-  await a.evaluate(() => { window.app.data.lesson_plans.push({ id: 'lp1', date: '2026-10-01', student: 'st_a', subject: 'Math', topic: 'Fractions', status: '🟢 Completed', samples: [{ id: 'smp1', name: 'worksheet.jpg', size: 120000 }] }); window.app.saveData(); });
+  await a.evaluate(() => { const k = __att(); if (!k) return; const f = SECTIONS[k].fields.find(x => x.type === 'attachments').name; (window.app.data[k] = window.app.data[k] || []).push({ id: 'att1', [f]: [{ id: 'smp1', name: 'scan.jpg', size: 120000 }] }); window.app.saveData(); });
   await now(a); await now(b);
-  ok(await b.evaluate(() => (window.app.data.lesson_plans.find(l => l.id === 'lp1') || {}).topic === 'Fractions'), 'a record with an attachment syncs its metadata');
+  ok(await b.evaluate(() => !__att() || (window.app.data[__att()] || []).some(l => l.id === 'att1')), 'a record with an attachment syncs its metadata');
   ok(!bodies.some(x => /data:image|dataUrl/.test(x)), 'no attachment payload reaches the server');
 
-  await a.evaluate(() => storage.remove ? storage.remove('dwPINHash') : localStorage.removeItem('dwPINHash'));   // else the lock screen covers the reload
+  await a.evaluate(() => storage.remove(__P() + 'PINHash'));   // else the lock screen covers the reload
   await a.reload(); await a.waitForFunction(() => window.app && window.app.sync && window.app.sync.status.state === 'synced', null, { timeout: 15000 });
   ok(await names(a) === 'Alpha2' && await a.evaluate(() => window.app.sync.on), 'after a reload: records and sync still there');
   const before = bodies.length; await now(a); await now(b); ok(bodies.length === before, 'nothing re-sent when computers match');

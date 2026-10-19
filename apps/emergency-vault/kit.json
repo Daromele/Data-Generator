@@ -1,0 +1,13 @@
+{
+  "product": "Emergency Vault",
+  "slug": "emergency-vault",
+  "file": "Emergency_Vault.html",
+  "theme": "ledger",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://jps-demo.pages.dev/emergency-vault/",
+  "hosted_url": "https://jps-apps.pages.dev/emergency-vault/",
+  "brand": {"name": "JPS Digital Pages", "site": "https://www.jpsdigitalpages.com", "email": "hello@jpsdigitalpages.com",
+            "more_apps": "https://jpsdigitalpages.com/collection/web-applications", "more_label": "more apps and free demos"},
+  "listing": {"promise": "Everything the people you trust would need if you could not tell them yourself, in one private file."}
+}
