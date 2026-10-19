@@ -14,7 +14,7 @@ on phones and tablets, and backups are free with purchase**; sync is optional.
 | Codes | `hosting/codes.json` (SHA-256, committed), `hosting/ACCESS_CODES.txt` (plain, **git-ignored**) |
 | Gate test | `scripts/gate_test.mjs` |
 | Icons | `scripts/hosted_icons.js` -> `hosting/icons/<slug>/` (committed, drawn once) |
-| Deploy | `.github/workflows/deploy-dbd-apps.yml` -> Cloudflare Pages **dbd-apps**, `https://dbd-apps.pages.dev/<slug>/` |
+| Deploy | **Shared with JPS**: Dashboard-Creator `hosting/build_sites.py` (`BINDERS` list) + `deploy-jps-apps.yml` -> Cloudflare Pages **jps-apps**, `https://jps-apps.pages.dev/<slug>/`. Copy the built binder to `binders/` there, add it to `BINDERS`, put its hash in `codes.json`, push. |
 | Buyer sheet | `scripts/start_here.py` -> one-page **START_HERE.pdf** with the link and the code |
 
 **One code per product**, not per order (the JPS model, already in use for 14
@@ -28,9 +28,11 @@ START_HERE to future buyers (existing buyers then need the new code).
 for it before building a buyer kit; append any new code to it and hand the file
 back. `make_kits.py --codes` refuses to build a hosted product's kit without it.
 
-**Deploy needs one secret** in the repo that runs the workflow:
-`CLOUDFLARE_API_TOKEN` (the JPS one lives in Dashboard-Creator; Data-Generator
-needs its own copy). The sandbox cannot reach `*.pages.dev`: ask the user to
+**Deploy goes through the JPS pipeline** (the user's choice: one Cloudflare
+project, one secret, one gate). `build_hosted.py` here stays as the local
+builder and test bench; production is Dashboard-Creator's `jps-apps` project.
+The free demo goes to jps-demos (`<slug>/index.html` from `make_demo.py`, plus
+a card on the landing page). The sandbox cannot reach `*.pages.dev`: ask the user to
 check the live link on their phone.
 
 The rest of this page is the reasoning behind it.

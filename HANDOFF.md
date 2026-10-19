@@ -121,8 +121,10 @@ verify_binder.js      6 passed, 0 failed (run against the Vault)
 
 - **Phone access + START_HERE.pdf** (the JPS model): `build_hosted.py`,
   `start_here.py`, `gate_test.mjs`, workflow `deploy-dbd-apps.yml`. Homeschool
-  Hub has its code (in the user's ACCESS_CODES.txt, never in git). **Deploy is
-  blocked until the user adds the `CLOUDFLARE_API_TOKEN` secret to this repo.**
+  Hub has its code (in the user's ACCESS_CODES.txt, never in git). Production
+  hosting is the JPS pipeline: Dashboard-Creator branch `claude/gifted-cannon-6hsfy4`
+  (`binders/`, `BINDERS` in `hosting/build_sites.py`) -> https://jps-apps.pages.dev/homeschool-hub/.
+  Free demo: https://jps-demo.pages.dev/homeschool-hub/ (jps-demos main).
 
 ## Open / next
 

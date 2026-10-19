@@ -128,7 +128,7 @@ def main():
         assert r.returncode == 0, r.stderr
     for s in gate:
         shutil.copytree(os.path.join(icons, s), os.path.join(site, s, 'icons'), dirs_exist_ok=True)
-    print(f'hosting/site: {len(gate)} binder(s) -> https://{cfg["project"]}.pages.dev/<slug>/')
+    print(f'hosting/site: {len(gate)} binder(s) -> https://{cfg['project']}.pages.dev/<slug>/')
 
 
 if __name__ == '__main__':

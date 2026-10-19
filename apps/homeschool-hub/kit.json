@@ -4,8 +4,8 @@
   "file": "Homeschool_Hub.html",
   "theme": "indigo",
   "support_email": "[ADD YOUR SUPPORT EMAIL]",
-  "shop_link": "[ADD YOUR ETSY SHOP LINK]",
-  "demo_link": "[ADD YOUR DEMO LINK]",
+  "shop_link": "https://designsbydarowan.com/collection/web-applications",
+  "demo_link": "https://jps-demo.pages.dev/homeschool-hub/",
   "video_link": "[ADD YOUR VIDEO LINK]",
   "entity": "students",
   "artifact": "an official high school transcript",
@@ -258,7 +258,7 @@
       "icon": "phone",
       "title": "On your phone or tablet",
       "lines": [
-        "Open dbd-apps.pages.dev/homeschool-hub, enter the access code from START_HERE once.",
+        "Open jps-apps.pages.dev/homeschool-hub, enter the access code from START_HERE once.",
         "Then Share → Add to Home Screen. Turn on sync to share records with your computer."
       ]
     },
@@ -288,7 +288,7 @@
       ]
     }
   ],
-  "hosted_url": "https://dbd-apps.pages.dev/homeschool-hub/",
+  "hosted_url": "https://jps-apps.pages.dev/homeschool-hub/",
   "start_here": {
     "steps": [
       [
