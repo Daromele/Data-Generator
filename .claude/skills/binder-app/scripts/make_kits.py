@@ -4,11 +4,11 @@
     python3 make_kits.py kit.json App.html SHOTS_DIR PHOTOS_DIR VIDEO.mp4 DEMO.html OUT_DIR --codes hosting/ACCESS_CODES.txt
 
 OUT_DIR/
-  <Product>_Buyer_Kit.zip          what the buyer downloads from Etsy (3_Digital_File)
+  <Product>_Buyer_Kit.zip          what the buyer downloads from Etsy (uploaded on its own)
       <file>.html  START_HERE.pdf (with the phone link and ACCESS CODE)  LICENSE.txt
       <Product>_Quick_Start_Guide.html
   <Product>_Listing_Kit/           what the seller uploads
-      1_Photos/  2_Video/  3_Digital_File/  4_Extras/  Listing_Text.txt
+      1_Photos/  2_Video/  4_Extras/  Listing_Text.txt
   <Product>_Listing_Kit.zip
 
 Listing_Text.txt opens with the Etsy title and the 13 tags, then the
