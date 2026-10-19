@@ -137,11 +137,32 @@ def check(html):
     return out
 
 
+JPS_THEMES = ("kiln", "ledger", "sage", "linen", "fjord", "slate", "lavender", "blush")
+
+
+def check_jps(html):
+    """A binder re-dressed for the JPS shop (jps_skin.py) follows the JPS house style instead."""
+    out = []
+    if not re.search(r'font-family:\s*"DM Sans"', html) or not re.search(r'font-family:\s*"?Manrope', html):
+        out.append(("BLOCKER", "JPS typefaces", "DM Sans and Manrope are not both inlined.", "Re-run jps_skin.py with the JPS fonts.css."))
+    if re.search(r"font-family:[^;}]*(Inter|Merriweather|JetBrains Mono)", html):
+        out.append(("MAJOR", "Binder typeface left", "A binder face survives beside the JPS ones.", "Re-run jps_skin.py; check print templates."))
+    missing = [t for t in JPS_THEMES if '"%s":' % t not in html]
+    if missing:
+        out.append(("BLOCKER", "JPS themes", "Missing: " + ", ".join(missing), "THEMES must be the 8 JPS light themes."))
+    if 'id="jps-skin"' not in html:
+        out.append(("BLOCKER", "JPS skin", "The skin stylesheet is missing.", "Re-run jps_skin.py."))
+    return out
+
+
 def main():
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
     html = open(sys.argv[1], encoding="utf-8", errors="replace").read()
-    findings = check(html)
+    jps = 'JPS house style skin' in html
+    if jps:
+        print('JPS-skinned binder: checking against the JPS house style')
+    findings = check_jps(html) if jps else check(html)
     rank = {"BLOCKER": 0, "MAJOR": 1, "minor": 2}
     counts = {k: 0 for k in rank}
     for sev, name, what, fix in sorted(findings, key=lambda f: rank[f[0]]):

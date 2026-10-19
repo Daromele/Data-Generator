@@ -273,7 +273,7 @@
     },
     {
       "icon": "sync",
-      "title": "Optional: sync your computers",
+      "title": "Optional: sync your devices",
       "lines": [
         "Settings → Sync Across Devices → Turn On Sync, then enter the sync code on your other device.",
         "Encrypted with your private code. Attached files stay on each device."

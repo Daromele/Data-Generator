@@ -129,8 +129,9 @@ verify_binder.js      6 passed, 0 failed (run against the Vault)
 - **Homeschool Hub moved to JPS Digital Pages** (user's decision, 2026-10-19): no DBD sales in 2
   months; JPS has the reviews, demo site and hosting. Brand lives in `kit.json` › `brand`
   (start_here.py, make_kits.py read it). Storage keys and the sync key are unchanged, so existing
-  buyers lose nothing. Not done: the full JPS visual house style (fonts, paper look) — the binder
-  engine keeps its own look for now.
+  buyers lose nothing. Restyled to the JPS house style with `scripts/jps_skin.py` (DM Sans/Manrope, 8 JPS themes,
+  paper/rail/hero); `check_house_style.py` checks a skinned binder against JPS rules. Its listing kit is
+  built with the JPS pipeline in Dashboard-Creator `monthly-plan/listing/homeschool-hub/`.
 
 ## Open / next
 

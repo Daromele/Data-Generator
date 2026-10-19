@@ -51,7 +51,7 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   const themes = await page.evaluate(() => typeof THEMES !== 'undefined' ? Object.keys(THEMES) : ['indigo', 'teal', 'emerald', 'rose', 'amber']);
   await page.evaluate(() => window.app.navigateTo('dashboard'));
   for (const t of themes) { await page.evaluate(t => window.app.setColorTheme(t), t).catch(() => {}); await shot('theme-' + t); }
-  await page.evaluate(t => window.app.setColorTheme(t), themes[0]).catch(() => {});
+  await page.evaluate(t => window.app.setColorTheme(typeof DEFAULT_THEME !== 'undefined' ? DEFAULT_THEME : t), themes[0]).catch(() => {});   // documents print in the product's default theme
   await page.evaluate(() => { if (!document.documentElement.classList.contains('dark')) window.app.toggleDarkMode(); window.app.navigateTo('dashboard'); });
   await shot('screen-dark-dashboard');
   await page.evaluate(() => { if (document.documentElement.classList.contains('dark')) window.app.toggleDarkMode(); });
