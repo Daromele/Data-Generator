@@ -67,7 +67,7 @@ your records meet any rule that applies to you.
 
 The file is provided as is, without warranty. Keep your own backups.
 
-© Designs by Darowan. All rights reserved.
+© {kit.get('brand', {}).get('name', 'Designs by Darowan')}. All rights reserved.
 """
 
 ICONS = {

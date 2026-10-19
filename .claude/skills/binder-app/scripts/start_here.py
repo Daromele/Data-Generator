@@ -37,6 +37,7 @@ has_sync = 'BinderSync.create' in app
 file_name = kit.get('file', 'App.html')
 guide = re.sub(r'[^A-Za-z0-9]+', '_', kit['product']).strip('_') + '_Quick_Start_Guide.html'
 email, shop = kit['support_email'], kit['shop_link']
+brand = kit.get('brand') or {'name': 'Designs by Darowan', 'more_apps': shop, 'more_label': 'more binders'}
 
 ICON = {
     'file': '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
@@ -101,8 +102,8 @@ td{{padding:8px;border-top:1px solid var(--rule);vertical-align:middle}}td:first
 <section class="card"><h2>{svg('swap')}Keep your records safe</h2><table><tr><th>How</th><th>What it does</th><th>Where</th></tr>{''.join(rows)}</table>
 <div class="tip">{svg('shield')}<span><b>Back up today.</b> Your records live in this browser only; clearing browser data removes them. A new version of the planner never loses them: open it, then Settings › Restore Backup.</span></div></section>
 <section><h2>{svg('help')}Need help?</h2><div class="help"><div>{svg('book')}<span><b>{e(guide)}</b><br>step-by-step, in your download</span></div>
-<div>{svg('mail')}<span><a href="mailto:{e(email)}">{e(email)}</a><br>or Etsy Messages</span></div><div>{svg('tag')}<span><a href="{e(shop)}">Designs by Darowan</a><br>more binders</span></div></div></section>
-<div class="ft"><span>© Designs by Darowan · for your own household, see LICENSE.txt</span><span>{e(sh.get('footer', ''))}</span></div>
+<div>{svg('mail')}<span><a href="mailto:{e(email)}">{e(email)}</a><br>or Etsy Messages</span></div><div>{svg('tag')}<span><a href="{e(brand.get('more_apps', shop))}">{e(brand['name'])}</a><br>{e(brand.get('more_label', 'more apps'))}</span></div></div></section>
+<div class="ft"><span>© {e(brand['name'])} · for your own household, see LICENSE.txt</span><span>{e(sh.get('footer', ''))}</span></div>
 </body></html>'''
 
 tmp = out + '.html'

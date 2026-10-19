@@ -34,7 +34,7 @@ ${wrong ? '<p class="err" role="alert">That code doesn’t match this app. Check
 
 export async function onRequest(ctx) {
   const url = new URL(ctx.request.url), slug = url.pathname.split('/')[1], app = APPS[slug];
-  if (!slug) return HOME ? Response.redirect(HOME, 302) : new Response('Designs by Darowan', { status: 404 });
+  if (!slug) return HOME ? Response.redirect(HOME, 302) : new Response('Not found', { status: 404 });
   if (!app) return ctx.next();
   if (url.pathname === '/' + slug) return Response.redirect(url.origin + '/' + slug + '/' + url.search, 301);
   if (OPEN.test(url.pathname)) return ctx.next();

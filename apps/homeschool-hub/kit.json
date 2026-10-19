@@ -3,8 +3,8 @@
   "slug": "homeschool-hub",
   "file": "Homeschool_Hub.html",
   "theme": "indigo",
-  "support_email": "[ADD YOUR SUPPORT EMAIL]",
-  "shop_link": "https://designsbydarowan.com/collection/web-applications",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
   "demo_link": "https://jps-demo.pages.dev/homeschool-hub/",
   "video_link": "[ADD YOUR VIDEO LINK]",
   "entity": "students",
@@ -307,5 +307,12 @@
       "Back up, or let automatic backup do it"
     ],
     "footer": "Tracks what you enter; not legal or educational advice"
+  },
+  "brand": {
+    "name": "JPS Digital Pages",
+    "site": "https://www.jpsdigitalpages.com",
+    "email": "hello@jpsdigitalpages.com",
+    "more_apps": "https://jpsdigitalpages.com/collection/web-applications",
+    "more_label": "more apps and free demos"
   }
 }
