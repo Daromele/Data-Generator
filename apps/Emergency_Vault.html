@@ -6026,7 +6026,7 @@ window.BinderSync = window.JPSSync;
                       options: ["Checking", "Savings", "Retirement", "Investment", "Mortgage", "Loan", "Credit card", "Other"] },
                     { name: "holder", label: "Held by", type: "member_select" },
                     { name: "reference", label: "Reference (last 4 digits only)", type: "text" },
-                    { name: "approx_value", label: "Approximate value", type: "number" },
+                    { name: "approx_value", label: "Approximate value", type: "number", format: "currency" },
                     { name: "where_paperwork", label: "Where the paperwork is", type: "text" },
                     { name: "notes", label: "Notes", type: "textarea" }
                 ]
@@ -6044,7 +6044,7 @@ window.BinderSync = window.JPSSync;
                     { name: "policy_no", label: "Policy number", type: "text" },
                     { name: "covers", label: "Covers", type: "member_multi" },
                     { name: "renews", label: "Renews", type: "date" },
-                    { name: "premium", label: "Premium", type: "number" },
+                    { name: "premium", label: "Premium", type: "number", format: "currency" },
                     { name: "phone", label: "Claims phone", type: "text" },
                     { name: "notes", label: "Notes", type: "textarea" }
                 ]
@@ -6075,7 +6075,7 @@ window.BinderSync = window.JPSSync;
                       options: ["Home", "Rental", "Land", "Safe", "Storage unit", "Safety deposit box", "Valuable", "Other"] },
                     { name: "location", label: "Where it is", type: "text" },
                     { name: "key_location", label: "Where the key or code is kept", type: "text" },
-                    { name: "approx_value", label: "Approximate value", type: "number" },
+                    { name: "approx_value", label: "Approximate value", type: "number", format: "currency" },
                     { name: "notes", label: "Notes", type: "textarea" },
                     { name: "attachments", label: "Photos", type: "attachments" }
                 ]
@@ -7405,7 +7405,7 @@ window.BinderSync = window.JPSSync;
                 if (skipConfirm) {
                     wipeFn();
                 } else {
-                    this.openConfirm("Clear Entire Binder?", "This permanently deletes every person, record and photo in this vault. Download a backup first if there is any chance you will want it back.", "Wipe Data", "bg-rose-600 hover:bg-rose-700 text-white", wipeFn);
+                    this.openConfirm("Clear Entire Vault?", "This permanently deletes every person, record and photo in this vault. Download a backup first if there is any chance you will want it back.", "Wipe Data", "bg-rose-600 hover:bg-rose-700 text-white", wipeFn);
                 }
             }
 
