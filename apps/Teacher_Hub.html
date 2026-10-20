@@ -7681,7 +7681,10 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     const quickLog = key === 'attendance'
                         ? `<button onclick="window.app.openBulkLog()" class="px-4 py-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 mr-2"><i class="ph ph-lightning text-primary-500"></i> <span class="hidden sm:inline">Take Attendance</span></button>`
                         : '';
-                    btnContainer.innerHTML = `<div class="flex items-center">${yearWizard}${quickLog}<button onclick="window.app.openModal('${escapeHtml(key)}')" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors flex items-center gap-2"><i class="ph ph-plus"></i> <span class="sm:hidden">Add</span><span class="hidden sm:inline">Add ${escapeHtml(SECTIONS[key].singular || 'Record')}</span></button></div>`;
+                    const weekPrint = key === 'lesson_plans'
+                        ? `<button onclick="window.app.printWeekPlan()" class="px-4 py-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 mr-2"><i class="ph ph-printer text-primary-500"></i> <span class="hidden sm:inline">Print Week</span></button>`
+                        : '';
+                    btnContainer.innerHTML = `<div class="flex items-center">${yearWizard}${quickLog}${weekPrint}<button onclick="window.app.openModal('${escapeHtml(key)}')" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors flex items-center gap-2"><i class="ph ph-plus"></i> <span class="sm:hidden">Add</span><span class="hidden sm:inline">Add ${escapeHtml(SECTIONS[key].singular || 'Record')}</span></button></div>`;
                     
                     const config = SECTIONS[key];
                     const storedView = storage.get(`thViewMode_${key}`);

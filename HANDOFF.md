@@ -196,5 +196,7 @@ Next, in order: Co-Parenting Planner (drop the couples-finance
 "Shared Expenses Breakdown" screen), Legacy & End-of-Life (credential fields: no full
 account numbers or "keys/codes"), After Loss, Divorce, Cleaning Tracker (only the DEMO
 file received; need the full one), Caregiver (drop the HIPAA claim, non-clinical).
-Then FIRST after Ultimate Mom: Digital Teacher Hub (classroom management and planning), new,
-built from Homeschool Hub as the base.
+Digital Teacher Hub: DONE (apps/Teacher_Hub.html, prefix th, theme kiln, slug teacher-hub). Built from
+Homeschool Hub: classes are the backbone (courses key = Classes & Periods; course_select = class field);
+classFilter on every list, the dashboard and print selection; seating (custom + keepsData, fields: []),
+Picker & Timer, sub plans, progress reports, week print, attendance grid. Compliance/transcripts removed.
