@@ -28,16 +28,21 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   improvements: app => app.printImprovementsReport('all', 'all'),
   contacts: app => app.printEmergencySheet(),
   sitter: app => app.printSitterSheet(),                        // Ultimate Mom
-  week: app => app.printWeeklyPlan(),
+  weekplan: app => app.printWeeklyPlan(),
   grocery: app => app.printGroceryList(),
   immunization: app => app.printImmunisationRecord('all', 'all'),
+  progress: app => app.generateReportCards('all', 'all'),        // Teacher Hub
+  sub: app => app.printSubPlans(),
+  week: app => app.printWeekPlan(),
+  seating: app => app.printSeatingChart(),
 };
 
 (async () => {
   const opts = fs.existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {};
   const browser = await chromium.launch(opts);
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, reducedMotion: 'reduce', offline: true });
-  await ctx.addInitScript(() => { try { ['dw', 'ev', 'hb', 'mb'].forEach(p => localStorage.setItem(p + 'WelcomeSeen', 'true')); } catch (e) {} });
+  const PREFIX = (fs.readFileSync(file, 'utf8').match(/SETTINGS_PREFIX = '(\w+)'/) || [, 'dw'])[1];   // whichever binder this is
+  await ctx.addInitScript(P => { try { localStorage.setItem(P + 'WelcomeSeen', 'true'); } catch (e) {} }, PREFIX);
   const page = await ctx.newPage();
   page.on('pageerror', e => console.error('page error:', e.message));
   await page.goto('file://' + path.resolve(file));

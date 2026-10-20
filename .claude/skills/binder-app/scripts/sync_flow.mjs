@@ -10,6 +10,7 @@ import { Room } from '../assets/sync/worker/index.mjs';
 const require = createRequire(import.meta.url);
 const pw = require('playwright');
 const html = readFileSync(process.argv[2]);
+const PREFIX = (String(html).match(/SETTINGS_PREFIX = '(\w+)'/) || [, 'dw'])[1];   // whichever binder this is
 const srv = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'text/html' }); r.end(html); }).listen(0);
 const BASE = `http://localhost:${srv.address().port}/`;
 let failed = 0; const ok = (c, m) => { console.log(c ? 'ok  ' : 'FAIL', m); if (!c) failed++; };
@@ -32,7 +33,7 @@ try {
       window.__att = () => Object.keys(SECTIONS).find(k => (SECTIONS[k].fields || []).some(f => f.type === 'attachments'));
       window.__P = () => (typeof SETTINGS_PREFIX !== 'undefined' ? SETTINGS_PREFIX : 'dw');
     });
-    await ctx.addInitScript(() => { try { ['dw', 'ev', 'hb', 'mb', 'hs'].forEach(p => localStorage.setItem(p + 'WelcomeSeen', 'true')); } catch (e) {} });
+    await ctx.addInitScript(P => { try { localStorage.setItem(P + 'WelcomeSeen', 'true'); } catch (e) {} }, PREFIX);
     const p = await ctx.newPage(); p.on('pageerror', e => ok(false, 'pageerror: ' + e.message));
     p.on('dialog', d => d.accept());
     await p.goto(BASE); await p.waitForFunction(() => window.app && window.app.sync);

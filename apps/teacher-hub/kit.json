@@ -1,0 +1,13 @@
+{
+  "product": "Digital Teacher Hub",
+  "slug": "teacher-hub",
+  "file": "Teacher_Hub.html",
+  "theme": "kiln",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://jps-demo.pages.dev/teacher-hub/",
+  "hosted_url": "https://jps-apps.pages.dev/teacher-hub/",
+  "brand": {"name": "JPS Digital Pages", "site": "https://www.jpsdigitalpages.com", "email": "hello@jpsdigitalpages.com",
+            "more_apps": "https://jpsdigitalpages.com/collection/web-applications", "more_label": "more apps and free demos"},
+  "listing": {"promise": "Lesson plans, attendance, grades, seating charts and sub plans for one class or six periods, in one private file."}
+}
