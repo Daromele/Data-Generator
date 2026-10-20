@@ -189,9 +189,12 @@ Engine fixes found on the way, applied to all three binders and the skill:
 
 ## Binder queue (agreed with the user)
 
-Done: Homeschool Hub, Emergency Vault, Home Management Binder (all JPS, Night/Midnight).
-Next, in order: Ultimate Mom Binder, Co-Parenting Planner (drop the couples-finance
+Done: Homeschool Hub, Emergency Vault, Home Management Binder, Ultimate Mom Binder (all JPS,
+Night/Midnight). Ultimate Mom fixes: US family, trips never resolved (looked in a Home list),
+12-hour times in US format.
+Next, in order: Co-Parenting Planner (drop the couples-finance
 "Shared Expenses Breakdown" screen), Legacy & End-of-Life (credential fields: no full
 account numbers or "keys/codes"), After Loss, Divorce, Cleaning Tracker (only the DEMO
 file received; need the full one), Caregiver (drop the HIPAA claim, non-clinical).
-New, built from scratch: Digital Teacher Hub (classroom management and planning).
+Then FIRST after Ultimate Mom: Digital Teacher Hub (classroom management and planning), new,
+built from Homeschool Hub as the base.

@@ -1,0 +1,13 @@
+{
+  "product": "Ultimate Mom Binder",
+  "slug": "ultimate-mom",
+  "file": "Ultimate_Mom_Binder.html",
+  "theme": "blush",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://jps-demo.pages.dev/ultimate-mom/",
+  "hosted_url": "https://jps-apps.pages.dev/ultimate-mom/",
+  "brand": {"name": "JPS Digital Pages", "site": "https://www.jpsdigitalpages.com", "email": "hello@jpsdigitalpages.com",
+            "more_apps": "https://jpsdigitalpages.com/collection/web-applications", "more_label": "more apps and free demos"},
+  "listing": {"promise": "Chores, meals, school, health and the whole family calendar, in one private file."}
+}

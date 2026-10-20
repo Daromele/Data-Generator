@@ -27,13 +27,17 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   inventory: app => app.printInventoryReport('all', 'all'),    // Home Management
   improvements: app => app.printImprovementsReport('all', 'all'),
   contacts: app => app.printEmergencySheet(),
+  sitter: app => app.printSitterSheet(),                        // Ultimate Mom
+  week: app => app.printWeeklyPlan(),
+  grocery: app => app.printGroceryList(),
+  immunization: app => app.printImmunisationRecord('all', 'all'),
 };
 
 (async () => {
   const opts = fs.existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {};
   const browser = await chromium.launch(opts);
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, reducedMotion: 'reduce', offline: true });
-  await ctx.addInitScript(() => { try { ['dw', 'ev', 'hb'].forEach(p => localStorage.setItem(p + 'WelcomeSeen', 'true')); } catch (e) {} });
+  await ctx.addInitScript(() => { try { ['dw', 'ev', 'hb', 'mb'].forEach(p => localStorage.setItem(p + 'WelcomeSeen', 'true')); } catch (e) {} });
   const page = await ctx.newPage();
   page.on('pageerror', e => console.error('page error:', e.message));
   await page.goto('file://' + path.resolve(file));
