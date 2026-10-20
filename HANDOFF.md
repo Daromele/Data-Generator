@@ -186,3 +186,12 @@ Engine fixes found on the way, applied to all three binders and the skill:
 - `jps_skin.py` wrapped unquoted font names in double quotes, which broke
   `style="..."` attributes in printed documents
 - `capture_screens.js` now dismisses the welcome for any prefix
+
+## Binder queue (agreed with the user)
+
+Done: Homeschool Hub, Emergency Vault, Home Management Binder (all JPS, Night/Midnight).
+Next, in order: Ultimate Mom Binder, Co-Parenting Planner (drop the couples-finance
+"Shared Expenses Breakdown" screen), Legacy & End-of-Life (credential fields: no full
+account numbers or "keys/codes"), After Loss, Divorce, Cleaning Tracker (only the DEMO
+file received; need the full one), Caregiver (drop the HIPAA claim, non-clinical).
+New, built from scratch: Digital Teacher Hub (classroom management and planning).
