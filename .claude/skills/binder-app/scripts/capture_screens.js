@@ -24,6 +24,8 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   gobag: app => app.printGoBagSheet(),                         // Emergency Vault
   medical: app => app.printMedicalSummary('all', 'all'),
   where: app => app.printWhereThingsAre(),
+  executor: app => app.printExecutorLetter(),                   // Legacy Planner
+  wishes: app => app.printMyWishes(),
   inventory: app => app.printInventoryReport('all', 'all'),    // Home Management
   improvements: app => app.printImprovementsReport('all', 'all'),
   contacts: app => app.printEmergencySheet(),

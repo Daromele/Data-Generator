@@ -196,7 +196,12 @@ Co-Parenting Planner: DONE (apps/Co_Parenting_Planner.html, prefix cp, theme fjo
 co-parenting). Forked from Ultimate Mom; couples-finance screen dropped. Custody, medical/school,
 incidents, communications, court orders (hidden by default), shared expenses, child support,
 children, professional contacts. Prints: handover sheet, expense statement, master binder.
-Next, in order: Legacy & End-of-Life (credential fields: no full
+Legacy Planner: APP BUILT (apps/Legacy_Planner.html, prefix lg, theme sage, slug legacy-planner),
+forked from Emergency Vault. Sections: First Steps, Key People, Important Documents, Dependents & Pets,
+Medical Directives, Funeral & Memorial, Letters & Messages, Accounts (+beneficiary), Insurance & Benefits,
+Digital Life, Property & Belongings. Prints: For My Executor, My Wishes (signed), Where Things Are.
+No full numbers, no keys/codes field. TODO: kit.json, hosting, demo, listing kit.
+Next after it: Legacy & End-of-Life (credential fields: no full
 account numbers or "keys/codes"), After Loss, Divorce, Cleaning Tracker (only the DEMO
 file received; need the full one), Caregiver (drop the HIPAA claim, non-clinical).
 Digital Teacher Hub: DONE (apps/Teacher_Hub.html, prefix th, theme kiln, slug teacher-hub). Built from

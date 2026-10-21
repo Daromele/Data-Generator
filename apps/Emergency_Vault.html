@@ -6900,7 +6900,7 @@ window.BinderSync = window.JPSSync;
             // document with silently missing columns is worse than a wide one.
             hiddenColumns(sectionKey) {
                 try {
-                    const list = JSON.parse(storage.get(`mbCols_${sectionKey}`) || '[]');
+                    const list = JSON.parse(storage.get(`evCols_${sectionKey}`) || '[]');
                     return Array.isArray(list) ? list : [];
                 } catch (err) {
                     return [];
@@ -6920,14 +6920,14 @@ window.BinderSync = window.JPSSync;
                 const next = hidden.includes(fieldName)
                     ? hidden.filter(n => n !== fieldName)
                     : [...hidden, fieldName];
-                storage.set(`mbCols_${sectionKey}`, JSON.stringify(next));
+                storage.set(`evCols_${sectionKey}`, JSON.stringify(next));
                 this.renderGenericSection(sectionKey);
                 const menu = document.getElementById('column-menu');
                 if (menu) menu.classList.remove('hidden');
             }
 
             showAllColumns(sectionKey) {
-                storage.remove(`mbCols_${sectionKey}`);
+                storage.remove(`evCols_${sectionKey}`);
                 this.renderGenericSection(sectionKey);
             }
 
@@ -7670,7 +7670,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     if (config.dueFields && !this.sortConfig.key) {
                         this.sortConfig = { key: config.dueFields[0], direction: 'asc' };
                     }
-                    const storedView = storage.get(`mbViewMode_${key}`);
+                    const storedView = storage.get(`evViewMode_${key}`);
                     const narrow = window.innerWidth < 640;
                     this.viewMode = storedView || (config.hasCalendar ? 'calendar' : (narrow ? 'grid' : 'table'));
                     
@@ -8236,7 +8236,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
             // --- Views, Sorting, Filtering Engine ---
             setViewMode(mode) {
                 this.viewMode = mode;
-                storage.set(`mbViewMode_${this.currentSection}`, mode); // preference only; never blocks the redraw
+                storage.set(`evViewMode_${this.currentSection}`, mode); // preference only; never blocks the redraw
                 this.reRenderCurrentSection();
             }
 
@@ -9611,14 +9611,14 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                                 <p class="text-sm text-slate-500 leading-relaxed max-w-3xl">The pages worth having on paper, plus a master ledger of every active section. Each one lets you pick who to include, then print it or save it as a file you can email.</p>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
                                     <button onclick="window.app.openPrintModal(false, null, false, false, true)" class="group text-left p-4 bg-white dark:bg-slate-900/40 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary-400 dark:hover:border-primary-500 rounded-xl transition-colors shadow-sm">
-                                        <span class="w-9 h-9 rounded-lg bg-primary-50 dark:bg-slate-800 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0"><i class="ph ph-first-aid-kit text-lg"></i></span>
-                                        <span class="block mt-3 mb-1 font-bold text-slate-900 dark:text-white text-sm">Sitter Sheet</span>
-                                        <span class="block text-xs text-slate-500 leading-relaxed">Allergies, contacts, routines</span>
+                                        <span class="w-9 h-9 rounded-lg bg-primary-50 dark:bg-slate-800 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0"><i class="ph ph-folder-open text-lg"></i></span>
+                                        <span class="block mt-3 mb-1 font-bold text-slate-900 dark:text-white text-sm">Where Things Are</span>
+                                        <span class="block text-xs text-slate-500 leading-relaxed">Every document, key and safe</span>
                                     </button>
                                     <button onclick="window.app.openPrintModal(false, null, true)" class="group text-left p-4 bg-white dark:bg-slate-900/40 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary-400 dark:hover:border-primary-500 rounded-xl transition-colors shadow-sm">
-                                        <span class="w-9 h-9 rounded-lg bg-primary-50 dark:bg-slate-800 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0"><i class="ph ph-syringe text-lg"></i></span>
-                                        <span class="block mt-3 mb-1 font-bold text-slate-900 dark:text-white text-sm">Immunisation</span>
-                                        <span class="block text-xs text-slate-500 leading-relaxed">Dates a school asks for</span>
+                                        <span class="w-9 h-9 rounded-lg bg-primary-50 dark:bg-slate-800 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0"><i class="ph ph-first-aid-kit text-lg"></i></span>
+                                        <span class="block mt-3 mb-1 font-bold text-slate-900 dark:text-white text-sm">Medical Summary</span>
+                                        <span class="block text-xs text-slate-500 leading-relaxed">One page per person</span>
                                     </button>
                                     <button onclick="window.app.openPrintModal(false, null, false, false, false, true)" class="group text-left p-4 bg-white dark:bg-slate-900/40 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary-400 dark:hover:border-primary-500 rounded-xl transition-colors shadow-sm">
                                         <span class="w-9 h-9 rounded-lg bg-primary-50 dark:bg-slate-800 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0"><i class="ph ph-images text-lg"></i></span>
