@@ -250,3 +250,28 @@ worlds, digital on every device and a real binder on the shelf.
 - Description: a "The best of both worlds:" paragraph right after the
   opening line, naming that product's printouts.
 - Tags: include "printable planner".
+
+
+**Listing videos are real walkthroughs (the user's rule, for every web app, not only binders).**
+Buyers must see real app navigation, not a slide show of screenshots with a cursor drawn on top.
+Record with `scripts/record_walkthrough.js walkthrough.json --format etsy` and `--format social`
+(in html-app-mockup-deck; copies in sellable-html-app and binder-app). The live app runs in an
+iframe on a branded stage; a visible cursor moves to real buttons (sidebar, tabs, Add, Apply,
+Print) and clicks them; screens change because the app navigated; a fake clock plays timers,
+rolls and animations at true speed.
+- Etsy cut: 1440x1080, <= 15 s (Etsy's limit), 3 steps, 5-8 clicks, silent. Title card, steps
+  with a caption each, end card.
+- Social (TikTok/Reels) cut: 1080x1920, ~16-22 s, 4-5 steps, music and click sounds
+  (make_audio.py). The WHOLE app stays in frame: never crop or zoom into part of the screen.
+  Captions sit above the app and shrink until they clear it, lines are balanced, and a
+  highlighted phrase never splits across lines. Check a still of every caption before sending.
+- Show something change on every click: a number moves, a list filters, a document opens, a
+  row is marked done. Prints: override the app's print function in `setup` so the document
+  shows in an in-app preview, then close it with an `eval` step.
+- Targets: stable selectors (`button.nav-item[title^="Section"]`, `button:has-text("Apply")`).
+  Unhide any module a step visits. A missing target stops the run and saves
+  `.walkthrough-missing.png`.
+- A walkthrough is also a test: it has found real bugs (Teacher Hub's attendance grid crashed
+  on open). Fix the app, not the script.
+- The screenshot renderers (render_video.js, render_social.js) are only for products with
+  nothing to click (printables, PDFs).
