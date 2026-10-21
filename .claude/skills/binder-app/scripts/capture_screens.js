@@ -51,16 +51,16 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   page.on('pageerror', e => console.error('page error:', e.message));
   await page.goto('file://' + path.resolve(file));
   await page.waitForFunction(() => window.app && window.app.data);
-  await page.evaluate(() => {
+  await page.evaluate(owner => {
     const app = window.app;
     app.closeOnboarding && app.closeOnboarding();
     app.hiddenSections = []; app.renderNav();
-    // A document with a real educator name reads as finished.
-    if (app.profile && !app.profile.userName) { app.profile.userName = 'Jane Doe'; }
+    // A document with a real owner name reads as finished (OWNER=... matches the demo family).
+    if (app.profile && !app.profile.userName) { app.profile.userName = owner; }
     // Listing photos show a planner that is looked after: no backup nag.
     try { storage.set((typeof SETTINGS_PREFIX !== 'undefined' ? SETTINGS_PREFIX : 'dw') + 'LastBackup', String(Date.now())); } catch (e) {}
     app.printDocument = html => { window.__doc = html; };
-  });
+  }, process.env.OWNER || 'Jane Doe');
   const shot = async name => { await page.waitForTimeout(450); await page.screenshot({ path: path.join(out, name + '.png') }); console.log('  ' + name); };
 
   const keys = await page.evaluate(() => ['dashboard', ...Object.keys(SECTIONS).filter(k => k !== 'dashboard')]);
