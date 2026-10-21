@@ -55,12 +55,12 @@ body{background:radial-gradient(120% 80% at 50% 0%, ${brand.bold} 0%, ${brand.in
 #cap{position:absolute;left:60px;right:60px;top:${social ? 250 : 46}px;text-align:center;transition:none}
 #eb{font:700 ${social ? 26 : 18}px "DM Sans",sans-serif;letter-spacing:.18em;text-transform:uppercase;color:${brand.pop};margin-bottom:${social ? 18 : 10}px;min-height:1em}
 #ct{font:800 ${social ? 74 : 56}px/1.08 Manrope,"DM Sans",sans-serif;letter-spacing:-.02em}
-#ct b{color:${brand.ink};background:${brand.pop};padding:0 .18em;border-radius:.16em;font-weight:800}
+#ct{text-wrap:balance}#ct b{color:${brand.ink};background:${brand.pop};padding:0 .18em;border-radius:.16em;font-weight:800;white-space:nowrap}
 #cur{position:absolute;left:0;top:0;width:${social ? 54 : 40}px;height:${social ? 54 : 40}px;pointer-events:none;z-index:20;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))}
 #ring{position:absolute;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;border:4px solid ${brand.pop};opacity:0;pointer-events:none;z-index:19}
 .card{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px;z-index:30;background:radial-gradient(120% 80% at 50% 0%, ${brand.bold} 0%, ${brand.ink} 100%);opacity:0}
 .card .e{font:700 ${social ? 28 : 20}px "DM Sans";letter-spacing:.18em;text-transform:uppercase;color:${brand.pop};margin-bottom:22px}
-.card h1{font:800 ${social ? 104 : 84}px/1.04 Manrope,sans-serif;letter-spacing:-.03em}
+.card h1{text-wrap:balance;font:800 ${social ? 104 : 84}px/1.04 Manrope,sans-serif;letter-spacing:-.03em}
 .card p{font:500 ${social ? 36 : 28}px/1.35 "DM Sans";color:rgba(255,255,255,.78);margin-top:22px}
 .pills{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}.pills span{font:700 ${social ? 26 : 20}px "DM Sans";padding:10px 20px;border-radius:99px;background:rgba(255,255,255,.12)}
 .cta{margin-top:40px;font:800 ${social ? 34 : 28}px "DM Sans";color:${brand.ink};background:${brand.pop};padding:16px 34px;border-radius:99px}
@@ -121,7 +121,14 @@ body{background:radial-gradient(120% 80% at 50% 0%, ${brand.bold} 0%, ${brand.in
   const hold = async s => { for (let i = 0; i < Math.round(s * FPS); i++) await frame(); };
   const ease = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
   const card = async (id, op) => page.evaluate(([id, op]) => { document.getElementById(id).style.opacity = op; }, [id, op]);
-  const caption = async (text, eyebrow) => page.evaluate(([h, e]) => { document.getElementById('ct').innerHTML = h; document.getElementById('eb').textContent = e || ''; }, [hi(text), eyebrow || '']);
+  // Captions shrink until they clear the app by 28 px: never overlap, never clip.
+  const caption = async (text, eyebrow) => page.evaluate(([h, e, limit]) => {
+    const ct = document.getElementById('ct'), cap = document.getElementById('cap');
+    ct.innerHTML = h; document.getElementById('eb').textContent = e || '';
+    ct.style.fontSize = '';
+    let size = parseFloat(getComputedStyle(ct).fontSize);
+    while (cap.getBoundingClientRect().bottom > limit && size > 24) { size -= 2; ct.style.fontSize = size + 'px'; }
+  }, [hi(text), eyebrow || '', AY - 28]);
 
   // Stage coordinates of an element inside the app.
   const where = async sel => {

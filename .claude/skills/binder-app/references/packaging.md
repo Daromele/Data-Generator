@@ -228,7 +228,11 @@ screens change because the app navigated. A fake clock advances one frame
 at a time, so rolls and countdowns play at true speed.
 
 - Etsy cut: <= 15 s (Etsy's limit), 3 steps, 6-8 clicks, silent.
-- Social cut: 1080x1920, ~20 s, 4-5 steps, music and click sounds (make_audio.py).
+- Social cut: 1080x1920, ~16-22 s, 4-5 steps, music and click sounds (make_audio.py).
+  The whole app stays in frame (no cropping); captions shrink and balance so
+  they never touch the app and a highlighted phrase never splits across lines.
+- Sidebar targets: `button.nav-item[title^="Section Title"]` (prefix: a badge
+  lengthens the title). Unhide any module a step visits in `setup`.
 - Prints: override `app.printDocument` in `setup` to show the document in
   an in-app preview overlay, then close it with an `eval` step.
 - A walkthrough is also a test: the Teacher Hub recording found the
