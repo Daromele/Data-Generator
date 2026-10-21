@@ -109,3 +109,15 @@ working style — things that are right but wrong.
 - Scope reduced-motion overrides tightly; a blanket rule once flattened every
   chart.
 - Verify Phosphor icon names exist. A wrong name is a blank box, silently.
+
+
+## Paper is a selling point (user rule)
+
+Binder apps are for people who still like paper copies. That is why every
+tab prints a polished PDF. Say so in every listing: it is the best of both
+worlds, digital on every device and a real binder on the shelf.
+- Listing photos: photo 2 is "The best of both worlds." over a fan of real
+  printed pages (binder cover + three documents, content pages, not covers).
+- Description: a "The best of both worlds:" paragraph right after the
+  opening line, naming that product's printouts.
+- Tags: include "printable planner".

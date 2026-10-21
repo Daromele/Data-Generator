@@ -234,3 +234,15 @@ at a time, so rolls and countdowns play at true speed.
 - A walkthrough is also a test: the Teacher Hub recording found the
   attendance grid crashing. If a target is missing the script saves
   `.walkthrough-missing.png`.
+
+
+## Paper is a selling point (user rule)
+
+Binder apps are for people who still like paper copies. That is why every
+tab prints a polished PDF. Say so in every listing: it is the best of both
+worlds, digital on every device and a real binder on the shelf.
+- Listing photos: photo 2 is "The best of both worlds." over a fan of real
+  printed pages (binder cover + three documents, content pages, not covers).
+- Description: a "The best of both worlds:" paragraph right after the
+  opening line, naming that product's printouts.
+- Tags: include "printable planner".
