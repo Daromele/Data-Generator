@@ -215,3 +215,22 @@ Before building anything: **what does the buyer hand to someone else?** A
 transcript for admissions. A net worth statement for a lender. A sitter sheet.
 That artifact is the product. If there is not one, the ceiling is low and a PDF
 template may serve the buyer better — say so.
+
+
+## Listing videos are real walkthroughs (user rule, Teacher Hub)
+
+"The idea of the video is so users can see real app navigation." Not a
+slide show of screenshots with a cursor drawn on top. Use
+`scripts/record_walkthrough.js walkthrough.json --format etsy|social`:
+the real app runs in an iframe on a branded stage, a visible cursor moves
+to real buttons (sidebar, Shuffle, Pick a Student, Start, Print), and the
+screens change because the app navigated. A fake clock advances one frame
+at a time, so rolls and countdowns play at true speed.
+
+- Etsy cut: <= 15 s (Etsy's limit), 3 steps, 6-8 clicks, silent.
+- Social cut: 1080x1920, ~20 s, 4-5 steps, music and click sounds (make_audio.py).
+- Prints: override `app.printDocument` in `setup` to show the document in
+  an in-app preview overlay, then close it with an `eval` step.
+- A walkthrough is also a test: the Teacher Hub recording found the
+  attendance grid crashing. If a target is missing the script saves
+  `.walkthrough-missing.png`.

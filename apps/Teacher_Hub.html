@@ -4948,7 +4948,7 @@ html.dark[data-dark="midnight"]{--j-paper:#0C1720!important;--j-card:#14232D!imp
     <div id="bulk-backdrop" role="dialog" aria-modal="true" aria-label="Quick log week attendance" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[145] hidden flex items-center justify-center opacity-0 transition-opacity p-4">
         <div id="bulk-content" class="bg-white dark:bg-darkCard w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform overflow-hidden flex flex-col max-h-[92vh]">
             <div class="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white tracking-tight serif-font flex items-center gap-2"><i class="ph ph-lightning text-primary-500"></i> Quick Log &mdash; Week Attendance</h3>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white tracking-tight serif-font flex items-center gap-2"><i class="ph ph-lightning text-primary-500"></i> Take Attendance &mdash; This Week</h3>
                 <button onclick="window.app.closeBulkLog()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1"><i class="ph ph-x text-xl"></i></button>
             </div>
             <div id="bulk-body" class="p-6 overflow-auto custom-scrollbar flex-1"></div>
@@ -8312,8 +8312,8 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 if (!this.hiddenSections.includes('grades')) {
                     bottomRowCharts.push(`
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col w-full">
-                            <h3 class="font-bold text-slate-900 dark:text-white mb-1 cursor-pointer hover:text-primary-500 transition-colors" onclick="window.app.navigateTo('grades')">Average Score by Subject</h3>
-                            <p class="text-xs text-slate-500 mb-6">Performance breakdown across all active subjects.</p>
+                            <h3 class="font-bold text-slate-900 dark:text-white mb-1 cursor-pointer hover:text-primary-500 transition-colors" onclick="window.app.navigateTo('grades')">Average Score by Class</h3>
+                            <p class="text-xs text-slate-500 mb-6">Average of all graded work, class by class.</p>
                             <div class="flex-1 relative h-[250px] w-full flex items-center justify-center">
                                 <canvas id="subjectGradesChart"></canvas>
                             </div>
@@ -9461,7 +9461,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
             renderBulkLog() {
                 const dates = this.bulkWeekDates().slice(1, 6);   // Monday to Friday
                 const roster = this.studentsInClass(this.bulkClass);
-                const label = `${dates[0].toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} \u2013 ${dates[6].toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
+                const label = `${dates[0].toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} \u2013 ${dates[dates.length - 1].toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
                 const todayStr = this.isoDate(new Date());
 
                 const cellClass = (status) => {
