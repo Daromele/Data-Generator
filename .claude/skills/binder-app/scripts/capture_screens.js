@@ -35,6 +35,8 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   sub: app => app.printSubPlans(),
   week: app => app.printWeekPlan(),
   seating: app => app.printSeatingChart(),
+  handover: app => app.printHandoverSheet(),                     // Co-Parenting
+  expense: app => app.printExpenseStatement(),
 };
 
 (async () => {

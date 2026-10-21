@@ -192,8 +192,11 @@ Engine fixes found on the way, applied to all three binders and the skill:
 Done: Homeschool Hub, Emergency Vault, Home Management Binder, Ultimate Mom Binder (all JPS,
 Night/Midnight). Ultimate Mom fixes: US family, trips never resolved (looked in a Home list),
 12-hour times in US format.
-Next, in order: Co-Parenting Planner (drop the couples-finance
-"Shared Expenses Breakdown" screen), Legacy & End-of-Life (credential fields: no full
+Co-Parenting Planner: DONE (apps/Co_Parenting_Planner.html, prefix cp, theme fjord, slug
+co-parenting). Forked from Ultimate Mom; couples-finance screen dropped. Custody, medical/school,
+incidents, communications, court orders (hidden by default), shared expenses, child support,
+children, professional contacts. Prints: handover sheet, expense statement, master binder.
+Next, in order: Legacy & End-of-Life (credential fields: no full
 account numbers or "keys/codes"), After Loss, Divorce, Cleaning Tracker (only the DEMO
 file received; need the full one), Caregiver (drop the HIPAA claim, non-clinical).
 Digital Teacher Hub: DONE (apps/Teacher_Hub.html, prefix th, theme kiln, slug teacher-hub). Built from
