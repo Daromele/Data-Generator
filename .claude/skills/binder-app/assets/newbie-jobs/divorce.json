@@ -1,0 +1,13 @@
+[
+ {"note":"the welcome: read every slide, then take the clean start like a real buyer","welcome":"show"},{"dump":true},
+ {"shot":"01-first-slide"},{"click":"Start with my own records"},{"wait":500},{"dump":true},{"click":"Finish Later"},{"wait":600},
+ {"note":"the empty dashboard: do I know what to do first?","dump":true},{"shot":"02-empty-dashboard","full":true},{"expect":"never backed up","absent":true},
+ {"note":"the first job: add my attorney from the dashboard","click":"@#main-content button[onclick*='openModal']"},{"wait":500},{"dump":true},{"shot":"03-first-form"},
+ {"fill":["#modal-backdrop [name=name]","Rachel Kim"]},{"eval":"(()=>{const r=document.querySelector('#modal-backdrop [name=role]');return 'role default: '+(r&&r.value)})()"},{"click":"@#modal-backdrop button[onclick*='saveFormData']"},{"wait":800},{"milestone":"first contact saved"},{"dump":true},
+ {"note":"then an asset with a value, to check cents everywhere","eval":"app.navigateTo('assets');app.openModal('assets')"},{"wait":500},{"dump":true},
+ {"fill":["#modal-backdrop [name=item]","Joint savings"]},{"fill":["#modal-backdrop [name=value]","12345.67"]},{"click":"@#modal-backdrop button[onclick*='saveFormData']"},{"wait":800},{"milestone":"first asset saved"},
+ {"eval":"app.navigateTo('dashboard')"},{"wait":1300},{"dump":true},{"shot":"04-dashboard-after-first","full":true},{"numbers":["12,345.67"]},
+ {"note":"the main action: the inventory for the attorney","click":"@#main-content button[onclick*='printInventory']"},{"wait":800},{"dump":true},
+ {"reload":true},{"eval":"app.navigateTo('assets')"},{"wait":500},{"expect":"Joint savings"},
+ {"startFresh":true}
+]

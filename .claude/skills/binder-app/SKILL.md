@@ -170,9 +170,15 @@ Then:
 1. **Fork the closest shipped product.** Choose by *entity*, not by subject —
    the entity is the record everything else hangs off:
 
+   **Fork the newest engine you can.** Legacy Planner and Divorce Planner carry every
+   fix so far (first five minutes, list and calendar height, phone text, filter labels,
+   finished-never-overdue, 12-hour times, Excel export). Older binders lack some of these.
+
    | Entity | Fork | Examples |
    |---|---|---|
-   | People | Mom Binder / Emergency Vault | family, patients, clients, pets |
+   | A case or process (dates, documents, money) | Divorce Planner | divorce, after loss, caregiving, moving |
+   | Records someone else will need | Legacy Planner / Emergency Vault | estate, emergency, medical |
+   | People | Mom Binder / Co-Parenting | family, patients, clients, pets |
    | Places | Home Management Binder | properties, rooms, sites, vehicles |
    | Accounts | Finance Planner | money, subscriptions, assets |
    | Students | Homeschool Hub | anything with years and grading |
@@ -205,7 +211,43 @@ Then:
    Grep for the donor's module keys — a leftover `this.data.groceries` in a
    finance planner is silent, not loud.
 
-8. **Audit and verify** before calling it done.
+8. **Every binder with dates gets a calendar.** Any section people plan around
+   (court dates, appointments, deadlines, tasks) sets `hasCalendar: true`: that gives
+   the three views (calendar, cards, list). Status options mark finished items with ✅
+   and cancelled with ❌ so they are never overdue. A dedicated calendar section
+   (Divorce's Case Calendar) feeds the dashboard's Coming Up.
+
+9. **Excel export where numbers go to a professional** (attorney, mediator, CPA,
+   lender): `exportWorkbook()` with the built-in `xlsxLite` writer (Divorce,
+   Co-Parenting). One sheet per section, live totals, a Summary sheet; private logs
+   stay out. `references/feature-catalog.md`.
+
+10. **Audit and verify** before calling it done (next section).
+
+## Done means all three skills pass
+
+1. **binder-app:** `audit_binder.py`, `check_house_style.py`, `verify_binder.js`,
+   `sync_flow.mjs` and `novice_check.js` all 0 / 0 / 0.
+2. **newbie-check** (Dashboard-Creator): `crawl.js`, `walk.js` and `drive.js` with a
+   job file (`assets/newbie-jobs/divorce.json` is a binder template). Read every
+   screenshot. First record in at most 4 clicks; typed amounts shown to the cent.
+3. **device-check** (Dashboard-Creator): `phone_check.js` and `layout_check.js` with
+   `scripts/device_check_setup.js` as `--setup`, and `print_check.js` on every
+   document. Nothing under 12px on a phone, nothing cut off, every PDF read by eye.
+
+## Shipping the kit
+
+- **START_HERE.pdf:** `monthly-plan/build/start_here_binder.py` (Dashboard-Creator)
+  wraps `start_here.py` with the binder's own words (Settings menu, welcome choice,
+  backup file). Needs `pip install segno` or the QR code is silently blank. For
+  divorce and co-parenting it never suggests sharing sync with a partner.
+- **Etsy video:** exactly 15 s at double speed: `"pace": 2, "length": 15` in
+  walkthrough.json, 9+ real clicks, outro under 2 s, and every printable PDF opened
+  and scrolled (`scrollDoc`). An 8.8 s cut with 3 clicks was sent back.
+- **Listing photo 2** is the paper slide; the description has the
+  "best of both worlds" paragraph and the "printable planner" tag.
+- **Etsy downloads:** when a fix touches every binder, send all the changed HTML
+  files so the user can replace them on Etsy.
 
 Expect roughly **12% of the code to be domain-specific**. Writing much more
 means something generic is being rebuilt.
