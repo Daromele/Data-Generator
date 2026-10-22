@@ -5976,6 +5976,14 @@ window.BinderSync = window.JPSSync;
             return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(num);
         };
 
+        const formatTime = (val) => {
+            const m = /^(\d{1,2}):(\d{2})/.exec(String(val || ''));
+            if (!m) return val || '';
+            if ((storage.get(SETTINGS_PREFIX + 'DateFormat') || 'MM/DD/YYYY') !== 'MM/DD/YYYY') return val;
+            const h = +m[1];
+            return `${h % 12 || 12}:${m[2]} ${h < 12 ? 'AM' : 'PM'}`;
+        };
+
         const formatDate = (val) => {
             if(!val) return '';
             const format = storage.get('dvDateFormat') || 'MM/DD/YYYY';
@@ -6015,10 +6023,25 @@ window.BinderSync = window.JPSSync;
         const SECTIONS = {
             dashboard: { title: "Overview", icon: "ph-squares-four" },
 
+            case_calendar: {
+                title: "Case Calendar", icon: "ph-calendar-dots", group: "case",
+                singular: "Date", desc: "Court dates, mediation, meetings, deadlines and tasks, on one calendar.",
+                filterField: "kind", hasCalendar: true, dateField: "date", dueFields: ["date"],
+                fields: [
+                    { name: "date", label: "Date", type: "date", required: true },
+                    { name: "time", label: "Time", type: "time" },
+                    { name: "title", label: "What", type: "text", required: true, placeholder: "e.g. Mediation session 2" },
+                    { name: "kind", label: "Type", filterLabel: "Types", type: "select", required: true, default: "\ud83d\udcc5 Meeting", options: ["\u2696\ufe0f Court date", "\ud83e\udd1d Mediation", "\ud83d\udcc5 Meeting", "\u23f0 Deadline", "\ud83d\udcc4 Filing", "\ud83d\udc67 Custody handover", "\u2611\ufe0f Task", "\ud83d\udccc Other"] },
+                    { name: "status", label: "Status", type: "select", default: "\u23f3 Upcoming", options: ["\u23f3 Upcoming", "\u2705 Done", "\u274c Cancelled"] },
+                    { name: "where", label: "Where or with whom", type: "text" },
+                    { name: "notes", label: "Notes", type: "textarea" }
+                ]
+            },
+
             discovery: {
                 title: "Discovery Checklist", icon: "ph-list-checks", group: "case",
                 singular: "Document", desc: "Every paper your attorney or mediator will ask for, and where you are with each.",
-                filterField: "status", dateField: "due", dueFields: ["due"],
+                filterField: "status", hasCalendar: true, dateField: "due", dueFields: ["due"],
                 fields: [
                     { name: "item", label: "Document needed", type: "text", required: true, placeholder: "e.g. 2025 tax return" },
                     { name: "category", label: "Category", type: "select", options: ["Tax returns", "Pay stubs", "Bank statements", "Retirement", "Credit cards", "Loans", "Property", "Business", "Insurance", "Other"] },
@@ -6031,7 +6054,7 @@ window.BinderSync = window.JPSSync;
             uncoupling: {
                 title: "Untangle Accounts", icon: "ph-link-break", group: "case",
                 singular: "Task", desc: "Accounts, policies and logins to separate, one task at a time.",
-                filterField: "status", dateField: "due", dueFields: ["due"],
+                filterField: "status", hasCalendar: true, dateField: "due", dueFields: ["due"],
                 fields: [
                     { name: "task", label: "Task", type: "text", required: true, placeholder: "e.g. Open a checking account in my name" },
                     { name: "category", label: "Category", type: "select", options: ["Bank account", "Credit card", "Insurance", "Utilities", "Phone", "Subscriptions", "Passwords and logins", "Mail and address", "Beneficiaries", "Other"] },
@@ -6393,6 +6416,16 @@ window.BinderSync = window.JPSSync;
                     members: [
                         { id: 'dv_m1', name: 'Sofia Moreno', dob: '2017-04-11', school: 'Maple Grove Elementary, Ms. Patel (4th grade)', ssn_location: 'Fireproof box, hall closet', passport_location: 'Daniel has it', notes: 'Peanut allergy, carries an EpiPen. Soccer on Saturdays.' },
                         { id: 'dv_m2', name: 'Leo Moreno', dob: '2020-08-02', school: 'Maple Grove Elementary, Mr. Okafor (1st grade)', ssn_location: 'Fireproof box, hall closet', passport_location: 'Fireproof box, hall closet', notes: 'Speech therapy Tuesdays at 4:00 PM.' }
+                    ],
+                    case_calendar: [
+                        { id: 'dv_e1', date: at(-15), time: '10:00', title: 'Mediation session 1', kind: '\ud83e\udd1d Mediation', status: '\u2705 Done', where: 'Linda Harper, Harper Mediation', notes: 'Agreed on the weekend schedule. House still open.' },
+                        { id: 'dv_e2', date: at(3), time: '14:30', title: 'Meet Rachel: review the proposal', kind: '\ud83d\udcc5 Meeting', status: '\u23f3 Upcoming', where: 'Kim Family Law', notes: 'Bring the attorney checklist and the affidavit worksheet.' },
+                        { id: 'dv_e3', date: at(9), title: 'Financial disclosures due', kind: '\u23f0 Deadline', status: '\u23f3 Upcoming', notes: 'Bank statements and the 401(k) statement must be in by this date.' },
+                        { id: 'dv_e4', date: at(12), time: '10:00', title: 'Mediation session 2', kind: '\ud83e\udd1d Mediation', status: '\u23f3 Upcoming', where: 'Linda Harper, Harper Mediation', notes: 'Topic: the house and the 401(k).' },
+                        { id: 'dv_e5', date: at(14), time: '18:00', title: 'Kids to Daniel for the weekend', kind: '\ud83d\udc67 Custody handover', status: '\u23f3 Upcoming', where: 'School pickup' },
+                        { id: 'dv_e6', date: at(20), title: 'Home appraisal', kind: '\u2611\ufe0f Task', status: '\u23f3 Upcoming', where: '14 Birch Lane', notes: 'Appraiser arrives at 9:00 AM. Daniel agreed to be out.' },
+                        { id: 'dv_e7', date: at(34), time: '09:00', title: 'Temporary orders hearing', kind: '\u2696\ufe0f Court date', status: '\u23f3 Upcoming', where: 'County Family Court, Room 4B', notes: 'Arrive 30 minutes early. Rachel will meet me outside.' },
+                        { id: 'dv_e8', date: at(41), title: 'File the parenting plan', kind: '\ud83d\udcc4 Filing', status: '\u23f3 Upcoming', notes: 'Rachel files it. I sign the day before.' }
                     ],
                     discovery: [
                         { id: 'dv_d1', item: 'Joint tax returns, last 3 years', category: 'Tax returns', status: '\u2705 Gathered', due: at(9), notes: 'Downloaded from the IRS account.' },
@@ -6896,6 +6929,8 @@ window.BinderSync = window.JPSSync;
                 const cfg = SECTIONS[sectionKey];
                 const fields = (cfg && cfg.dueFields) || [];
                 if (fields.length === 0) return null;
+                // Finished or cancelled is never "overdue": no badge, not in the sidebar count.
+                if (/\u2705|\ud83d\udfe2|\u274c/.test(String(item.status || ''))) return null;
 
                 let soonest = null;
                 fields.forEach(name => {
@@ -7698,6 +7733,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     this.renderSettings();
                 } else {
                     const SHORTCUTS = {
+                        case_calendar: { fn: 'printAttorneyChecklist', icon: 'ph-list-checks', label: 'Attorney Checklist' },
                         discovery: { fn: 'printAttorneyChecklist', icon: 'ph-list-checks', label: 'Attorney Checklist' },
                         uncoupling:{ fn: 'printAttorneyChecklist', icon: 'ph-list-checks', label: 'Attorney Checklist' },
                         contacts:  { fn: 'printAttorneyChecklist', icon: 'ph-list-checks', label: 'Attorney Checklist' },
@@ -7738,6 +7774,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
             // Every dated obligation across the binder, in one list.
             upcomingItems() {
                 const sources = [
+                    { key: 'case_calendar', field: 'date', label: i => i.title, kind: 'Case date', icon: 'ph-calendar-dots' },
                     { key: 'discovery', field: 'due', label: i => i.item, kind: 'Discovery', icon: 'ph-list-checks' },
                     { key: 'uncoupling', field: 'due', label: i => i.task, kind: 'Untangle', icon: 'ph-link-break' }
                 ];
@@ -7749,7 +7786,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                         const days = daysUntil(when);
                         if (days === null) return;
                         if (src.neverLate && days < 0) return;
-                        if (String(item.status || '').includes('🟢') || String(item.status || '').includes('✅')) return;
+                        if (/🟢|✅|❌/.test(String(item.status || ''))) return;
                         if (!this.recordMatchesMember(item, this.dashboardMemberFilter)) return;
                         out.push({
                             section: src.key, kind: src.kind, icon: src.icon,
@@ -10291,10 +10328,17 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
             // What is still open: discovery to gather, accounts to untangle, and who is working on the case.
             printAttorneyChecklist() {
                 const disc = this.data.discovery || [], unc = this.data.uncoupling || [], people = this.data.contacts || [];
-                if (disc.length + unc.length + people.length === 0) return this.showToast('Add a discovery document or a contact first.', 'error');
+                if (disc.length + unc.length + people.length + (this.data.case_calendar || []).length === 0) return this.showToast('Add a date, a discovery document or a contact first.', 'error');
                 const e = escapeHtml, done = v => String(v || '').includes('✅'), plain = v => String(v || '').replace(/^[^A-Za-z]+/, '');
                 const box = d => `<div style="text-align:center">${done(d) ? '&#9745;' : '&#9744;'}</div>`;
                 let html = `<div style="padding: 16px 16px;">` + this.docHead('Attorney Checklist');
+                const today = new Date().toISOString().slice(0, 10);
+                const dates = (this.data.case_calendar || []).filter(d => String(d.date) >= today && !/\u2705|\u274c/.test(d.status || '')).sort((a, b) => (String(a.date) + (a.time || '')).localeCompare(String(b.date) + (b.time || '')));
+                if (dates.length) {
+                    html += `<h3 style="margin-top:0;font-size:15px;">Upcoming dates</h3>` + this.printTable(
+                        ['Date', 'What', 'Type', 'Where or with whom'], [16, 38, 18, 28],
+                        dates.map(d => [`<span class="num">${e(formatDate(d.date))}${d.time ? '<br>' + e(formatTime(d.time)) : ''}</span>`, `${e(d.title)}${d.notes ? `<div style="font-weight:400;color:#475569;font-size:11px;margin-top:3px">${e(d.notes)}</div>` : ''}`, e(plain(d.kind)), e(d.where || '')]));
+                }
                 if (disc.length) {
                     const sorted = disc.slice().sort((a, b) => done(a.status) - done(b.status));
                     html += `<h3 style="margin-top:0;font-size:15px;">Discovery documents (${disc.filter(d => done(d.status)).length} of ${disc.length} gathered)</h3>` + this.printTable(
@@ -10603,7 +10647,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
             // The journal, incident and communication logs stay out on purpose: a file you email gets forwarded.
             exportWorkbook() {
                 const A = this.data.assets || [], D = this.data.debts || [], L = this.data.budget || [], Q = this.data.discovery || [];
-                if (A.length + D.length + L.length + Q.length === 0) return this.showToast('Add an asset, a debt or your budget first.', 'error');
+                if (A.length + D.length + L.length + Q.length + (this.data.case_calendar || []).length === 0) return this.showToast('Add an asset, a debt or your budget first.', 'error');
                 const plain = v => String(v || '').replace(/^[^A-Za-z0-9]+/, '').replace(/’/g, "'");
                 const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
                 const date = v => v ? formatDate(v) : '';
@@ -10637,7 +10681,10 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                         [{ v: 'All', s: 'b' }, { f: 'SUM(B5:B8)', s: 'mb' }, { f: 'SUM(C5:C8)', s: 'mb' }, { f: 'SUM(D5:D8)', s: 'mb' }], [],
                         ['Values are estimates. Whether something is marital or separate is for state law and the court to decide.'],
                         ['Account references show the last four digits only. Journal, incident and communication logs are not included.']] };
-                const blob = xlsxLite.build([summary, assets, debts, budget, disc]);
+                const K = (this.data.case_calendar || []).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+                const cal = { name: 'Case Calendar', freeze: 1, widths: [12, 8, 36, 18, 14, 28, 40],
+                    rows: [H(['Date', 'Time', 'What', 'Type', 'Status', 'Where or with whom', 'Notes']), ...K.map(k => [date(k.date), k.time ? formatTime(k.time) : '', k.title || '', plain(k.kind), plain(k.status), k.where || '', k.notes || ''])] };
+                const blob = xlsxLite.build([summary, assets, debts, budget, disc].concat(K.length ? [cal] : []));
                 this.downloadFile(`Divorce_Financial_Workbook_${new Date().toISOString().slice(0, 10)}.xlsx`, blob, blob.type);
                 this.showToast('Excel workbook downloaded');
             }
@@ -10701,6 +10748,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 if (field.type === 'member_multi') return this.memberNames(val);
                 if (field.type === 'trip_select') return this.tripName(val);
                 if (field.type === 'date') return formatDate(val);
+                if (field.type === 'time') return formatTime(val);
                 if (field.type === 'number') return field.format === 'currency' ? formatMoney(val) : val;
                 return val;
             }

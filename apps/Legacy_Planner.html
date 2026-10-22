@@ -5920,6 +5920,14 @@ window.BinderSync = window.JPSSync;
             return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(num);
         };
 
+        const formatTime = (val) => {
+            const m = /^(\d{1,2}):(\d{2})/.exec(String(val || ''));
+            if (!m) return val || '';
+            if ((storage.get(SETTINGS_PREFIX + 'DateFormat') || 'MM/DD/YYYY') !== 'MM/DD/YYYY') return val;
+            const h = +m[1];
+            return `${h % 12 || 12}:${m[2]} ${h < 12 ? 'AM' : 'PM'}`;
+        };
+
         const formatDate = (val) => {
             if(!val) return '';
             const format = storage.get('lgDateFormat') || 'MM/DD/YYYY';
@@ -6853,6 +6861,8 @@ window.BinderSync = window.JPSSync;
                 const cfg = SECTIONS[sectionKey];
                 const fields = (cfg && cfg.dueFields) || [];
                 if (fields.length === 0) return null;
+                // Finished or cancelled is never "overdue": no badge, not in the sidebar count.
+                if (/\u2705|\ud83d\udfe2|\u274c/.test(String(item.status || ''))) return null;
 
                 let soonest = null;
                 fields.forEach(name => {
@@ -7712,7 +7722,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                         const days = daysUntil(when);
                         if (days === null) return;
                         if (src.neverLate && days < 0) return;
-                        if (String(item.status || '').includes('🟢') || String(item.status || '').includes('✅')) return;
+                        if (/🟢|✅|❌/.test(String(item.status || ''))) return;
                         if (!this.recordMatchesMember(item, this.dashboardMemberFilter)) return;
                         out.push({
                             section: src.key, kind: src.kind, icon: src.icon,
@@ -10654,6 +10664,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 if (field.type === 'member_multi') return this.memberNames(val);
                 if (field.type === 'trip_select') return this.tripName(val);
                 if (field.type === 'date') return formatDate(val);
+                if (field.type === 'time') return formatTime(val);
                 if (field.type === 'number') return field.format === 'currency' ? formatMoney(val) : val;
                 return val;
             }
