@@ -123,3 +123,5 @@ worlds, digital on every device and a real binder on the shelf.
 - Tags: include "printable planner".
 
 - Wide screens: no 1400px cap (.max-w-7xl.mx-auto{max-width:none}), and the calendar view grows with the window (cal-card/cal-scroll/cal-grid: the page scrolls, never a box inside it). New binders forked from an existing one inherit both; the CSS sits at the end of the jps-skin style block.
+
+- List view: the table card grows with its rows (.list-card), like the calendar. Filter labels: a field can set filterLabel, and words ending in -us pluralize to -uses ("All Statuses"). Phones: nothing under 12px, 40px menu button (Oct 2026, device-check on the Divorce Planner).

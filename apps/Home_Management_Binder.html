@@ -4787,6 +4787,17 @@ html.dark[data-dark="midnight"]{--j-paper:#0C1720!important;--j-card:#14232D!imp
 .cal-card,.cal-scroll{overflow:visible!important;flex:none!important}
 .cal-grid{min-height:520px!important;height:auto!important}
 @media (min-width:640px){.cal-grid{min-height:max(760px,calc(100vh - 230px))!important}}
+
+/* list view: the table is as tall as its rows; the page scrolls, not a box inside it */
+.list-card{flex:none!important}
+
+/* phones: nothing under 12px, and the small controls get a real tap target */
+@media (max-width:767px){
+.text-\[9px\],.text-\[10px\],.text-\[11px\]{font-size:12px!important;line-height:1.35!important}
+.jps-pal span{font-size:12px!important}
+#open-sidebar{min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center}
+button.absolute.top-3{min-width:36px;min-height:36px;top:4px!important;right:4px!important;display:inline-flex;align-items:center;justify-content:center}
+}
 </style>
 </head>
 <body class="app-canvas text-slate-800 dark:text-slate-200 h-screen flex overflow-hidden transition-colors selection:bg-primary-500 selection:text-white">
@@ -5999,7 +6010,7 @@ window.BinderSync = window.JPSSync;
                 fields: [
                     { name: "project", label: "Project", type: "text", required: true, width: "full", placeholder: "e.g., Kitchen remodel" },
                     { name: "category", label: "Category", type: "select", options: ["Renovation", "Repair", "Upgrade", "Systems (HVAC, Plumbing, Electrical)", "Roofing", "Landscaping", "Other"] },
-                    { name: "basis", label: "Adds to cost basis?", printLabel: "Capital?", type: "select", options: ["🏦 Yes — capital improvement", "🔧 No — routine repair", "❓ Not sure"], required: true },
+                    { name: "basis", filterLabel: "Projects", label: "Adds to cost basis?", printLabel: "Capital?", type: "select", options: ["🏦 Yes — capital improvement", "🔧 No — routine repair", "❓ Not sure"], required: true },
                     { name: "cost", label: "Total Cost", printLabel: "Cost", type: "number", format: "currency" },
                     { name: "contractor", label: "Contractor / Company", printLabel: "Contractor", type: "text" },
                     { name: "completed", label: "Completed", printLabel: "Done", type: "date" },
@@ -8452,8 +8463,8 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     
                     if (filterOptions.length > 0) {
                         // "All Category" reads as a typo; the select needs the plural.
-                        let filterLabel = filterDef ? filterDef.label.split('(')[0].trim() : 'Filter';
-                        if (!/s$/i.test(filterLabel)) filterLabel += /(y)$/i.test(filterLabel) ? '' : 's';
+                        let filterLabel = filterDef ? (filterDef.filterLabel || filterDef.label.split('(')[0].trim()) : 'Filter';
+                        if (!filterDef || !filterDef.filterLabel) if (/us$/i.test(filterLabel)) filterLabel += 'es'; else if (!/s$/i.test(filterLabel)) filterLabel += /(y)$/i.test(filterLabel) ? '' : 's';
                         if (/y$/i.test(filterLabel)) filterLabel = filterLabel.slice(0, -1) + 'ies';
                         dynamicFilterHtml = `
                         <div class="relative min-w-[150px] flex-1 md:flex-none">
@@ -8744,7 +8755,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 const pinHead = 'sticky right-0 z-10 bg-slate-50 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700';
                 const pinCell = 'sticky right-0 z-10 border-l border-slate-200 dark:border-slate-800';
                 return `
-                    <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex-1 flex flex-col">
+                    <div class="list-card bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex-1 flex flex-col">
                         <div class="overflow-x-auto flex-1">
                             <table class="w-full text-left border-collapse min-w-max">
                                 <thead>
@@ -8933,7 +8944,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     const textStr = this.calendarLabel(item);
                     cellHtml += `
                         <div class="group/chip relative text-[10px] px-1.5 py-1 rounded font-medium shadow-sm border ${badgeColor} hover:brightness-95 transition-all flex items-center gap-1" onclick="event.stopPropagation(); window.app.openModal('${escapeHtml(sectionKey)}', '${escapeHtml(item.id)}')" title="${escapeHtml(textStr)}">
-                            <span class="truncate flex-1">${escapeHtml(textStr)}</span>
+                            <span class="truncate flex-1" title="${escapeHtml(textStr)}">${escapeHtml(textStr)}</span>
                         </div>
                     `;
                 });
