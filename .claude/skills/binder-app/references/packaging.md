@@ -275,3 +275,5 @@ rolls and animations at true speed.
   on open). Fix the app, not the script.
 - The screenshot renderers (render_video.js, render_social.js) are only for products with
   nothing to click (printables, PDFs).
+
+**Etsy cut: exactly 15 s, fast.** record_walkthrough.js with `"pace": 2` and `"length": 15`; 9+ real clicks, outro under 2 s; open and scroll (`scrollDoc`) every printable PDF the binder makes, then close it. An 8.8 s cut with 3 clicks was sent back (Divorce Planner, Oct 2026).

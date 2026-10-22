@@ -17,6 +17,8 @@
 //   "etsy":   { "out": "App_Etsy_Video.mp4", "viewport": [1440, 900] },          // <= 15 s for Etsy
 //   "social": { "out": "App_Social.mp4", "viewport": [1180, 1400], "bpm": 104, "music": 0.5 },
 //   "intro": { "eyebrow": "...", "headline": "Line one<br>line two", "dur": 1.6 },
+//   "pace": 2,  "length": 15,   // optional: faster cursor; Etsy cut held to exactly 15 s
+//   {"scrollDoc": [600, 1.0]}  // step action: scroll the print preview 600 px over 1 s
 //   "outro": { "headline": "App Name", "sub": "...", "cta": "Instant download on Etsy", "dur": 2.2 },
 //   "steps": [ { "caption": "Take attendance in *seconds*",            // *word* = highlighted
 //                "do": [ { "click": "css or text=... inside the app" }, { "wait": 0.8 },
@@ -138,14 +140,15 @@ body{background:radial-gradient(120% 80% at 50% 0%, ${brand.bold} 0%, ${brand.in
     const r = await loc.evaluate(el => { const b = el.getBoundingClientRect(); return { x: b.left + b.width / 2, y: b.top + b.height / 2 }; });
     return { x: AX + r.x * scale, y: AY + r.y * scale };
   };
-  const moveTo = async (p, secs = 0.55) => {
+  const PACE = C.pace || 1;   // 2 = cursor moves twice as fast (more clicks fit in 15 s)
+  const moveTo = async (p, secs = 0.55 / PACE) => {
     const a = { ...cur }, n = Math.max(1, Math.round(secs * FPS));
     for (let i = 1; i <= n; i++) { const k = ease(i / n); cur = { x: a.x + (p.x - a.x) * k, y: a.y + (p.y - a.y) * k }; await frame(); }
   };
   const click = async (sel, after = 0.6) => {
     const p = await where(sel);
     await moveTo(p);
-    await hold(0.08);
+    await hold(0.08 / PACE);
     events.push({ t: t(), kind: 'click' });
     ringT = frames;
     await page.mouse.click(p.x, p.y);
@@ -168,6 +171,7 @@ body{background:radial-gradient(120% 80% at 50% 0%, ${brand.bold} 0%, ${brand.in
       else if (a.wait) await hold(a.wait);
       else if (a.select) { const p = await where(a.select[0]); await moveTo(p); events.push({ t: t(), kind: 'click' }); ringT = frames; await appF.locator(a.select[0]).first().selectOption(a.select[1]); await hold(a.after ?? 0.6); }
       else if (a.eval) { await appF.evaluate(src => (0, eval)(src), a.eval); await hold(a.after ?? 0.2); }
+      else if (a.scrollDoc) { const [dy, secs = 0.8] = [].concat(a.scrollDoc); const n = Math.round(secs * FPS); for (let i = 0; i < n; i++) { await appF.evaluate(d => { const f = document.querySelector('#pv iframe'); if (f && f.contentWindow) f.contentWindow.scrollBy(0, d); }, dy / n); await frame(); } await hold(a.after ?? 0.2); }
       else if (a.scroll) { const [sel, dy] = a.scroll; const n = Math.round(0.6 * FPS); for (let i = 0; i < n; i++) { await appF.evaluate(([s, d]) => { const el = document.querySelector(s); if (el) el.scrollBy(0, d); }, [sel, dy / n]); await frame(); } }
     }
   }
@@ -175,7 +179,9 @@ body{background:radial-gradient(120% 80% at 50% 0%, ${brand.bold} 0%, ${brand.in
   // ---- outro -------------------------------------------------------------
   events.push({ t: t(), kind: 'ding' });
   for (let i = 1; i <= 9; i++) { await card('outro', i / 9); await frame(); }
-  await hold((C.outro?.dur || 2.2) - 0.3);
+  // "length": the outro holds until the video is exactly that long (Etsy: use all 15 s, never more)
+  if (C.length && FORMAT === 'etsy') { const left = C.length - frames / FPS; if (left < 1.2) console.warn(`steps run long: only ${left.toFixed(2)} s left for the outro`); await hold(Math.max(0, left)); }
+  else await hold((C.outro?.dur || 2.2) - 0.3);
 
   enc.stdin.end(); await new Promise(r => enc.on('close', r));
   const dur = frames / FPS;
