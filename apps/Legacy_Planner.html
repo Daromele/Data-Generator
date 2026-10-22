@@ -4733,8 +4733,7 @@
         .toast-exit { animation: fadeOut 0.2s ease-in forwards; }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
-        @media print {
-            body { background: white !important; color: black !important; }
+        @media print { body { background: white !important; color: black !important; } html.dark, html.dark body, html.dark #main-content, html.dark #main-content * { background-color: #fff !important; background-image: none !important; color: #111 !important; border-color: #ddd !important; box-shadow: none !important; }
             #sidebar, #topbar, .action-btns, #toast-container, #modal-backdrop, #confirm-backdrop, #lock-screen, #onboarding-backdrop, #print-modal-backdrop, #backup-backdrop, #viewer-backdrop { display: none !important; }
             #main-content { margin: 0 !important; padding: 0 !important; width: 100% !important; overflow: visible !important; }
         }
@@ -5445,7 +5444,7 @@ window.BinderSync = window.JPSSync;
     <!-- Scripts -->
     <script>
         const STORAGE_KEY = 'legacyPlannerData';
-        const APP_VERSION = '1.0.0';
+        const APP_VERSION = '1.1.0';
         const SCHEMA_VERSION = 2;
         const SNAPSHOT_KEYS = ['lgSnapshot1', 'lgSnapshot2', 'lgSnapshot3'];
         const BACKUP_NUDGE_DAYS = 30;
@@ -5968,8 +5967,7 @@ window.BinderSync = window.JPSSync;
                 singular: "Contact", desc: "Your executor, attorney, advisors and the people to tell.",
                 fields: [
                     { name: "name", label: "Name", type: "text", required: true },
-                    { name: "role", label: "Role", type: "select", required: true,
-                      options: ["Executor", "Backup executor", "Attorney", "Financial advisor", "Accountant", "Insurance agent", "Family", "Friend", "Clergy", "Funeral home", "Doctor", "Employer", "Other"] },
+                    { name: "role", label: "Role", type: "select", required: true, default: "Executor", options: ["Executor", "Backup executor", "Attorney", "Financial advisor", "Accountant", "Insurance agent", "Family", "Friend", "Clergy", "Funeral home", "Doctor", "Employer", "Other"] },
                     { name: "phone", label: "Phone", type: "text" },
                     { name: "email", label: "Email", type: "text" },
                     { name: "notes", label: "Notes", type: "textarea" }
@@ -6374,7 +6372,7 @@ window.BinderSync = window.JPSSync;
                     medical: [
                         { id: 'lg_h1', directive: 'Living will', agent: 'David Ellison', agent_phone: '(555) 210-0141', location: 'Fireproof box, bedroom closet', reviewed: at(-120), notes: 'No machines to keep me alive if there is no hope of recovery. Comfort first.' },
                         { id: 'lg_h2', directive: 'Healthcare power of attorney', agent: 'David Ellison', agent_phone: '(555) 210-0141', location: 'Fireproof box, bedroom closet', reviewed: at(-120), notes: 'Susan if David is not reachable.' },
-                        { id: 'lg_h3', directive: 'Organ and tissue donation', location: 'Driver’s license and the state registry', reviewed: at(-380), notes: 'Yes to any organ or tissue that can help someone.' }
+                        { id: 'lg_h3', directive: 'Organ and tissue donation', location: 'Driver’s license and the state registry', reviewed: at(-340), notes: 'Yes to any organ or tissue that can help someone.' }
                     ],
                     funeral: [
                         { id: 'lg_u1', topic: 'Burial or cremation', preference: 'Cremation', provider: 'Willow Grove Funeral Home', prepaid: 'Yes, fully', paperwork: 'Fireproof box, bedroom closet', notes: 'Ashes beside Robert at Oak Hill.' },
@@ -6398,7 +6396,7 @@ window.BinderSync = window.JPSSync;
                     ],
                     insurance: [
                         { id: 'lg_i1', provider: 'Harbor Life', kind: 'Life insurance', reference: '•••• 9120', beneficiary: 'David Ellison', amount: 150000, renews: at(64), phone: '(800) 555-0101', notes: 'Pay off the mortgage first, then split with Claire’s trust.' },
-                        { id: 'lg_i2', provider: 'County Teachers’ Pension', kind: 'Pension', reference: '•••• 2207', beneficiary: 'None, it stops', renews: at(-6), phone: '(800) 555-0144', notes: 'Overpayments after death have to be returned. Tell them quickly.' },
+                        { id: 'lg_i2', provider: 'County Teachers’ Pension', kind: 'Pension', reference: '•••• 2207', beneficiary: 'None, it stops', renews: at(12), phone: '(800) 555-0144', notes: 'Overpayments after death have to be returned. Tell them quickly.' },
                         { id: 'lg_i3', provider: 'Social Security', kind: 'Social Security', phone: '(800) 772-1213', notes: 'A one-time death payment may go to a surviving spouse or child.' },
                         { id: 'lg_i4', provider: 'Evergreen Final Expense', kind: 'Final expense', reference: '•••• 6618', beneficiary: 'Willow Grove Funeral Home', amount: 12000, phone: '(800) 555-0166', notes: 'Assigned to the funeral home for the prepaid plan.' }
                     ],
@@ -6421,7 +6419,7 @@ window.BinderSync = window.JPSSync;
 
             loadData() {
                 const stored = recordStore.get(STORAGE_KEY);
-                if (!stored) return this.migrate(this.getDemoData());
+                if (!stored) { this.isDemoData = true; return this.migrate(this.getDemoData()); }
                 try {
                     const parsed = JSON.parse(stored);
                     // v2 wraps records in an envelope; v1 stored the bare object.
@@ -7331,13 +7329,9 @@ window.BinderSync = window.JPSSync;
                 this.renderSettings();
             }
 
-            startApp() {
-                this.navigateTo('dashboard');
-                if (!storage.get('lgWelcomeSeen')) setTimeout(() => this.showOnboarding(), 500);
-            }
+            startApp() { this.navigateTo('dashboard'); this.firstRun = !storage.get('lgWelcomeSeen'); if (this.firstRun) setTimeout(() => this.showOnboarding(), 500); }
 
-            showOnboarding() {
-                this.currentSlide = 0;
+            showOnboarding() { if (storage.get('lgWelcomeSeen')) this.firstRun = false; this.currentSlide = 0;
                 this.renderOnboardingSlide();
                 const b = document.getElementById('onboarding-backdrop'), c = document.getElementById('onboarding-content');
                 b.classList.remove('hidden'); setTimeout(() => { b.classList.remove('opacity-0'); c.classList.remove('scale-95'); }, 10);
@@ -7386,21 +7380,17 @@ window.BinderSync = window.JPSSync;
                         </div>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight serif-font">${slide.title}</h2>
                         <p class="text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm text-sm">${slide.desc}</p>
-                        ${slide.isFinal ? `
-                            <div class="mt-8 flex flex-col gap-3 w-full max-w-sm">
-                                <button onclick="window.app.completeDemoChoice(true)" class="w-full px-5 py-3 text-sm font-medium text-rose-600 bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:hover:bg-rose-900/40 rounded-xl transition-colors border border-rose-200 dark:border-rose-900/50">Wipe Demo Data & Start Clean</button>
-                                <button onclick="window.app.completeDemoChoice(false)" class="w-full px-5 py-3 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-xl shadow-md transition-all">Keep Demo Data</button>
-                            </div>
-                        ` : ''}
+                        ${this.currentSlide === 0 && this.firstRun ? `<div class="mt-8 flex flex-col gap-3 w-full max-w-sm"><button onclick="window.app.completeDemoChoice(true)" class="w-full px-5 py-3 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-xl shadow-md transition-all">Start with my own records</button><button onclick="window.app.currentSlide++; window.app.renderOnboardingSlide()" class="w-full px-5 py-3 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors">Show me around first</button></div>` : ''}${slide.isFinal && this.firstRun ? ` <div class="mt-8 flex flex-col gap-3 w-full max-w-sm"> <button onclick="window.app.completeDemoChoice(true)" class="w-full px-5 py-3 text-sm font-medium text-rose-600 bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:hover:bg-rose-900/40 rounded-xl transition-colors border border-rose-200 dark:border-rose-900/50">Wipe Demo Data & Start Clean</button>
+                                <button onclick="window.app.completeDemoChoice(false)" class="w-full px-5 py-3 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-xl shadow-md transition-all">Keep Demo Data</button> </div> ` : slide.isFinal ? `<div class="mt-8 w-full max-w-sm"><button onclick="window.app.closeOnboarding()" class="w-full px-5 py-3 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-xl shadow-md transition-all">Done</button></div>` : ''}
                     </div>
                 `;
                 const dots = ONBOARDING_SLIDES.map((_, i) => `<div class="w-2 h-2 rounded-full transition-all ${i === this.currentSlide ? 'bg-primary-500 w-4' : 'bg-slate-300 dark:bg-slate-600'}"></div>`).join('');
                 document.getElementById('onboarding-footer').innerHTML = slide.isFinal ? 
                     `<div class="flex gap-1.5">${dots}</div><button onclick="window.app.currentSlide--; window.app.renderOnboardingSlide()" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white">Back</button>` : 
-                    `<div class="flex gap-1.5">${dots}</div><div class="flex items-center gap-3">${this.currentSlide > 0 ? `<button onclick="window.app.currentSlide--; window.app.renderOnboardingSlide()" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white px-3 py-2">Back</button>` : `<button onclick="window.app.currentSlide = 'profile_setup'; window.app.renderOnboardingSlide()" class="text-sm font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-3 py-2">Skip</button>`}<button onclick="window.app.currentSlide++; window.app.renderOnboardingSlide()" class="px-5 py-2.5 text-sm font-medium text-white bg-slate-900 dark:bg-primary-500 rounded-xl shadow-sm hover:bg-slate-800 dark:hover:bg-primary-400">Next</button></div>`;
+                    `<div class="flex gap-1.5">${dots}</div><div class="flex items-center gap-3">${this.currentSlide > 0 ? `<button onclick="window.app.currentSlide--; window.app.renderOnboardingSlide()" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white px-3 py-2">Back</button>` : `<button onclick="if (window.app.firstRun) { window.app.completeDemoChoice(true); } else { window.app.closeOnboarding(); }" class="text-sm font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-3 py-2">Skip</button>`}<button onclick="window.app.currentSlide++; window.app.renderOnboardingSlide()" class="px-5 py-2.5 text-sm font-medium text-white bg-slate-900 dark:bg-primary-500 rounded-xl shadow-sm hover:bg-slate-800 dark:hover:bg-primary-400">Next</button></div>`;
             }
 
-            completeDemoChoice(clear) {
+            completeDemoChoice(clear) { this.isDemoData = !clear;
                 if (clear) {
                     const emptyData = {};
                     Object.keys(SECTIONS).forEach(key => { if(key !== 'dashboard' && !SECTIONS[key].custom) emptyData[key] = []; });
@@ -7457,9 +7447,7 @@ window.BinderSync = window.JPSSync;
                 });
             }
 
-            showToast(message, type = 'success', action = null) {
-                const container = document.getElementById('toast-container');
-                if(!container) return;
+            showToast(message, type = 'success', action = null) { const container = document.getElementById('toast-container'); if(!container) return; [...container.children].forEach(t => { if (!t.querySelector('button')) t.remove(); });
                 const toast = document.createElement('div');
                 toast.classList.add('pointer-events-auto');
                 const colors = type === 'success' ? 'bg-white dark:bg-darkCard border-primary-200 dark:border-primary-900' : 'bg-white dark:bg-darkCard border-rose-200 dark:border-rose-900';
@@ -7833,7 +7821,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     const bits = [];
                     if (overdue.length) bits.push(`<strong>${overdue.length}</strong> thing${overdue.length === 1 ? '' : 's'} overdue`);
                     if (thisWeek.length) bits.push(`<strong>${thisWeek.length}</strong> in the next seven days`);
-                    if (gaps) bits.push(`<strong>${gaps}</strong> section${gaps === 1 ? '' : 's'} not started yet`);
+                    if (gaps) bits.push(`Next: start ${gaps === 1 ? 'the one section' : 'the other <strong>' + gaps + '</strong> sections'} still empty`);
                     if (bits.length === 0) bits.push('Nothing overdue and nothing due this week');
                     if (this.banners.insights) {
                         insightsHtml = `
@@ -7899,7 +7887,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             </div>
                             <button onclick="window.app.reconnectBackupFile()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-bold shadow-sm transition-colors whitespace-nowrap shrink-0">Reconnect</button>
                         </div>`;
-                } else if (link.status !== 'linked' && this.recordCount() > 0 && (sinceBackup === null || sinceBackup > BACKUP_NUDGE_DAYS)) {
+                } else if (link.status !== 'linked' && this.recordCount() >= 5 && !this.isDemoData && (sinceBackup === null || sinceBackup > BACKUP_NUDGE_DAYS)) {
                     backupNudgeHtml = `
                         <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
                             <div class="flex items-start gap-3">
@@ -7921,8 +7909,8 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 kpiCards.push(`
                     <div class="bg-gradient-to-br ${overdue.length ? 'from-rose-500 to-rose-600 dark:from-rose-600 dark:to-rose-800 border-rose-400 dark:border-rose-700' : 'from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-800 border-primary-400 dark:border-primary-700'} p-6 rounded-2xl border shadow-md text-white flex flex-col justify-between group cursor-pointer" onclick="window.app.navigateTo('protocol')">
                         <div class="text-white/70 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ${overdue.length ? 'ph-warning-circle' : 'ph-check-circle'} text-lg"></i> Needs Attention</div>
-                        <div class="text-3xl font-bold number-font">${vaultEmpty ? '&mdash;' : overdue.length + dueSoon.length}</div>
-                        <div class="text-xs text-white/70 mt-2">${vaultEmpty ? 'Nothing added yet' : `${overdue.length} overdue &middot; ${dueSoon.length} due within ${DUE_SOON_DAYS} days`}</div>
+                        <div class="text-3xl font-bold number-font">${vaultEmpty || !(overdue.length + dueSoon.length) ? '&mdash;' : overdue.length + dueSoon.length}</div>
+                        <div class="text-xs text-white/70 mt-2">${vaultEmpty ? 'Nothing added yet' : !(overdue.length + dueSoon.length) ? `Nothing overdue or due within ${DUE_SOON_DAYS} days` : `${overdue.length} overdue &middot; ${dueSoon.length} due within ${DUE_SOON_DAYS} days`}</div>
                     </div>`);
                 kpiCards.push(`
                     <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors group" onclick="(document.getElementById('plan-progress')||{}).scrollIntoView?.({behavior:'smooth',block:'start'})">
@@ -7934,7 +7922,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     kpiCards.push(`
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors group" onclick="window.app.navigateTo('financial')">
                             <div class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ph-scales text-lg group-hover:scale-110 transition-transform text-blue-500"></i> Estate, Approx.</div>
-                            <div class="text-2xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty ? '&mdash;' : formatMoney(estateValue)}</div>
+                            <div class="text-2xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty || !estateValue ? '&mdash;' : formatMoney(estateValue)}</div>
                             <div class="text-xs text-slate-400 mt-2">Accounts and property, less debts</div>
                         </div>`);
                 }
@@ -9079,8 +9067,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 }
 
                 this.dynamicForm.innerHTML = config.fields.map(f => {
-                    let value = itemData[f.name] !== undefined ? itemData[f.name] : '';
-                    if (!itemId && f.type === 'date' && f.name === 'date' && defaultDate) value = defaultDate; 
+                    let value = itemData[f.name] !== undefined ? itemData[f.name] : ''; if (!itemId && f.type === 'date' && f.name === 'date' && defaultDate) value = defaultDate; if (!itemId && value === '' && f.default !== undefined) value = f.default; 
 
                     const reqStr = f.required ? 'required' : '';
                     let inputHtml = '';
@@ -9166,8 +9153,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 setTimeout(() => { b.classList.add('hidden'); this.dynamicForm.innerHTML = ''; }, 200);
             }
 
-            saveFormData() {
-                if (!this.dynamicForm.checkValidity()) { this.dynamicForm.reportValidity(); return; }
+            saveFormData() { if (!this.dynamicForm.checkValidity()) { const bad = this.dynamicForm.querySelector(':invalid'); const wrap = bad && bad.closest('div'); const label = wrap && wrap.querySelector('label') ? wrap.querySelector('label').innerText.replace(/\s*\*\s*$/, '').trim() : ''; this.showToast(label ? `Fill in "${label}" first.` : 'Fill in the highlighted field first.', 'error'); if (bad) { bad.classList.add('border-rose-400'); bad.focus(); } return; }
                 const formData = new FormData(this.dynamicForm);
                 const itemData = { id: this.editingId || Date.now().toString(36) };
                 

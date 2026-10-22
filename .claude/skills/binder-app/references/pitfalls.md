@@ -151,6 +151,22 @@ tiles opening sections that do not exist (`chores`, `events`). `novice_check.js`
 now fails on dead navigateTo/openModal targets; still read every screenshot and
 every printed page for donor wording.
 
+**Donor words survive two audits (Emergency Vault, third pass).** After the
+conversion above, Settings › Document Export still offered Sitter Sheet,
+Immunisation and Photo Record, the dashboard chart said "Chores, appointments,
+school deadlines", and a demo note mentioned "Katie the sitter". Nothing read
+the rendered text. `novice_check.js` now builds a donor-word list from the other
+binders beside the app and fails on a hit in any state.
+
+**A replay of the welcome offered to wipe real data.** The final slide's
+"Wipe Demo Data & Start Clean" showed on every replay from Settings. Guard the
+wipe and the two-button first slide with `this.firstRun`, set in `startApp()`.
+
+**The demo opened overdue, with a backup nag on top.** `renews: at(-6)` made
+the first screen a red "1 overdue" tile under "You have never backed up".
+Demo due dates go in the future; the nudge checks `!this.isDemoData` and
+`recordCount() >= 5`.
+
 **A "last reviewed" date shown as overdue.** The Vault listed medical records
 "200 days overdue" because it treated the date of the last review as a due
 date. A past-tense field ("reviewed", "last serviced") needs a `due` that adds

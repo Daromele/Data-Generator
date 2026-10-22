@@ -274,6 +274,11 @@ shipped that way.
 
 ## Print
 
+Whatever theme is on, paper is paper: `@media print` resets `html.dark` and
+everything under `#main-content` to a white background and dark ink (the
+screen's own print, not the engine's documents, which have their own sheet).
+Three binders printed black pages from dark mode before this rule.
+
 The printed document has its own stylesheet and does not inherit any of this —
 see `print-engine.md` and `assets/print-stylesheet.css`. The screen's print
 rules only hide chrome:

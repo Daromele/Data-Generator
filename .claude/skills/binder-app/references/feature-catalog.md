@@ -24,7 +24,8 @@ I  settings: themes, dark mode, hidden modules ("n of m shown"), entity list,
    regional (currency, date format), PIN, getting started, replay tour
 J  data safety: backup, restore (merge), auto-backup link, snapshots, CSV
 K  print: picker, cover, per-entity documents, signature block
-L  onboarding: welcome slides, demo data, backup nudge after 30 days
+L  onboarding: two-button first slide, clean start on Skip, demo never overdue, ≤4 clicks to
+   the first record, backup nudge after ~5 records then 30 days
 M  keyboard, focus, accessibility
 N  motion, with prefers-reduced-motion off
 O  storage keys and state conventions
@@ -122,8 +123,15 @@ list gets extra polish, it is this one.
 
 ## L. Onboarding
 
-Four or five welcome slides, shown once, replayable. Demo data on by default
-with one-click clear. The backup nudge at 30 days.
+Four or five welcome slides, shown once, replayable. Slide one carries two
+buttons: **Start with my own records** (wipes the demo, goes to the quick
+profile) and **Show me around first** (the slides, then wipe-or-keep). Skip on a
+first run starts clean; a replay from Settings never offers to wipe. Demo data
+is anchored to today with every due date in the future, so the first screen is
+never a red tile, and the backup banner never shows over demo data. The first
+saved record is at most 4 clicks from first open; the record's required choice
+has a default (`default:` on the field). The backup nudge waits for ~5 records,
+then every 30 days.
 
 ## M. Keyboard and accessibility
 

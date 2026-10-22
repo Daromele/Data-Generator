@@ -91,8 +91,13 @@ NODE_PATH=$(npm root -g) node scripts/novice_check.js path/to/App.html --shots /
 ```
 
 The last one is the **novice review**: a first-time buyer's walk through every
-screen, empty and with demo data. Then look at its screenshots yourself with the
-checklist in `references/novice-review.md` — the script cannot judge wording.
+screen, empty and with demo data, plus the welcome walked as a buyer (clicks to
+the first record), one record added through the real form, the demo checked for
+overdue items and the backup nag, every screen scanned for the other binders'
+words, and a print from dark mode. Then look at its screenshots yourself with
+the checklist in `references/novice-review.md` — the script cannot judge wording.
+The `newbie-check` skill (Dashboard-Creator repo) runs on binders too, with no
+setup; its first-job drive and screenshots are the second opinion before packaging.
 
 The static audit finds most defects in seconds. The verifier catches the three
 that only appear when the file runs: whether it renders with no network, whether
@@ -312,7 +317,7 @@ not use from here.
 | `scripts/verify_binder.js` | Runtime checks in a real browser. Needs Playwright. |
 | `scripts/build.py` | Inlines every asset; refuses to build a file that reaches the network. |
 | `scripts/check_house_style.py` | Enforces the fixed themes, palette, typefaces and dark pairs. Exits 1 on blockers. |
-| `scripts/novice_check.js` | First-time-buyer walk of every screen, empty and demo. Exits 1 on blockers. |
+| `scripts/novice_check.js` | First-time-buyer walk: welcome, first record, every screen empty and demo, donor words, dark print. Exits 1 on blockers. `--forbid "a|b"` overrides the donor-word list. |
 | `scripts/add_sync.py` | Add-on: wires sync into a binder on the shared engine. |
 | `scripts/sync_flow.mjs` | Two browsers syncing through the real server code, in memory. |
 | `scripts/capture_screens.js` | Listing screenshots, theme shots, and every printed document as PDF + page PNGs. |
