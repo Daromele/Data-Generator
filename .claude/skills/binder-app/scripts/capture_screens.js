@@ -26,6 +26,9 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   where: app => app.printWhereThingsAre(),
   executor: app => app.printExecutorLetter(),                   // Legacy Planner
   wishes: app => app.printMyWishes(),
+  property: app => app.printInventory(),                         // Divorce Planner
+  affidavit: app => app.printAffidavitWorksheet(),
+  attorney: app => app.printAttorneyChecklist(),
   inventory: app => app.printInventoryReport('all', 'all'),    // Home Management
   improvements: app => app.printImprovementsReport('all', 'all'),
   contacts: app => app.printEmergencySheet(),

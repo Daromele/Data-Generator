@@ -201,6 +201,12 @@ forked from Emergency Vault. Sections: First Steps, Key People, Important Docume
 Medical Directives, Funeral & Memorial, Letters & Messages, Accounts (+beneficiary), Insurance & Benefits,
 Digital Life, Property & Belongings. Prints: For My Executor, My Wishes (signed), Where Things Are.
 No full numbers, no keys/codes field. Kit DONE (hosting, demo, deck, videos, guide, zips).
+Divorce & Separation Planner: DONE (apps/Divorce_Planner.html, prefix dv, theme slate, slug divorce-planner),
+forked from Legacy (newest engine). Discovery, Untangle Accounts, Vital Documents, Contacts, Assets, Debts,
+Income & Expenses, Children, Incident and Communication logs, Journal. Prints: Property & Debt Inventory,
+Financial Affidavit Worksheet, Attorney Checklist. Checked with binder-app, newbie-check and device-check.
+TODO: port the first-five-minutes fixes (Legacy/EV, Oct 2026 review) to Co-Parenting, Home, Homeschool,
+Teacher, Mom: novice_check flags them.
 Next after it: Legacy & End-of-Life (credential fields: no full
 account numbers or "keys/codes"), After Loss, Divorce, Cleaning Tracker (only the DEMO
 file received; need the full one), Caregiver (drop the HIPAA claim, non-clinical).
