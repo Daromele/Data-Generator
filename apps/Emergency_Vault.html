@@ -4733,8 +4733,7 @@
         .toast-exit { animation: fadeOut 0.2s ease-in forwards; }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
-        @media print {
-            body { background: white !important; color: black !important; }
+        @media print { body { background: white !important; color: black !important; } html.dark, html.dark body, html.dark #main-content, html.dark #main-content * { background-color: #fff !important; background-image: none !important; color: #111 !important; border-color: #ddd !important; box-shadow: none !important; }
             #sidebar, #topbar, .action-btns, #toast-container, #modal-backdrop, #confirm-backdrop, #lock-screen, #onboarding-backdrop, #print-modal-backdrop, #backup-backdrop, #viewer-backdrop { display: none !important; }
             #main-content { margin: 0 !important; padding: 0 !important; width: 100% !important; overflow: visible !important; }
         }
@@ -5445,7 +5444,7 @@ window.BinderSync = window.JPSSync;
     <!-- Scripts -->
     <script>
         const STORAGE_KEY = 'emergencyVaultData';
-        const APP_VERSION = '1.0.0';
+        const APP_VERSION = '1.1.0';
         const SCHEMA_VERSION = 2;
         const SNAPSHOT_KEYS = ['evSnapshot1', 'evSnapshot2', 'evSnapshot3'];
         const BACKUP_NUDGE_DAYS = 30;
@@ -5988,8 +5987,7 @@ window.BinderSync = window.JPSSync;
                 isEntity: true, entityLabel: "person",
                 fields: [
                     { name: "name", label: "Name", type: "text", required: true },
-                    { name: "role", label: "Who they are", type: "select", required: true,
-                      options: ["Adult", "Teen", "Child", "Dependent", "Pet", "Other"] },
+                    { name: "role", label: "Who they are", type: "select", required: true, default: "Adult", options: ["Adult", "Teen", "Child", "Dependent", "Pet", "Other"] },
                     { name: "dob", label: "Date of birth", type: "date" },
                     { name: "phone", label: "Phone", type: "text" },
                     { name: "notes", label: "Notes", type: "textarea" }
@@ -6371,7 +6369,7 @@ window.BinderSync = window.JPSSync;
                         { id: 'ev_d2', item: 'House deeds', kind: 'Deed or title', location: 'Fireproof box, attic', notes: 'Box code is written in the back of the recipe folder.' },
                         { id: 'ev_d3', item: 'Passports', kind: 'Passport or ID', location: 'Study filing cabinet, top drawer', expires: at(430), notes: 'Ella’s expires first — check before booking anything.' },
                         { id: 'ev_d4', item: 'Birth certificates', kind: 'Certificate', location: 'Fireproof box, attic' },
-                        { id: 'ev_d5', item: 'Spare house keys', kind: 'Key or safe', location: 'With Grandma and Grandpa', expires: at(21), notes: 'Also one with Katie the sitter.' }
+                        { id: 'ev_d5', item: 'Spare house keys', kind: 'Key or safe', location: 'With Grandma and Grandpa', expires: at(21), notes: 'Also one with the neighbor.' }
                     ],
                     medical: [
                         { id: 'ev_h1', member: 'ev_m3', blood_type: 'O+', allergies: 'Peanuts — carries an EpiPen', conditions: 'Asthma', medications: 'Blue inhaler as needed. Brown inhaler morning and night.', doctor: 'Marsh Lane Family Practice', doctor_phone: '(555) 555-0101', directive: 'None recorded', reviewed: at(-40), notes: 'Ask for Dr. Okafor.' },
@@ -6394,7 +6392,7 @@ window.BinderSync = window.JPSSync;
                     ],
                     insurance: [
                         { id: 'ev_i1', provider: 'Harbor Life', kind: 'Life', policy_no: 'LF-99120', covers: ['ev_m1', 'ev_m2'], renews: at(64), premium: 38.5, phone: '(800) 555-0101', notes: 'Pays off the mortgage first.' },
-                        { id: 'ev_i2', provider: 'Keystone Home', kind: 'Home', policy_no: 'HM-40881', covers: ['ev_m1'], renews: at(-6), premium: 24.9, phone: '(800) 555-0122', notes: 'Overdue — renew or it lapses.' },
+                        { id: 'ev_i2', provider: 'Keystone Home', kind: 'Home', policy_no: 'HM-40881', covers: ['ev_m1'], renews: at(12), premium: 24.9, phone: '(800) 555-0122', notes: 'Overdue — renew or it lapses.' },
                         { id: 'ev_i3', provider: 'Roadline Auto', kind: 'Vehicle', policy_no: 'VH-72104', covers: ['ev_m2'], renews: at(150), premium: 41.2, phone: '(800) 555-0133' }
                     ],
                     digital: [
@@ -6422,7 +6420,7 @@ window.BinderSync = window.JPSSync;
 
             loadData() {
                 const stored = recordStore.get(STORAGE_KEY);
-                if (!stored) return this.migrate(this.getDemoData());
+                if (!stored) { this.isDemoData = true; return this.migrate(this.getDemoData()); }
                 try {
                     const parsed = JSON.parse(stored);
                     // v2 wraps records in an envelope; v1 stored the bare object.
@@ -7332,13 +7330,9 @@ window.BinderSync = window.JPSSync;
                 this.renderSettings();
             }
 
-            startApp() {
-                this.navigateTo('dashboard');
-                if (!storage.get('evWelcomeSeen')) setTimeout(() => this.showOnboarding(), 500);
-            }
+            startApp() { this.navigateTo('dashboard'); this.firstRun = !storage.get('evWelcomeSeen'); if (this.firstRun) setTimeout(() => this.showOnboarding(), 500); }
 
-            showOnboarding() {
-                this.currentSlide = 0;
+            showOnboarding() { if (storage.get('evWelcomeSeen')) this.firstRun = false; this.currentSlide = 0;
                 this.renderOnboardingSlide();
                 const b = document.getElementById('onboarding-backdrop'), c = document.getElementById('onboarding-content');
                 b.classList.remove('hidden'); setTimeout(() => { b.classList.remove('opacity-0'); c.classList.remove('scale-95'); }, 10);
@@ -7387,21 +7381,17 @@ window.BinderSync = window.JPSSync;
                         </div>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight serif-font">${slide.title}</h2>
                         <p class="text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm text-sm">${slide.desc}</p>
-                        ${slide.isFinal ? `
-                            <div class="mt-8 flex flex-col gap-3 w-full max-w-sm">
-                                <button onclick="window.app.completeDemoChoice(true)" class="w-full px-5 py-3 text-sm font-medium text-rose-600 bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:hover:bg-rose-900/40 rounded-xl transition-colors border border-rose-200 dark:border-rose-900/50">Wipe Demo Data & Start Clean</button>
-                                <button onclick="window.app.completeDemoChoice(false)" class="w-full px-5 py-3 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-xl shadow-md transition-all">Keep Demo Data</button>
-                            </div>
-                        ` : ''}
+                        ${this.currentSlide === 0 && this.firstRun ? `<div class="mt-8 flex flex-col gap-3 w-full max-w-sm"><button onclick="window.app.completeDemoChoice(true)" class="w-full px-5 py-3 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-xl shadow-md transition-all">Start with my own records</button><button onclick="window.app.currentSlide++; window.app.renderOnboardingSlide()" class="w-full px-5 py-3 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors">Show me around first</button></div>` : ''}${slide.isFinal && this.firstRun ? ` <div class="mt-8 flex flex-col gap-3 w-full max-w-sm"> <button onclick="window.app.completeDemoChoice(true)" class="w-full px-5 py-3 text-sm font-medium text-rose-600 bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:hover:bg-rose-900/40 rounded-xl transition-colors border border-rose-200 dark:border-rose-900/50">Wipe Demo Data & Start Clean</button>
+                                <button onclick="window.app.completeDemoChoice(false)" class="w-full px-5 py-3 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-xl shadow-md transition-all">Keep Demo Data</button> </div> ` : slide.isFinal ? `<div class="mt-8 w-full max-w-sm"><button onclick="window.app.closeOnboarding()" class="w-full px-5 py-3 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-xl shadow-md transition-all">Done</button></div>` : ''}
                     </div>
                 `;
                 const dots = ONBOARDING_SLIDES.map((_, i) => `<div class="w-2 h-2 rounded-full transition-all ${i === this.currentSlide ? 'bg-primary-500 w-4' : 'bg-slate-300 dark:bg-slate-600'}"></div>`).join('');
                 document.getElementById('onboarding-footer').innerHTML = slide.isFinal ? 
                     `<div class="flex gap-1.5">${dots}</div><button onclick="window.app.currentSlide--; window.app.renderOnboardingSlide()" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white">Back</button>` : 
-                    `<div class="flex gap-1.5">${dots}</div><div class="flex items-center gap-3">${this.currentSlide > 0 ? `<button onclick="window.app.currentSlide--; window.app.renderOnboardingSlide()" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white px-3 py-2">Back</button>` : `<button onclick="window.app.currentSlide = 'profile_setup'; window.app.renderOnboardingSlide()" class="text-sm font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-3 py-2">Skip</button>`}<button onclick="window.app.currentSlide++; window.app.renderOnboardingSlide()" class="px-5 py-2.5 text-sm font-medium text-white bg-slate-900 dark:bg-primary-500 rounded-xl shadow-sm hover:bg-slate-800 dark:hover:bg-primary-400">Next</button></div>`;
+                    `<div class="flex gap-1.5">${dots}</div><div class="flex items-center gap-3">${this.currentSlide > 0 ? `<button onclick="window.app.currentSlide--; window.app.renderOnboardingSlide()" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white px-3 py-2">Back</button>` : `<button onclick="if (window.app.firstRun) { window.app.completeDemoChoice(true); } else { window.app.closeOnboarding(); }" class="text-sm font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-3 py-2">Skip</button>`}<button onclick="window.app.currentSlide++; window.app.renderOnboardingSlide()" class="px-5 py-2.5 text-sm font-medium text-white bg-slate-900 dark:bg-primary-500 rounded-xl shadow-sm hover:bg-slate-800 dark:hover:bg-primary-400">Next</button></div>`;
             }
 
-            completeDemoChoice(clear) {
+            completeDemoChoice(clear) { this.isDemoData = !clear;
                 if (clear) {
                     const emptyData = {};
                     Object.keys(SECTIONS).forEach(key => { if(key !== 'dashboard' && !SECTIONS[key].custom) emptyData[key] = []; });
@@ -7458,9 +7448,7 @@ window.BinderSync = window.JPSSync;
                 });
             }
 
-            showToast(message, type = 'success', action = null) {
-                const container = document.getElementById('toast-container');
-                if(!container) return;
+            showToast(message, type = 'success', action = null) { const container = document.getElementById('toast-container'); if(!container) return; [...container.children].forEach(t => { if (!t.querySelector('button')) t.remove(); });
                 const toast = document.createElement('div');
                 toast.classList.add('pointer-events-auto');
                 const colors = type === 'success' ? 'bg-white dark:bg-darkCard border-primary-200 dark:border-primary-900' : 'bg-white dark:bg-darkCard border-rose-200 dark:border-rose-900';
@@ -7830,7 +7818,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     const bits = [];
                     if (overdue.length) bits.push(`<strong>${overdue.length}</strong> thing${overdue.length === 1 ? '' : 's'} overdue`);
                     if (thisWeek.length) bits.push(`<strong>${thisWeek.length}</strong> in the next seven days`);
-                    if (gaps) bits.push(`<strong>${gaps}</strong> person${gaps === 1 ? '' : 's'} with no medical record yet`);
+                    if (gaps) bits.push(`Next: medical notes for <strong>${gaps}</strong> ${gaps === 1 ? 'person' : 'people'}`);
                     if (bits.length === 0) bits.push('Nothing overdue and nothing due this week');
                     if (this.banners.insights) {
                         insightsHtml = `
@@ -7896,7 +7884,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             </div>
                             <button onclick="window.app.reconnectBackupFile()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-bold shadow-sm transition-colors whitespace-nowrap shrink-0">Reconnect</button>
                         </div>`;
-                } else if (link.status !== 'linked' && this.recordCount() > 0 && (sinceBackup === null || sinceBackup > BACKUP_NUDGE_DAYS)) {
+                } else if (link.status !== 'linked' && this.recordCount() >= 5 && !this.isDemoData && (sinceBackup === null || sinceBackup > BACKUP_NUDGE_DAYS)) {
                     backupNudgeHtml = `
                         <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
                             <div class="flex items-start gap-3">
@@ -7918,14 +7906,14 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 kpiCards.push(`
                     <div class="bg-gradient-to-br ${overdue.length ? 'from-rose-500 to-rose-600 dark:from-rose-600 dark:to-rose-800 border-rose-400 dark:border-rose-700' : 'from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-800 border-primary-400 dark:border-primary-700'} p-6 rounded-2xl border shadow-md text-white flex flex-col justify-between group cursor-pointer" onclick="window.app.navigateTo('protocol')">
                         <div class="text-white/70 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ${overdue.length ? 'ph-warning-circle' : 'ph-check-circle'} text-lg"></i> Needs Attention</div>
-                        <div class="text-3xl font-bold number-font">${vaultEmpty ? '&mdash;' : overdue.length + dueSoon.length}</div>
-                        <div class="text-xs text-white/70 mt-2">${vaultEmpty ? 'Nothing added yet' : `${overdue.length} overdue &middot; ${dueSoon.length} due within ${DUE_SOON_DAYS} days`}</div>
+                        <div class="text-3xl font-bold number-font">${vaultEmpty || !(overdue.length + dueSoon.length) ? '&mdash;' : overdue.length + dueSoon.length}</div>
+                        <div class="text-xs text-white/70 mt-2">${vaultEmpty ? 'Nothing added yet' : !(overdue.length + dueSoon.length) ? `Nothing overdue or due within ${DUE_SOON_DAYS} days` : `${overdue.length} overdue &middot; ${dueSoon.length} due within ${DUE_SOON_DAYS} days`}</div>
                     </div>`);
                 if (!this.hiddenSections.includes('events')) {
                     kpiCards.push(`
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors group" onclick="(document.getElementById('coming-up')||{}).scrollIntoView?.({behavior:'smooth',block:'start'})">
                             <div class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ph-calendar-check text-lg group-hover:scale-110 transition-transform text-blue-500"></i> This Week</div>
-                            <div class="text-3xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty ? '&mdash;' : thisWeek.length}</div>
+                            <div class="text-3xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty || !thisWeek.length ? '&mdash;' : thisWeek.length}</div>
                             <div class="text-xs text-slate-400 mt-2">Things happening in seven days</div>
                         </div>`);
                 }
@@ -7934,7 +7922,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     kpiCards.push(`
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors group" onclick="window.app.navigateTo('documents')">
                             <div class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ph-folder-open text-lg group-hover:scale-110 transition-transform text-blue-500"></i> Located</div>
-                            <div class="text-2xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty ? '&mdash;' : kept}</div>
+                            <div class="text-2xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty || !kept ? '&mdash;' : kept}</div>
                             <div class="text-xs text-slate-400 mt-2">Documents and keys</div>
                         </div>`);
                 }
@@ -7944,7 +7932,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     kpiCards.push(`
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors group" onclick="window.app.navigateTo('contacts')">
                             <div class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><i class="ph ph-phone-call text-lg group-hover:scale-110 transition-transform text-emerald-500"></i> Who to Call</div>
-                            <div class="text-2xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty ? '&mdash;' : people}</div>
+                            <div class="text-2xl font-bold text-slate-900 dark:text-white number-font">${vaultEmpty || !people ? '&mdash;' : people}</div>
                             <div class="text-xs text-slate-400 mt-2">Contacts on file</div>
                         </div>`);
                 }
@@ -8030,7 +8018,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     <div class="mb-6">
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col w-full">
                             <h3 class="font-bold text-slate-900 dark:text-white mb-1">The Fortnight Ahead</h3>
-                            <p class="text-xs text-slate-500 mb-6">Chores, appointments, school deadlines and events falling on each of the next fourteen days.</p>
+                            <p class="text-xs text-slate-500 mb-6">Actions, renewals and reviews falling on each of the next fourteen days.</p>
                             <div class="flex-1 relative h-[250px] w-full flex items-center justify-center"><canvas id="fortnightChart"></canvas></div>
                         </div>
                     </div>`;
@@ -9072,8 +9060,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 }
 
                 this.dynamicForm.innerHTML = config.fields.map(f => {
-                    let value = itemData[f.name] !== undefined ? itemData[f.name] : '';
-                    if (!itemId && f.type === 'date' && f.name === 'date' && defaultDate) value = defaultDate; 
+                    let value = itemData[f.name] !== undefined ? itemData[f.name] : ''; if (!itemId && f.type === 'date' && f.name === 'date' && defaultDate) value = defaultDate; if (!itemId && value === '' && f.default !== undefined) value = f.default; 
 
                     const reqStr = f.required ? 'required' : '';
                     let inputHtml = '';
@@ -9159,8 +9146,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 setTimeout(() => { b.classList.add('hidden'); this.dynamicForm.innerHTML = ''; }, 200);
             }
 
-            saveFormData() {
-                if (!this.dynamicForm.checkValidity()) { this.dynamicForm.reportValidity(); return; }
+            saveFormData() { if (!this.dynamicForm.checkValidity()) { const bad = this.dynamicForm.querySelector(':invalid'); const wrap = bad && bad.closest('div'); const label = wrap && wrap.querySelector('label') ? wrap.querySelector('label').innerText.replace(/\s*\*\s*$/, '').trim() : ''; this.showToast(label ? `Fill in "${label}" first.` : 'Fill in the highlighted field first.', 'error'); if (bad) { bad.classList.add('border-rose-400'); bad.focus(); } return; }
                 const formData = new FormData(this.dynamicForm);
                 const itemData = { id: this.editingId || Date.now().toString(36) };
                 
