@@ -157,3 +157,5 @@ Only for products that take scans. Downscaled on import
 (`SAMPLE_MAX_EDGE` 1600, `SAMPLE_MAX_BYTES` 4 MB), shown as a thumbnail with a
 viewer, removable, and counted in the backup size warning. If sync is on, read
 the attachment rule in `sync.md` first.
+
+- **Excel workbook (.xlsx)** for apps whose numbers go to a professional (Divorce, Co-Parenting): `xlsxLite` in the app writes a real .xlsx with no library (stored zip, ~10 KB of code): one sheet per section, frozen header, currency format, live SUM/SUMIF totals, a Summary sheet. Private logs (journal, incidents, messages) stay out. It downloads through `downloadFile`, so the demo locks it; `make_demo.py` names it "Export an Excel workbook". Verify by recalculating in LibreOffice (`soffice --headless --convert-to xlsx`) and comparing totals with the dashboard.

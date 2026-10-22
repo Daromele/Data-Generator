@@ -65,6 +65,7 @@ DEMO = r'''
                 lock('exportData', 'Download a backup');
                 lock('importData', 'Restore a backup');
                 lock('exportCSV', 'Export to a spreadsheet');
+                lock('exportWorkbook', 'Export an Excel workbook');
                 lock('chooseBackupFile', 'Automatic backup');
                 lock('writeBackupFile', 'Automatic backup');
                 lock('reconnectBackupFile', 'Automatic backup');
