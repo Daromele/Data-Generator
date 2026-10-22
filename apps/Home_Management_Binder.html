@@ -4780,6 +4780,13 @@ html .text-emerald-600,html .text-emerald-500{color:var(--j-ok)}html .text-rose-
 html.dark[data-dark="night"]{--j-paper:#141218!important;--j-card:#1C1A21!important;--j-sunk:#232028!important;--j-ink:#EDEAF2!important;--j-ink2:#B4AEBF!important;--j-ink3:#8B8498!important;--j-rule:#2A2731!important;--j-rule2:#3A3644!important;--j-accent:#C3A9E8!important;--j-bold:#221C2C!important;--j-bold2:#1A1522!important;--j-onbold:#EDE7F5!important;--j-onbolddim:#A79BBA!important;--j-pop:#F0B98F!important;--j-popink:#2A1708!important;--theme-50:#292234!important;--theme-100:#352C44!important;--theme-200:#4A3D63!important;--theme-300:#D6C6EE!important;--theme-400:#C3A9E8!important;--theme-500:#9A7DD0!important;--theme-600:#7656AE!important;--theme-700:#634894!important;--theme-800:#4F3A77!important;--theme-900:#221C2C!important;}
 html.dark[data-dark="midnight"]{--j-paper:#0C1720!important;--j-card:#14232D!important;--j-sunk:#1B2D38!important;--j-ink:#F0F7F7!important;--j-ink2:#BDCDD1!important;--j-ink3:#97AEB6!important;--j-rule:#29414D!important;--j-rule2:#3B5864!important;--j-accent:#9DB8F5!important;--j-bold:#0B303D!important;--j-bold2:#092632!important;--j-onbold:#EFF9F7!important;--j-onbolddim:#ACCDCC!important;--j-pop:#F5C382!important;--j-popink:#2B1A07!important;--theme-50:#1E2D46!important;--theme-100:#2A3D5E!important;--theme-200:#3A5078!important;--theme-300:#BCD0F8!important;--theme-400:#9DB8F5!important;--theme-500:#5F86D6!important;--theme-600:#3A63B4!important;--theme-700:#30549A!important;--theme-800:#27457F!important;--theme-900:#0B303D!important;}
 .jps-pal.dark span{color:#ddd}
+
+/* full width on wide screens: page columns fill the space beside the sidebar; forms and reading columns keep their width */
+.max-w-7xl.mx-auto,.max-w-6xl.mx-auto{max-width:none!important}
+/* calendar view: the month grows with the window and the page scrolls, not a box inside it */
+.cal-card,.cal-scroll{overflow:visible!important;flex:none!important}
+.cal-grid{min-height:520px!important;height:auto!important}
+@media (min-width:640px){.cal-grid{min-height:max(760px,calc(100vh - 230px))!important}}
 </style>
 </head>
 <body class="app-canvas text-slate-800 dark:text-slate-200 h-screen flex overflow-hidden transition-colors selection:bg-primary-500 selection:text-white">
@@ -8832,7 +8839,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 const daysInPrevMonth = new Date(year, month, 0).getDate();
 
                 let calendarHtml = `
-                    <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex-1 flex flex-col min-h-[500px]">
+                    <div class="cal-card bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex-1 flex flex-col min-h-[500px]">
                         <div class="p-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                             
                             <div class="flex items-center gap-2">
@@ -8857,8 +8864,8 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                         <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/80 shrink-0">
                             ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="p-2 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">${d}</div>`).join('')}
                         </div>
-                        <div class="flex-1 overflow-y-auto custom-scrollbar relative">
-                            <div class="grid grid-cols-7 grid-rows-6 min-h-[520px] sm:min-h-[700px] h-full bg-slate-50 dark:bg-slate-900/20">
+                        <div class="cal-scroll flex-1 overflow-y-auto custom-scrollbar relative">
+                            <div class="cal-grid grid grid-cols-7 grid-rows-6 min-h-[520px] sm:min-h-[700px] h-full bg-slate-50 dark:bg-slate-900/20">
                 `;
 
                 const cellsToRender = 42; // Always 6 rows

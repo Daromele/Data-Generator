@@ -121,3 +121,5 @@ worlds, digital on every device and a real binder on the shelf.
 - Description: a "The best of both worlds:" paragraph right after the
   opening line, naming that product's printouts.
 - Tags: include "printable planner".
+
+- Wide screens: no 1400px cap (.max-w-7xl.mx-auto{max-width:none}), and the calendar view grows with the window (cal-card/cal-scroll/cal-grid: the page scrolls, never a box inside it). New binders forked from an existing one inherit both; the CSS sits at the end of the jps-skin style block.
