@@ -1,0 +1,11 @@
+[
+ {"welcome":"show"},{"dump":true},{"click":"Start with my own records"},{"wait":500},{"click":"Finish Later"},{"wait":600},
+ {"note":"the empty dashboard","dump":true},{"expect":"never backed up","absent":true},
+ {"note":"first job: add a task from the dashboard","click":"@#main-content button[onclick*='openModal']"},{"wait":500},{"dump":true},
+ {"fill":["#modal-backdrop [name=task]","Order death certificates"]},{"click":"@#modal-backdrop button[onclick*='saveFormData']"},{"wait":800},{"milestone":"first task saved"},
+ {"note":"an account with cents","eval":"app.navigateTo('accounts');app.openModal('accounts')"},{"wait":500},{"dump":true},
+ {"fill":["#modal-backdrop [name=institution]","Northgate Bank"]},{"fill":["#modal-backdrop [name=balance]","12345.67"]},{"click":"@#modal-backdrop button[onclick*='saveFormData']"},{"wait":800},{"milestone":"first account saved"},
+ {"eval":"app.navigateTo('accounts')"},{"wait":600},{"numbers":["12,345.67"]},
+ {"reload":true},{"eval":"app.navigateTo('tasks')"},{"wait":500},{"expect":"Order death certificates"},
+ {"startFresh":true}
+]
