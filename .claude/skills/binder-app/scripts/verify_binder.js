@@ -70,6 +70,8 @@ const skip = (n, d) => results.push(['SKIP', n, d]);
     const field = Object.keys(rec).find(f => f !== 'id' && typeof rec[f] === 'string');
     rec[field] = nasty;
     try { a.saveData && a.saveData(); } catch (e) {}
+    // the list view always shows every record; a calendar view hides undated ones
+    try { storage.set(SETTINGS_PREFIX + 'ViewMode_' + key, 'table'); } catch (e) {}
     try { a.navigateTo && a.navigateTo(key); } catch (e) {}
     const text = document.body.innerText;
     return { ok: text.includes('Smith & Sons <Reception>'), key, field, sample: text.slice(0, 0) };

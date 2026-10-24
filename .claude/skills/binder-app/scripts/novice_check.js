@@ -198,7 +198,7 @@ async function emptyForms(page, errors) {
     for (const r of form.requiredSelectsWithoutDefault) add('MINOR', `form › ${E}`, `"${r}" is required and has no default, on the very first record.`, 'Give it the default the welcome already implied (Adult, Executor), via `default:` on the field.');
     await page.evaluate(([E, nameField]) => { const f = window.app.dynamicForm; if (nameField) f.querySelector(`[name="${nameField}"]`).value = 'Sam Rivera'; f.querySelectorAll('select[required]').forEach(s => { if (!s.value) { const o = [...s.options].find(o => o.value && o.value !== '__custom__'); if (o) s.value = o.value; } }); window.app.saveFormData(); }, [E, nameField]);
     clicks++; await page.waitForTimeout(600);
-    const saved = await page.evaluate(E => (window.app.data[E] || []).some(x => x.name === 'Sam Rivera'), E);
+    const saved = await page.evaluate(([E, nf]) => (window.app.data[E] || []).some(x => x[nf || 'name'] === 'Sam Rivera'), [E, nameField]);
     if (!saved) { const bad = await page.evaluate(() => [...(window.app.dynamicForm || document).querySelectorAll(':invalid')].map(e => e.name || e.id)); add('BLOCKER', `form › ${E}`, `The first record could not be saved through the form with only the required fields (still invalid: ${bad.join(', ') || 'none reported'}).`, 'Fix the form.'); await page.evaluate(() => window.app.closeModal && window.app.closeModal()); }
     if (clicks > 4) add('MAJOR', 'first five minutes', `${clicks} clicks from first open to the first saved record.`, 'A two-button start on slide one and a one-click add; four slides before the first record is too many.');
     await go(page, 'dashboard');

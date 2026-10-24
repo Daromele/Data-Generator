@@ -29,6 +29,9 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   property: app => app.printInventory(),                         // Divorce Planner
   affidavit: app => app.printAffidavitWorksheet(),
   attorney: app => app.printAttorneyChecklist(),
+  notify: app => app.printNotificationLog(),                    // After Loss
+  claims: app => app.printClaimsTracker(),
+  estate: app => app.printEstateChecklist(),
   inventory: app => app.printInventoryReport('all', 'all'),    // Home Management
   improvements: app => app.printImprovementsReport('all', 'all'),
   contacts: app => app.printEmergencySheet(),

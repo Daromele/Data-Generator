@@ -127,3 +127,5 @@ worlds, digital on every device and a real binder on the shelf.
 - List view: the table card grows with its rows (.list-card), like the calendar. Filter labels: a field can set filterLabel, and words ending in -us pluralize to -uses ("All Statuses"). Phones: nothing under 12px, 40px menu button (Oct 2026, device-check on the Divorce Planner).
 
 - **Every binder with dates gets a calendar.** A dated section that people plan around (court dates, appointments, deadlines, tasks) sets `hasCalendar: true`, which gives the three views: calendar, cards and list. Divorce shipped without one and was sent back. Finished (✅/🟢) or cancelled (❌) items are never overdue; times show 12-hour (formatTime) in US date format.
+
+- **defaultView** on a section picks its first view (a checklist with hasCalendar opens as a list, cards on a phone). A binder with no people list needs the `data.members` guard in migrate (After Loss). verify_binder and novice_check now find records by the field the form filled, and read the list view.

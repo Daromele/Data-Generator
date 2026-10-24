@@ -6041,7 +6041,7 @@ window.BinderSync = window.JPSSync;
             discovery: {
                 title: "Discovery Checklist", icon: "ph-list-checks", group: "case",
                 singular: "Document", desc: "Every paper your attorney or mediator will ask for, and where you are with each.",
-                filterField: "status", hasCalendar: true, dateField: "due", dueFields: ["due"],
+                filterField: "status", hasCalendar: true, defaultView: "table", dateField: "due", dueFields: ["due"],
                 fields: [
                     { name: "item", label: "Document needed", type: "text", required: true, placeholder: "e.g. 2025 tax return" },
                     { name: "category", label: "Category", type: "select", options: ["Tax returns", "Pay stubs", "Bank statements", "Retirement", "Credit cards", "Loans", "Property", "Business", "Insurance", "Other"] },
@@ -6054,7 +6054,7 @@ window.BinderSync = window.JPSSync;
             uncoupling: {
                 title: "Untangle Accounts", icon: "ph-link-break", group: "case",
                 singular: "Task", desc: "Accounts, policies and logins to separate, one task at a time.",
-                filterField: "status", hasCalendar: true, dateField: "due", dueFields: ["due"],
+                filterField: "status", hasCalendar: true, defaultView: "table", dateField: "due", dueFields: ["due"],
                 fields: [
                     { name: "task", label: "Task", type: "text", required: true, placeholder: "e.g. Open a checking account in my name" },
                     { name: "category", label: "Category", type: "select", options: ["Bank account", "Credit card", "Insurance", "Utilities", "Phone", "Subscriptions", "Passwords and logins", "Mail and address", "Beneficiaries", "Other"] },
@@ -7756,7 +7756,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     }
                     const storedView = storage.get(`dvViewMode_${key}`);
                     const narrow = window.innerWidth < 640;
-                    this.viewMode = storedView || (config.hasCalendar ? 'calendar' : (narrow ? 'grid' : 'table'));
+                    this.viewMode = storedView || (config.defaultView === 'table' && narrow ? 'grid' : config.defaultView) || (config.hasCalendar ? 'calendar' : (narrow ? 'grid' : 'table'));
                     
                     this.renderGenericSection(key);
                 }
