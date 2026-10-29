@@ -30,6 +30,9 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   affidavit: app => app.printAffidavitWorksheet(),
   attorney: app => app.printAttorneyChecklist(),
   notify: app => app.printNotificationLog(),                    // After Loss
+  meds: app => app.printMedicationList(),                       // Caregiver
+  care: app => app.printCareSummary(),                          // Caregiver
+  costs: app => app.printCareCosts(),                           // Caregiver
   claims: app => app.printClaimsTracker(),
   estate: app => app.printEstateChecklist(),
   inventory: app => app.printInventoryReport('all', 'all'),    // Home Management
