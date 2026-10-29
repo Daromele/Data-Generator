@@ -4797,6 +4797,48 @@ html.dark[data-dark="midnight"]{--j-paper:#0C1720!important;--j-card:#14232D!imp
 #open-sidebar{min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center}
 button.absolute.top-3{min-width:36px;min-height:36px;top:4px!important;right:4px!important;display:inline-flex;align-items:center;justify-content:center}
 }
+
+/* clearance pass (device-check 2b): room and tap targets */
+.jps-pal{width:76px;height:54px;padding:8px 8px 22px}.jps-pal span{bottom:5px}
+.print-share{flex-direction:column!important;align-items:stretch!important}
+.print-share > div:last-child{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));width:100%!important}
+@media (max-width:1023px){#page-title{display:none!important}
+  #header-action-btn-container .hidden.sm\:inline{display:none!important}#header-action-btn-container .sm\:hidden{display:inline!important}}
+#page-title{margin-right:16px;white-space:nowrap}
+#header-action-btn-container button{white-space:nowrap}
+#main-content .p-6.flex:has(> button.px-5){flex-wrap:wrap;gap:12px}#main-content .p-6.flex > button.px-5{flex-shrink:0;white-space:nowrap}
+#dashboard-trip-label{box-shadow:none;border-width:0!important;line-height:1.3;padding:4px 10px!important;display:inline-block;border-radius:999px}#owner-name-display{margin-top:8px}
+#main-content .flex.items-center:has(> button.relative.inline-flex){gap:12px}#main-content .flex.items-center:has(> button.relative.inline-flex) > div{min-width:0}#main-content button.relative.inline-flex{flex-shrink:0}
+@media (max-width:1279px){#main-content .grid:has(> .flex.items-center > button.relative.inline-flex){grid-template-columns:repeat(auto-fill,minmax(230px,1fr))!important}}
+.sidebar-footer{padding:12px 16px 16px!important}
+#nav-menu{padding-left:16px!important;padding-right:16px!important}
+#dynamic-form label.block{margin-bottom:8px!important}
+@media (max-width:1279px){#main-content .grid.md\:grid-cols-2:has(> button.w-full.text-left){grid-template-columns:minmax(0,1fr)!important}}
+/* contrast pass (device-check 4): Tailwind's slate grays are too light on the palette papers; use the palette's own inks */
+html:not(.dark) .text-slate-300, html:not(.dark) .text-slate-400, html:not(.dark) .text-slate-500{color:var(--j-ink2)!important}
+html.dark .text-slate-400, html.dark .text-slate-500, html.dark .dark\:text-slate-400, html.dark .dark\:text-slate-500, html.dark .dark\:text-slate-600{color:var(--j-ink2)!important}
+html.dark .dark\:bg-primary-500{background-color:var(--theme-700)!important}
+html.dark .text-slate-300, html.dark .dark\:text-slate-600{color:var(--j-ink3)!important}
+html.dark .text-slate-400, html.dark .text-slate-500, html.dark .dark\:text-slate-400, html.dark .dark\:text-slate-500{color:color-mix(in srgb, var(--j-ink2) 75%, #fff)!important}
+html:not(.dark) .text-amber-600{color:#b45309!important}html:not(.dark) .text-rose-600{color:#be123c!important}
+#dynamic-form div.p-3.bg-slate-50{padding:16px!important}
+#nav-menu > div.sidebar-text{padding-bottom:8px!important}
+#sync-join-form > * + *{margin-top:12px!important}
+#main-content > div.h-full{height:auto;min-height:100%}
+.sidebar-footer .sidebar-text > a + div{margin-top:8px}
+@media (max-width:767px){#sidebar.-translate-x-full{visibility:hidden}}
+@media (pointer:coarse){
+  #main-content button:not(.jps-pal), #main-content select, #main-content input:not([type=checkbox]):not([type=radio]):not([type=color]),
+  #modal-backdrop button, #modal-backdrop select, #modal-backdrop input:not([type=checkbox]):not([type=radio]):not([type=color]),
+  #sidebar button, #topbar button, .nav-item{min-height:44px}
+  #main-content button.p-1\.5, #main-content button.p-2, #topbar button.p-2, #sidebar button.w-9, #close-sidebar, #open-sidebar{min-width:44px}
+  #main-content button{min-width:44px}
+  #modal-content > div.flex.items-center > button{min-width:44px}
+  .card-actions button{min-width:44px;display:inline-flex;align-items:center;justify-content:center}
+  #main-content button.text-xs, #sidebar .sidebar-text a, #main-content button.relative.inline-flex{position:relative}
+  #main-content button.text-xs::after, #sidebar .sidebar-text a::after{content:"";position:absolute;inset:-14px 0}
+  #main-content button.relative.inline-flex::after{content:"";position:absolute;inset:-10px 0}
+}
 </style>
 </head>
 <body class="app-canvas text-slate-800 dark:text-slate-200 h-screen flex overflow-hidden transition-colors selection:bg-primary-500 selection:text-white">
@@ -4907,7 +4949,7 @@ button.absolute.top-3{min-width:36px;min-height:36px;top:4px!important;right:4px
             </div>
             <div class="p-6 space-y-5 flex-1 overflow-y-auto custom-scrollbar">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wide">Property Period</label>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2.5 uppercase tracking-wide">Property Period</label>
                     <select id="print-date-range" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all shadow-sm">
                         <!-- Populated by JS -->
                     </select>
@@ -4923,7 +4965,7 @@ button.absolute.top-3{min-width:36px;min-height:36px;top:4px!important;right:4px
                 </div>
 
                 <div id="print-format-container" class="hidden">
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wide">Print Format</label>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2.5 uppercase tracking-wide">Print Format</label>
                     <div class="flex gap-3">
                         <label class="flex-1 relative border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex flex-col items-center gap-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                             <input type="radio" name="print_format" value="table" class="peer absolute opacity-0" checked>
@@ -4989,7 +5031,7 @@ button.absolute.top-3{min-width:36px;min-height:36px;top:4px!important;right:4px
     <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none" role="status" aria-live="polite" aria-atomic="false"></div>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col h-full transition-all duration-300 absolute md:relative z-20 transform -translate-x-full md:translate-x-0 shadow-xl">
+    <aside id="sidebar" class="nogutter w-64 bg-slate-900 border-r border-slate-800 flex flex-col h-full transition-all duration-300 absolute md:relative z-20 transform -translate-x-full md:translate-x-0 shadow-xl">
         <div class="sidebar-header h-20 flex items-center justify-between px-5 border-b border-white/10 overflow-hidden relative shrink-0">
             <button onclick="window.app.navigateTo('dashboard')" class="flex items-center gap-3 hover:opacity-80 transition-opacity w-full text-left" title="Dashboard">
                 <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-md flex items-center justify-center shrink-0 text-white">
@@ -5048,7 +5090,7 @@ button.absolute.top-3{min-width:36px;min-height:36px;top:4px!important;right:4px
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col min-w-0 h-full relative">
-        <header id="topbar" class="h-20 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-8 z-10 sticky top-0 transition-colors">
+        <header id="topbar" class="nogutter h-20 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-8 z-10 sticky top-0 transition-colors">
             <div class="flex items-center gap-4">
                 <button id="open-sidebar" aria-label="Open navigation menu" class="md:hidden text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
                     <i class="ph ph-list text-2xl"></i>
@@ -6935,7 +6977,7 @@ window.BinderSync = window.JPSSync;
                     slate: 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'
                 };
                 const icon = status.tone === 'rose' ? 'ph-warning-circle' : (status.tone === 'amber' ? 'ph-clock' : 'ph-calendar-check');
-                return `<span class="ml-2 px-2 py-0.5 ${tones[status.tone]} rounded-md text-[10px] font-bold border inline-flex items-center gap-1 whitespace-nowrap align-middle"><i class="ph ${icon}"></i>${escapeHtml(status.label)}</span>`;
+                return `<span class="ml-2 px-2 py-1 ${tones[status.tone]} rounded-md text-[10px] font-bold border inline-flex items-center gap-1 whitespace-nowrap align-middle"><i class="ph ${icon}"></i>${escapeHtml(status.label)}</span>`;
             }
 
             // How many records in a section are already past their date. Drives
@@ -7411,11 +7453,11 @@ window.BinderSync = window.JPSSync;
                             <div class="space-y-4 text-left">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Primary Owner</label>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">Primary Owner</label>
                                         <input type="text" id="setup-user-name" value="${this.profile.userName}" oninput="window.app.autoSaveProfile()" placeholder="e.g., Jane Doe" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all shadow-sm">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Secondary Owner</label>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">Secondary Owner</label>
                                         <input type="text" id="setup-user-name-2" value="${this.profile.userName2}" oninput="window.app.autoSaveProfile()" placeholder="Optional" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all shadow-sm">
                                     </div>
                                 </div>
@@ -7612,7 +7654,7 @@ window.BinderSync = window.JPSSync;
                 overview.className = `nav-item relative w-full flex items-center gap-3 py-2 rounded-lg text-sm transition-all mb-1 ${this.isSidebarCollapsed ? 'justify-center px-0' : 'px-3'} ${overviewActive
                     ? 'bg-primary-500/15 text-white font-bold'
                     : 'text-slate-400 hover:bg-white/5 hover:text-white font-medium'}`;
-overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-primary-400"></span>' : ''}<i class="ph ph-squares-four text-lg shrink-0 ${overviewActive ? 'text-primary-400' : ''}"></i> <span class="sidebar-text whitespace-nowrap ${this.isSidebarCollapsed ? 'hidden' : ''}">Overview</span>`;
+overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-primary-400"></span>' : ''}<i class="ph ph-squares-four text-lg shrink-0 ${overviewActive ? 'text-primary-400' : ''}"></i> <span class="sidebar-text whitespace-nowrap ${this.isSidebarCollapsed ? 'hidden' : ''}">Overview</span>`;
                 overview.onclick = () => { window.app.navigateTo('dashboard'); window.app.toggleSidebar(false); };
                 menu.appendChild(overview);
 
@@ -7648,7 +7690,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             ? `<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500"></span>`
                             : `<span class="sidebar-text ml-auto shrink-0 min-w-[20px] px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-bold text-center">${late}</span>`);
                         if (late > 0) link.title += ` \u2014 ${late} overdue`;
-                        link.innerHTML = `${isActive ? '<span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-primary-400"></span>' : ''}<i class="ph ${SECTIONS[key].icon} text-lg shrink-0 ${isActive ? 'text-primary-400' : ''}"></i> <span class="sidebar-text whitespace-nowrap ${this.isSidebarCollapsed ? 'hidden' : ''}">${escapeHtml(SECTIONS[key].title)}</span>${badge}`;
+                        link.innerHTML = `${isActive ? '<span data-cc-skip class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-primary-400"></span>' : ''}<i class="ph ${SECTIONS[key].icon} text-lg shrink-0 ${isActive ? 'text-primary-400' : ''}"></i> <span class="sidebar-text whitespace-nowrap ${this.isSidebarCollapsed ? 'hidden' : ''}">${escapeHtml(SECTIONS[key].title)}</span>${badge}`;
                         link.onclick = () => { window.app.navigateTo(key); window.app.toggleSidebar(false); };
                         menu.appendChild(link);
                     });
@@ -8024,7 +8066,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     }).join('');
                     dueStripHtml = `
                         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
-                            <div class="flex items-center justify-between mb-4">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                                 <div>
                                     <h3 id="coming-up" class="font-bold text-slate-900 dark:text-white flex items-center gap-2"><i class="ph ph-bell-ringing text-primary-500"></i> Coming Up</h3>
                                     <p class="text-xs text-slate-500 mt-0.5">Everything overdue or falling due in the next ${DUE_SOON_DAYS} days.</p>
@@ -8165,7 +8207,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                         ${bottomRowHtml}
 
                         <!-- Document generation -->
-                        <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm mt-8">
+                        <div class="print-share bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm mt-8">
                             <div>
                                 <h3 class="font-bold text-slate-900 dark:text-white mb-2 text-2xl serif-font">Print &amp; Share</h3>
                                 <p class="text-sm text-slate-500 dark:text-slate-400 max-w-lg">The pages worth having on paper: the medication list for every appointment, a care summary for a new helper, the care costs with who paid, and everything as one binder.</p>
@@ -8584,7 +8626,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
 
                                 <button onclick="window.app.openPrintModal(false, '${escapeHtml(sectionKey)}')" class="flex items-center justify-center p-2.5 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm shrink-0" title="Export / Print Section PDF"><i class="ph ph-printer text-lg"></i></button>
                                 
-                                <div class="flex items-center bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm shrink-0">
+                                <div data-cc-skip class="flex items-center bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm shrink-0">
                                     <button onclick="window.app.setViewMode('table')" class="p-2 transition-colors ${this.viewMode === 'table' ? 'bg-primary-50 dark:bg-slate-800 text-primary-600 dark:text-primary-400' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'}" title="Table View"><i class="ph ph-list-dashes text-lg"></i></button>
                                     <button onclick="window.app.setViewMode('grid')" class="p-2 transition-colors border-l border-slate-200 dark:border-slate-700 ${this.viewMode === 'grid' || (!config.hasCalendar && this.viewMode === 'calendar') ? 'bg-primary-50 dark:bg-slate-800 text-primary-600 dark:text-primary-400' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'}" title="Grid View"><i class="ph ph-cards text-lg"></i></button>
                                     ${config.hasCalendar ? `<button onclick="window.app.setViewMode('calendar')" class="p-2 transition-colors border-l border-slate-200 dark:border-slate-700 ${this.viewMode === 'calendar' ? 'bg-primary-50 dark:bg-slate-800 text-primary-600 dark:text-primary-400' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'}" title="Calendar View"><i class="ph ph-calendar text-lg"></i></button>` : ''}
@@ -8773,7 +8815,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     <div class="list-card bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex-1 flex flex-col">
                         <div class="overflow-x-auto flex-1">
                             <table class="w-full text-left border-collapse min-w-max">
-                                <thead>
+                                <thead data-cc-skip>
                                     <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold group">
                                         ${fields.map(f => `
                                             <th class="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors select-none" onclick="event.stopPropagation(); window.app.setSort('${escapeHtml(f.name)}')">
@@ -8825,7 +8867,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             const catOrType = item.category || item.status || item.type || item.frequency;
                             if (catOrType && typeof catOrType === 'string') {
                                 const match = catOrType.match(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/);
-                                if (match) emojiWatermark = `<div class="absolute -top-3 -right-2 text-6xl opacity-[0.05] group-hover:opacity-10 transition-opacity pointer-events-none">${match[0]}</div>`;
+                                if (match) emojiWatermark = `<div data-cc-skip style="right:0" class="absolute -top-3 text-6xl opacity-[0.05] group-hover:opacity-10 transition-opacity pointer-events-none">${match[0]}</div>`;
                             }
 
                             const titleField = config.fields[0];
@@ -8836,16 +8878,18 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             return `
                             <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border ${late ? 'border-rose-300 dark:border-rose-900' : 'border-slate-200 dark:border-slate-800'} relative group flex flex-col h-full shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                                 ${emojiWatermark}
-                                <div class="absolute top-4 right-4 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-20">
-                                    ${this.rowActionsHtml(sectionKey, item.id, 'card')}
+                                <div class="flex items-start gap-2 mb-4 border-b border-slate-100 dark:border-slate-800 pb-3 relative z-10">
+                                    <h4 class="flex-1 min-w-0 font-bold text-lg text-slate-900 dark:text-white truncate serif-font" title="${escapeHtml(titleVal)}">${escapeHtml(titleVal)}</h4>
+                                    <div class="card-actions shrink-0 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                        ${this.rowActionsHtml(sectionKey, item.id, 'card')}
+                                    </div>
                                 </div>
-                                <h4 class="font-bold text-lg text-slate-900 dark:text-white mb-4 pr-24 border-b border-slate-100 dark:border-slate-800 pb-3 truncate relative z-10 serif-font" title="${escapeHtml(titleVal)}">${escapeHtml(titleVal)}</h4>
                                 <div class="space-y-4 text-sm flex-1 relative z-10">
                                     ${config.fields.slice(1).map(f => {
                                         const cell = this.fieldCell(item, f, sectionKey, { longLink: true });
                                         if (cell.isEmpty) return '';
                                         const classes = cell.classes.includes('number-font') ? cell.classes + ' text-base' : 'text-slate-800 dark:text-slate-200 font-medium';
-                                        return `<div><span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">${escapeHtml(f.label.split('(')[0])}</span><span class="${classes}">${cell.html}</span></div>`;
+                                        return `<div><span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">${escapeHtml(f.label.split('(')[0])}</span><span class="${classes}">${cell.html}</span></div>`;
                                     }).join('')}
                                 </div>
                             </div>
@@ -8887,11 +8931,11 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
 
                             <div class="w-[60px] hidden sm:block"></div> 
                         </div>
-                        <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/80 shrink-0">
+                        <div data-cc-skip class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/80 shrink-0">
                             ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="p-2 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">${d}</div>`).join('')}
                         </div>
                         <div class="cal-scroll flex-1 overflow-y-auto custom-scrollbar relative">
-                            <div class="cal-grid grid grid-cols-7 grid-rows-6 min-h-[520px] sm:min-h-[700px] h-full bg-slate-50 dark:bg-slate-900/20">
+                            <div data-cc-skip class="cal-grid grid grid-cols-7 grid-rows-6 min-h-[520px] sm:min-h-[700px] h-full bg-slate-50 dark:bg-slate-900/20">
                 `;
 
                 const cellsToRender = 42; // Always 6 rows
@@ -8940,8 +8984,8 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
 
             renderCalendarCell(dayNum, dateStr, dayItems, sectionKey, isFaded, isToday) {
                 const bgClass = isToday ? 'bg-primary-50/30 dark:bg-primary-900/10' : (isFaded ? 'bg-slate-50/50 dark:bg-slate-900/30' : 'bg-white dark:bg-darkCard');
-                const textClass = isFaded ? 'text-slate-400 dark:text-slate-600' : (isToday ? 'bg-primary-500 text-white w-7 h-7 rounded-full flex items-center justify-center shadow-sm' : 'text-slate-700 dark:text-slate-300 w-7 h-7 flex items-center justify-center');
-                const opacityClass = isFaded ? 'opacity-60 hover:opacity-100' : '';
+                const textClass = isFaded ? 'text-slate-400 dark:text-slate-600' : (isToday ? 'bg-primary-600 text-white w-7 h-7 rounded-full flex items-center justify-center shadow-sm' : 'text-slate-700 dark:text-slate-300 w-7 h-7 flex items-center justify-center');
+                const opacityClass = '';
 
                 let cellHtml = `
                     <div class="min-h-[76px] sm:min-h-[100px] h-full p-2 border-r border-b border-slate-200 dark:border-slate-800/50 ${bgClass} hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer group transition-colors overflow-y-auto custom-scrollbar relative ${opacityClass}" onclick="window.app.openModal('${sectionKey}', null, '${dateStr}')">
@@ -9195,7 +9239,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                     }
                     
                     const colSpan = f.width === 'full' ? 'col-span-1 sm:col-span-2' : 'col-span-1';
-                    return `<div class="${colSpan}"><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wide">${escapeHtml(f.label)} ${f.required?'<span class="text-rose-500">*</span>':''}</label>${inputHtml}</div>`;
+                    return `<div class="${colSpan}"><label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2.5 uppercase tracking-wide">${escapeHtml(f.label)} ${f.required?'<span class="text-rose-500">*</span>':''}</label>${inputHtml}</div>`;
                 }).join('');
 
                 if (config.fields.some(f => f.type === 'attachments')) this.renderSampleStrip();
@@ -9461,7 +9505,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                                     <button data-sync="on" class="flex-1 px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm transition-colors shadow-md font-bold flex items-center justify-center gap-2"><i class="ph ph-cloud-arrow-up text-lg"></i> Turn On Sync</button>
                                 </div>
                                 <form id="sync-join-form" class="space-y-2">
-                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Already syncing on another device? Enter its code</label>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">Already syncing on another device? Enter its code</label>
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         <input name="code" autocomplete="off" spellcheck="false" placeholder="K7QM-3XRA-9PLW-T4ZD" class="flex-1 w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white number-font">
                                         <button class="${btn}"><i class="ph ph-link text-lg"></i> Link This Device</button>
@@ -9547,11 +9591,11 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             <div class="p-6 space-y-4">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Primary Owner</label>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">Primary Owner</label>
                                         <input type="text" id="setup-user-name" value="${this.profile.userName}" oninput="window.app.autoSaveProfile()" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all shadow-sm font-medium">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Secondary Owner</label>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">Secondary Owner</label>
                                         <input type="text" id="setup-user-name-2" value="${this.profile.userName2}" oninput="window.app.autoSaveProfile()" placeholder="Optional" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all shadow-sm font-medium">
                                     </div>
                                 </div>
@@ -9571,7 +9615,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                             <div class="p-6 space-y-6">
                                 <div class="flex flex-col sm:flex-row gap-4">
                                     <div class="flex-1">
-                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Date Format</label>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">Date Format</label>
                                         <select id="setting-date-format" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all shadow-sm font-semibold">
                                             <option value="MM/DD/YYYY" ${(storage.get('cgDateFormat') || 'MM/DD/YYYY') === 'MM/DD/YYYY' ? 'selected' : ''}>MM/DD/YYYY (US)</option>
                                             <option value="DD/MM/YYYY" ${(storage.get('cgDateFormat') || 'MM/DD/YYYY') === 'DD/MM/YYYY' ? 'selected' : ''}>DD/MM/YYYY (EU/UK)</option>
@@ -9579,7 +9623,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                                         </select>
                                     </div>
                                     <div class="flex-1">
-                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider">Currency</label>
+                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">Currency</label>
                                         <div class="flex gap-2">
                                             <select id="setting-currency" onchange="document.getElementById('setting-currency-custom').parentElement.classList.toggle('hidden', this.value !== 'Custom')" class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all shadow-sm font-semibold">
                                                 <option value="USD" ${(storage.get('cgCurrency') || 'USD') === 'USD' ? 'selected' : ''}>USD ($)</option>
@@ -9656,7 +9700,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                                                     </div>
                                                 </div>
                                                 <button onclick="window.app.toggleSectionVisibility('${key}')" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-darkCard ${!isHidden ? 'bg-primary-600' : 'bg-slate-200 dark:bg-slate-700'}">
-                                                    <span class="${!isHidden ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm"></span>
+                                                    <span data-cc-skip class="${!isHidden ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm"></span>
                                                 </button>
                                             </div>
                                         `;
@@ -10234,7 +10278,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
 
             printTable(head, widths, rows) {
                 return `<table style="margin-bottom:18px">
-                    <thead><tr>${head.map((h, i) => `<th style="width:${widths[i]}%">${h}</th>`).join('')}</tr></thead>
+                    <thead data-cc-skip><tr>${head.map((h, i) => `<th style="width:${widths[i]}%">${h}</th>`).join('')}</tr></thead>
                     <tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td${i === 0 ? ' style="font-weight:700"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody>
                 </table>`;
             }
@@ -10280,7 +10324,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 if (H.length + T.length + D.length + K.length + J.length === 0) return this.showToast('Add the care team or an appointment first.', 'error');
                 const e = escapeHtml, open = v => !/✅|❌/.test(String(v || ''));
                 const today = new Date().toISOString().slice(0, 10);
-                let html = `<div style="padding: 16px 16px;">` + this.docHead('Care Summary');
+                let html = `<style>.cs td,.cs th{padding-top:5px!important;padding-bottom:5px!important}.cs h3{margin:14px 0 6px!important}</style><div class="cs" style="padding: 16px 16px;">` + this.docHead('Care Summary');
                 if (H.length) {
                     html += `<h3 style="margin-top:0;font-size:15px;">Health summary</h3>` + this.printTable(
                         ['Detail', 'Category', 'Since', 'Notes'], [36, 20, 14, 30], H.map(h => [e(h.detail), e(h.category || ''), `<span class="num">${e(h.since ? formatDate(h.since) : '')}</span>`, e(h.notes || '')]));
@@ -10298,8 +10342,8 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
                 const openT = J.filter(t => open(t.status));
                 if (openT.length) {
                     html += `<h3 style="font-size:15px;">Who is doing what</h3>` + this.printTable(
-                        ['&#9744;', 'Task', 'Who', 'How often', 'Do by'], [6, 44, 18, 14, 18],
-                        openT.map(t => ['<div style="text-align:center">&#9744;</div>', e(t.task), e(t.who || ''), e(t.repeat || ''), `<span class="num">${e(t.due ? formatDate(t.due) : '')}</span>`]));
+                        ['<span style="display:inline-block;width:11px;height:11px;border:1.3px solid #334155;border-radius:2px;vertical-align:middle"></span>', 'Task', 'Who', 'How often', 'Do by'], [6, 44, 18, 14, 18],
+                        openT.map(t => ['<div style="text-align:center"><span style="display:inline-block;width:11px;height:11px;border:1.3px solid #334155;border-radius:2px;vertical-align:middle"></span></div>', e(t.task), e(t.who || ''), e(t.repeat || ''), `<span class="num">${e(t.due ? formatDate(t.due) : '')}</span>`]));
                 }
                 if (K.length) {
                     html += `<h3 style="font-size:15px;">Documents</h3>` + this.printTable(
@@ -10518,7 +10562,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
 
                     const cols = this.printableFields(config);
                     const wide = cols.length + (includeCheckboxes ? 1 : 0) >= WIDE_TABLE_COLUMNS;
-                    contentHtml += `<h3>${escapeHtml(config.title)} ${totalStr}</h3><table class="${wide ? 'wide-table' : ''}">${this.printColumnWidths(cols, includeCheckboxes)}<thead><tr>`;
+                    contentHtml += `<h3>${escapeHtml(config.title)} ${totalStr}</h3><table class="${wide ? 'wide-table' : ''}">${this.printColumnWidths(cols, includeCheckboxes)}<thead data-cc-skip><tr>`;
                     if (includeCheckboxes) contentHtml += `<th style="text-align:center;">✓</th>`;
                     contentHtml += `${cols.map(f => `<th>${escapeHtml(this.printLabelFor(f))}</th>`).join('')}</tr></thead><tbody>`;
 
@@ -10600,7 +10644,7 @@ overview.innerHTML = `${overviewActive ? '<span class="absolute left-0 top-1/2 -
 
                     const cols = this.printableFields(config);
                     const wide = cols.length + (includeCheckboxes ? 1 : 0) >= WIDE_TABLE_COLUMNS;
-                    contentHtml += `<h3>${escapeHtml(config.title)} ${totalStr}</h3><table class="${wide ? 'wide-table' : ''}">${this.printColumnWidths(cols, includeCheckboxes)}<thead><tr>`;
+                    contentHtml += `<h3>${escapeHtml(config.title)} ${totalStr}</h3><table class="${wide ? 'wide-table' : ''}">${this.printColumnWidths(cols, includeCheckboxes)}<thead data-cc-skip><tr>`;
                     if (includeCheckboxes) contentHtml += `<th style="text-align:center;">✓</th>`;
                     contentHtml += `${cols.map(f => `<th>${escapeHtml(this.printLabelFor(f))}</th>`).join('')}</tr></thead><tbody>`;
 

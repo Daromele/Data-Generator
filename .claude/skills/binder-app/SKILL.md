@@ -231,7 +231,12 @@ Then:
 2. **newbie-check** (Dashboard-Creator): `crawl.js`, `walk.js` and `drive.js` with a
    job file (`assets/newbie-jobs/divorce.json` is a binder template). Read every
    screenshot. First record in at most 4 clicks; typed amounts shown to the cent.
-3. **device-check** (Dashboard-Creator): `phone_check.js` and `layout_check.js` with
+3. **device-check clearance and contrast passes:** run `scripts/clearance_fix.py App.html`
+   on every fork first (engine spacing, tap targets, palette inks; it reports each step and
+   says NOT FOUND where an older engine differs), then `clearance_check.js` (360 to 1440, both
+   heights, every palette, empty, sample and every form) to 0 failing, and `contrast_check.js`
+   to nothing but the fading tour button. Caregiver Binder went from 104 failing issues to 0.
+4. **device-check** (Dashboard-Creator): `phone_check.js` and `layout_check.js` with
    `scripts/device_check_setup.js` as `--setup`, and `print_check.js` on every
    document. Nothing under 12px on a phone, nothing cut off, every PDF read by eye.
 
