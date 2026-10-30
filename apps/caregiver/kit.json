@@ -1,0 +1,13 @@
+{
+  "product": "Caregiver Binder",
+  "slug": "caregiver",
+  "file": "Caregiver_Binder.html",
+  "theme": "fjord",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://demo.jpsdigitalpages.com/caregiver/",
+  "hosted_url": "https://apps.jpsdigitalpages.com/caregiver/",
+  "brand": {"name": "JPS Digital Pages", "site": "https://www.jpsdigitalpages.com", "email": "hello@jpsdigitalpages.com",
+            "more_apps": "https://jpsdigitalpages.com/collection/web-applications", "more_label": "more apps and free demos"},
+  "listing": {"promise": "Medications, vitals, appointments and the care team for someone you look after, in one private file."}
+}

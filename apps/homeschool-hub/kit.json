@@ -1,0 +1,318 @@
+{
+  "product": "Homeschool Hub",
+  "slug": "homeschool-hub",
+  "file": "Homeschool_Hub.html",
+  "theme": "indigo",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://jps-demo.pages.dev/homeschool-hub/",
+  "video_link": "[ADD YOUR VIDEO LINK]",
+  "entity": "students",
+  "artifact": "an official high school transcript",
+  "steps": [
+    "Add your students",
+    "Fill it in as you teach",
+    "Print the transcript"
+  ],
+  "slides": [
+    {
+      "kind": "hero",
+      "headline": "Homeschool Hub",
+      "sub": "Plan, track & print your homeschool records",
+      "images": [
+        "screen-dashboard",
+        "doc-transcript-page-2"
+      ],
+      "pills": [
+        "Works offline",
+        "Transcripts",
+        "Compliance"
+      ]
+    },
+    {
+      "kind": "doc",
+      "headline": "Print a real transcript",
+      "sub": "Credits, GPA and every course, ready for admissions",
+      "images": [
+        "doc-transcript-page-1",
+        "doc-transcript-page-2"
+      ]
+    },
+    {
+      "kind": "screen",
+      "headline": "Your year at a glance",
+      "sub": "Hours, lessons, scores and credits per child",
+      "images": [
+        "screen-dashboard"
+      ]
+    },
+    {
+      "kind": "screen",
+      "headline": "Prove your required days",
+      "sub": "Set your state's rule; see who is on pace",
+      "images": [
+        "screen-compliance"
+      ]
+    },
+    {
+      "kind": "screen",
+      "headline": "Plan lessons on a calendar",
+      "sub": "Repeat weekly, attach work samples",
+      "images": [
+        "screen-lesson_plans"
+      ]
+    },
+    {
+      "kind": "screen",
+      "headline": "Courses, credits & GPA",
+      "sub": "Weighted for Honors, AP and Dual Enrollment",
+      "images": [
+        "screen-courses"
+      ]
+    },
+    {
+      "kind": "doc",
+      "headline": "A full portfolio in one click",
+      "sub": "Cover page, every module, one document",
+      "images": [
+        "doc-binder-page-1",
+        "doc-binder-page-2",
+        "doc-binder-page-3"
+      ]
+    },
+    {
+      "kind": "screen",
+      "headline": "Attendance in seconds",
+      "sub": "Log a whole week at once",
+      "images": [
+        "screen-attendance"
+      ]
+    },
+    {
+      "kind": "steps",
+      "headline": "How it works"
+    },
+    {
+      "kind": "themes",
+      "headline": "5 color themes + dark mode",
+      "images": [
+        "theme-indigo",
+        "theme-teal",
+        "theme-emerald",
+        "theme-rose",
+        "theme-amber",
+        "screen-dark-dashboard"
+      ]
+    },
+    {
+      "kind": "list",
+      "headline": "Private. Offline. Yours.",
+      "items": [
+        [
+          "Works offline",
+          "No account, no subscription, no internet needed"
+        ],
+        [
+          "Stays on your computer",
+          "Your records are never uploaded to us"
+        ],
+        [
+          "Backs itself up",
+          "Link a file once in Chrome or Edge"
+        ],
+        [
+          "Optional sync",
+          "Computer, phone and tablet, encrypted"
+        ]
+      ]
+    },
+    {
+      "kind": "list",
+      "headline": "What you get",
+      "items": [
+        [
+          "The planner",
+          "One HTML file for Windows and Mac computers"
+        ],
+        [
+          "Phone & tablet access",
+          "A private link and your access code"
+        ],
+        [
+          "Quick-start guide",
+          "Short steps with pictures"
+        ],
+        [
+          "Walkthrough video",
+          "See it working in under a minute"
+        ]
+      ]
+    }
+  ],
+  "listing": {
+    "title": "Homeschool Planner, Homeschool Transcript Maker, Attendance and Grade Tracker, Offline HTML Web App",
+    "tags": [
+      "homeschool planner",
+      "homeschool tracker",
+      "transcript maker",
+      "attendance tracker",
+      "grade tracker",
+      "lesson planner",
+      "homeschool records",
+      "high school credits",
+      "gpa calculator",
+      "homeschool binder",
+      "digital planner",
+      "homeschool mom",
+      "spreadsheet"
+    ],
+    "promise": "Plan lessons, log attendance and grades, and print an official high school transcript, all from one private file on your computer.",
+    "more_than": "More than a homeschool spreadsheet: it adds up hours and credits, works out GPA, checks your required days and prints finished documents.",
+    "what_you_get": "The Homeschool Hub HTML planner · phone and tablet access with your code · a quick-start guide · a walkthrough video",
+    "tabs": [
+      "Overview",
+      "Lesson Plans",
+      "Attendance Tracker",
+      "Grades & Assessments",
+      "Courses & Credits",
+      "Compliance",
+      "Reading Log",
+      "Curriculum Inventory",
+      "Field Trips",
+      "Expense Tracker",
+      "Weekly Reflections",
+      "Academic Years",
+      "Student Roster",
+      "Settings & Backup"
+    ],
+    "features": [
+      "Multiple students and school years, filter everything by child",
+      "Prints an official transcript, report cards, a compliance summary and a full portfolio",
+      "Credit-weighted GPA with Honors, AP and Dual Enrollment",
+      "Tracks your required instructional days against your own state's rule",
+      "Search, filters and column picker on every list",
+      "Automatic backup to a file you choose (Chrome and Edge)",
+      "Optional sync between your computer, phone and tablet, encrypted with a private code"
+    ],
+    "perfect_for": "Homeschooling families who need tidy records and a transcript without a subscription.",
+    "before_buying": [
+      "Works on Windows and Mac computers in Chrome, Edge, Firefox or Safari",
+      "Also on your phone or tablet: a private web link and access code come with your download",
+      "Digital download, no physical item",
+      "Tracks the numbers you enter; it does not give legal or educational advice",
+      "Due to the nature of digital files, no refunds"
+    ],
+    "materials": [
+      "HTML",
+      "Digital download"
+    ],
+    "price_note": "[SET YOUR PRICE]"
+  },
+  "guide": [
+    {
+      "icon": "open",
+      "title": "Open it",
+      "lines": [
+        "Double-click Homeschool_Hub.html. It opens in your web browser.",
+        "Bookmark the tab so you can find it again."
+      ],
+      "image": "screen-dashboard"
+    },
+    {
+      "icon": "people",
+      "title": "Add your students",
+      "lines": [
+        "Student Roster → Add Student.",
+        "Everything else attaches to a student, so start here."
+      ],
+      "image": "screen-students"
+    },
+    {
+      "icon": "pencil",
+      "title": "Fill it in as you teach",
+      "lines": [
+        "Lesson Plans, Attendance and Grades. A few minutes a week is enough.",
+        "Attendance → Quick Log Week fills a whole week at once."
+      ],
+      "image": "screen-attendance"
+    },
+    {
+      "icon": "shield",
+      "title": "Set your requirement",
+      "lines": [
+        "Compliance → Change requirement. Enter your own state's days or hours.",
+        "The planner tracks what you enter; it does not give legal advice."
+      ],
+      "image": "screen-compliance"
+    },
+    {
+      "icon": "save",
+      "title": "Back up today",
+      "lines": [
+        "Settings → Automatic Backup → Choose Backup File (Chrome or Edge).",
+        "Other browsers: Settings → Download Backup. Keep the file safe."
+      ],
+      "image": "screen-settings"
+    },
+    {
+      "icon": "phone",
+      "title": "On your phone or tablet",
+      "lines": [
+        "Open jps-apps.pages.dev/homeschool-hub, enter the access code from START_HERE once.",
+        "Then Share → Add to Home Screen. Turn on sync to share records with your computer."
+      ]
+    },
+    {
+      "icon": "print",
+      "title": "Print the transcript",
+      "lines": [
+        "Courses & Credits holds the courses. Print → Transcript builds the document.",
+        "Save as PDF, or print on paper."
+      ],
+      "image": "doc-transcript-page-2"
+    },
+    {
+      "icon": "sync",
+      "title": "Optional: sync your devices",
+      "lines": [
+        "Settings → Sync Across Devices → Turn On Sync, then enter the sync code on your other device.",
+        "Encrypted with your private code. Attached files stay on each device."
+      ]
+    },
+    {
+      "icon": "update",
+      "title": "Getting a new version",
+      "lines": [
+        "Open the new file, then Settings → Restore Backup.",
+        "Your records are not inside the app file, so a new version never loses them."
+      ]
+    }
+  ],
+  "hosted_url": "https://jps-apps.pages.dev/homeschool-hub/",
+  "start_here": {
+    "steps": [
+      [
+        "Add your students",
+        "Student Roster, then Add Student"
+      ],
+      [
+        "Fill it in as you teach",
+        "Lessons, attendance and grades"
+      ]
+    ],
+    "routine_title": "Each week",
+    "routine": [
+      "Log the week's attendance (Quick Log Week)",
+      "Check off lessons and add grades",
+      "Back up, or let automatic backup do it"
+    ],
+    "footer": "Tracks what you enter; not legal or educational advice"
+  },
+  "brand": {
+    "name": "JPS Digital Pages",
+    "site": "https://www.jpsdigitalpages.com",
+    "email": "hello@jpsdigitalpages.com",
+    "more_apps": "https://jpsdigitalpages.com/collection/web-applications",
+    "more_label": "more apps and free demos"
+  }
+}

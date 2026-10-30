@@ -1,0 +1,11 @@
+[
+ {"welcome":"show"},{"dump":true},{"click":"Start with my own records"},{"wait":500},{"click":"Finish Later"},{"wait":600},
+ {"note":"the empty dashboard","dump":true},{"expect":"never backed up","absent":true},
+ {"note":"first job: add a medication from the dashboard","click":"@#main-content button[onclick*='openModal']"},{"wait":500},{"dump":true},
+ {"fill":["#modal-backdrop [name=name]","Lisinopril"]},{"click":"@#modal-backdrop button[onclick*='saveFormData']"},{"wait":800},{"milestone":"first medication saved"},
+ {"note":"a care cost with cents","eval":"app.navigateTo('costs');app.openModal('costs')"},{"wait":500},{"dump":true},
+ {"fill":["#modal-backdrop [name=item]","Pharmacy copays"]},{"fill":["#modal-backdrop [name=amount]","12345.67"]},{"click":"@#modal-backdrop button[onclick*='saveFormData']"},{"wait":800},{"milestone":"first cost saved"},
+ {"eval":"app.navigateTo('costs')"},{"wait":600},{"numbers":["12,345.67"]},
+ {"reload":true},{"eval":"app.navigateTo('medications')"},{"wait":500},{"expect":"Lisinopril"},
+ {"startFresh":true}
+]

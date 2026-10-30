@@ -1,0 +1,13 @@
+{
+  "product": "Legacy Planner",
+  "slug": "legacy-planner",
+  "file": "Legacy_Planner.html",
+  "theme": "sage",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://jps-demo.pages.dev/legacy-planner/",
+  "hosted_url": "https://jps-apps.pages.dev/legacy-planner/",
+  "brand": {"name": "JPS Digital Pages", "site": "https://www.jpsdigitalpages.com", "email": "hello@jpsdigitalpages.com",
+            "more_apps": "https://jpsdigitalpages.com/collection/web-applications", "more_label": "more apps and free demos"},
+  "listing": {"promise": "Your executor letter, your wishes and where everything is, in one private file."}
+}

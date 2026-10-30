@@ -1,0 +1,13 @@
+{
+  "product": "Co-Parenting Planner",
+  "slug": "co-parenting",
+  "file": "Co_Parenting_Planner.html",
+  "theme": "fjord",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://jps-demo.pages.dev/co-parenting/",
+  "hosted_url": "https://jps-apps.pages.dev/co-parenting/",
+  "brand": {"name": "JPS Digital Pages", "site": "https://www.jpsdigitalpages.com", "email": "hello@jpsdigitalpages.com",
+            "more_apps": "https://jpsdigitalpages.com/collection/web-applications", "more_label": "more apps and free demos"},
+  "listing": {"promise": "Custody, handovers, shared costs and every message, dated and in one private file."}
+}

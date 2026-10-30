@@ -1,0 +1,15 @@
+# The deployed worker the binder apps use, shared with the JPS apps. The room
+# id is derived on the device from the app key, so products cannot collide.
+# This is a LIVE service for both shops: a change here affects both.
+name = "jps-sync"
+main = "index.mjs"
+account_id = "b8694802a36c8fe84be4a527a36ee810"   # not secret
+compatibility_date = "2025-09-01"
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "Room"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Room"]

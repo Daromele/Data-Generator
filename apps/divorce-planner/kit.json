@@ -1,0 +1,13 @@
+{
+  "product": "Divorce & Separation Planner",
+  "slug": "divorce-planner",
+  "file": "Divorce_Planner.html",
+  "theme": "slate",
+  "support_email": "hello@jpsdigitalpages.com",
+  "shop_link": "https://www.etsy.com/shop/JPSDigitalPages",
+  "demo_link": "https://jps-demo.pages.dev/divorce-planner/",
+  "hosted_url": "https://jps-apps.pages.dev/divorce-planner/",
+  "brand": {"name": "JPS Digital Pages", "site": "https://www.jpsdigitalpages.com", "email": "hello@jpsdigitalpages.com",
+            "more_apps": "https://jpsdigitalpages.com/collection/web-applications", "more_label": "more apps and free demos"},
+  "listing": {"promise": "Assets, debts, your budget and every document your attorney asks for, in one private file."}
+}
