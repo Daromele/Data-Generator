@@ -4839,6 +4839,43 @@ html:not(.dark) .text-amber-600{color:#b45309!important}html:not(.dark) .text-ro
   #main-content button.text-xs::after, #sidebar .sidebar-text a::after{content:"";position:absolute;inset:-14px 0}
   #main-content button.relative.inline-flex::after{content:"";position:absolute;inset:-10px 0}
 }
+
+/* caregiver extras (expert check) */
+.dose-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.dose-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.dose-slot{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--j-ink2)}
+.dose-btn{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 12px;border-radius:12px;border:1px solid var(--j-rule2);background:var(--j-card,#fff);text-align:left;cursor:pointer;transition:border-color .15s,background .15s}
+.dose-btn:hover{border-color:var(--theme-400)}
+.dose-btn.is-given{background:#ecfdf5;border-color:#a7f3d0}
+html.dark .dose-btn{background:transparent}
+html.dark .dose-btn.is-given{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.45)}
+.dose-ic{font-size:22px;flex:none;color:var(--j-ink3)}
+.dose-btn.is-given .dose-ic{color:#047857}
+html.dark .dose-btn.is-given .dose-ic{color:#6ee7b7}
+.dose-txt{display:flex;flex-direction:column;min-width:0}
+.dose-name{font-size:14px;font-weight:700;color:var(--j-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dose-str{font-weight:500;color:var(--j-ink2)}
+.dose-sub{font-size:12px;color:var(--j-ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.quick-note{display:flex;flex-direction:column;gap:12px}
+@media (min-width:640px){.quick-note{flex-direction:row;align-items:center}}
+.row-check{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;cursor:pointer}
+.row-check input{width:16px;height:16px;cursor:pointer;accent-color:var(--theme-600)}
+@media (pointer:coarse){.row-check{position:relative}.row-check::after{content:"";position:absolute;inset:-6px}}
+.bulk-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;margin-bottom:12px;border-radius:14px;background:var(--theme-50);border:1px solid var(--theme-200);color:var(--j-ink)}
+html.dark .bulk-bar{background:rgba(255,255,255,.04);border-color:var(--j-rule2)}
+.bulk-btn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px;border-radius:10px;border:1px solid var(--j-rule2);background:var(--j-card,#fff);font-size:14px;font-weight:700;color:var(--j-ink)}
+html.dark .bulk-btn{background:transparent}
+.bulk-del{color:#be123c}
+html.dark .bulk-del{color:#fda4af}
+.period-backdrop{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.55)}
+.period-backdrop.hidden{display:none}
+.period-card{width:100%;max-width:420px;background:var(--j-card,#fff);border-radius:18px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+html.dark .period-card{background:var(--j-sunk,#1f1d24)}
+.period-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.period-btn{min-height:44px;padding:10px 12px;border-radius:12px;border:1px solid var(--j-rule2);background:transparent;font-weight:700;font-size:14px;color:var(--j-ink)}
+.period-btn:hover,.period-btn:focus{border-color:var(--theme-500);outline:none}
+.period-cancel{margin-top:12px;width:100%;min-height:44px;font-size:14px;font-weight:700;color:var(--j-ink2)}
+.kbd{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;padding:0 8px;border-radius:8px;border:1px solid var(--j-rule2);border-bottom-width:2px;font:700 12px "DM Sans",sans-serif;color:var(--j-ink)}
 </style>
 </head>
 <body class="app-canvas text-slate-800 dark:text-slate-200 h-screen flex overflow-hidden transition-colors selection:bg-primary-500 selection:text-white">
@@ -4886,7 +4923,7 @@ html:not(.dark) .text-amber-600{color:#b45309!important}html:not(.dark) .text-ro
                 <i id="confirm-icon" class="ph ph-warning text-2xl text-rose-500 dark:text-rose-400"></i>
             </div>
             <h3 id="confirm-title" class="text-lg font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Are you sure?</h3>
-            <p id="confirm-message" class="text-sm text-slate-500 dark:text-slate-400 mb-6">This action cannot be undone.</p>
+            <p id="confirm-message" class="text-sm text-slate-500 dark:text-slate-400 mb-6">Are you sure?</p>
             <div class="flex gap-3 w-full">
                 <button type="button" onclick="window.app.closeConfirm()" class="flex-1 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Cancel</button>
                 <button type="button" id="confirm-action-btn" class="flex-1 px-4 py-2.5 text-sm font-semibold text-white rounded-lg shadow-sm transition-colors bg-rose-600 hover:bg-rose-700">Confirm</button>
@@ -6051,20 +6088,40 @@ window.BinderSync = window.JPSSync;
             { id: 'care', label: 'Day to Day' },
             { id: 'health', label: 'Health Records' },
             { id: 'support', label: 'Help & Money' },
+            { id: 'memory', label: 'Memory Care' },
             { id: 'you', label: 'For You' },
             { id: 'setup', label: 'Setup' }
         ];
 
         const ONBOARDING_SLIDES = [
             { icon: "ph-hand-heart", title: "Everything about their care, in one place", desc: "Appointments, the medication list, the care team, the daily log and the paperwork, so you are not carrying it all in your head. Private and offline. No account, no subscription." },
-            { icon: "ph-list-checks", title: "Start small", desc: "Add their medications from the labels and the next appointment. The rest can wait. Log a few lines a day when something changes, and the record builds itself." },
-            { icon: "ph-printer", title: "Paper for every appointment", desc: "Print the medication list for the doctor or the ER, a care summary for a new helper, and a care costs report for taxes or reimbursement. Every tab prints." },
+            { icon: "ph-list-checks", title: "Start small", desc: "Add their medications from the labels and the next appointment. The rest can wait. Tick doses off on the Overview, jot a quick note when something changes, and the record builds itself." },
+            { icon: "ph-printer", title: "Paper for every appointment", desc: "Print an emergency sheet for the fridge, the medication list and a visit-prep page for the doctor, vitals with charts, a weekly check-off sheet and a care costs report for any year. Every tab prints." },
             { icon: "ph-lock-simple", title: "A record, not medical advice", desc: "This binder keeps what you enter. It does not check doses or drug interactions; always follow the label and the care team. Insurance numbers: last four digits only. Set a PIN in Settings if others use this device.", isFinal: true }
         ];
 
         // --- Core Application Engine Configuration ---
+        // Sections most buyers will not need on day one; switched on in Settings.
+        const DEFAULT_HIDDEN = ['behaviors', 'safety'];
+
         const SECTIONS = {
             dashboard: { title: "Overview", icon: "ph-squares-four" },
+
+            members: {
+                title: "About Them", icon: "ph-identification-card", group: "health",
+                singular: "Person", desc: "The person you care for: the details every form, ER and new helper asks for. Add a second person and every section gets a For filter.",
+                filterField: "relation",
+                fields: [
+                    { name: "name", label: "Name", type: "text", required: true, placeholder: "e.g. Margaret Chen" },
+                    { name: "relation", label: "Who they are to you", filterLabel: "People", type: "select", default: "Mother", options: ["Mother", "Father", "Spouse or partner", "Grandparent", "Other family", "Friend or neighbor"] },
+                    { name: "dob", label: "Date of birth", printLabel: "Born", type: "date" },
+                    { name: "phone", label: "Phone", type: "text" },
+                    { name: "address", label: "Address", type: "text", width: "full" },
+                    { name: "code_status", label: "Code status, as the family recorded it", printLabel: "Code status", type: "text", width: "full", placeholder: "e.g. Full code / DNR form on the fridge" },
+                    { name: "hospital", label: "Preferred hospital", type: "text" },
+                    { name: "notes", label: "What helpers should know", type: "textarea", width: "full", placeholder: "Hearing, mobility, what calms them" }
+                ]
+            },
 
             dates: {
                 title: "Appointments", icon: "ph-calendar-dots", group: "care",
@@ -6078,6 +6135,7 @@ window.BinderSync = window.JPSSync;
                     { name: "status", label: "Status", type: "select", default: "⏳ Upcoming", options: ["⏳ Upcoming", "✅ Done", "❌ Cancelled"] },
                     { name: "where", label: "Where or with whom", type: "text" },
                     { name: "driver", label: "Who is taking them", type: "text" },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
                     { name: "notes", label: "Questions to ask, what was said", type: "textarea", printLabel: "Notes" }
                 ]
             },
@@ -6088,10 +6146,27 @@ window.BinderSync = window.JPSSync;
                 filterField: "kind", dateField: "date", defaultView: "table",
                 fields: [
                     { name: "date", label: "Date", type: "date", required: true, default: "today" },
-                    { name: "time", label: "Time", type: "time" },
+                    { name: "time", label: "Time", type: "time", default: "now" },
                     { name: "title", label: "What happened", type: "text", required: true, placeholder: "e.g. Ate a full lunch, walked to the mailbox" },
                     { name: "kind", label: "Type", filterLabel: "Types", type: "select", required: true, default: "📝 General", options: ["📝 General", "🍽️ Meals", "😴 Sleep", "🚶 Mobility or fall", "💭 Mood or memory", "🌡️ Something new to mention", "📞 Call or visit"] },
                     { name: "logged_by", label: "Logged by", type: "text" },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
+                    { name: "notes", label: "Notes", type: "textarea" }
+                ]
+            },
+
+            doses: {
+                title: "Medications Given", icon: "ph-check-square-offset", group: "care",
+                singular: "Dose", desc: "Every dose ticked off on the Overview, with who gave it and when. A record of what the family did, not a dosing guide.",
+                filterField: "status", dateField: "date", defaultView: "table",
+                fields: [
+                    { name: "date", label: "Date", type: "date", required: true, default: "today" },
+                    { name: "slot", label: "Time of day", type: "select", required: true, default: "Morning", options: ["Morning", "Noon", "Evening", "Bedtime", "As needed"] },
+                    { name: "medication", label: "Medication", type: "text", required: true },
+                    { name: "status", label: "Status", type: "select", required: true, default: "✅ Given", options: ["✅ Given", "⏭️ Skipped", "🚫 Refused"] },
+                    { name: "given_by", label: "Given by", type: "text" },
+                    { name: "time", label: "Time", type: "time", default: "now" },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
                     { name: "notes", label: "Notes", type: "textarea" }
                 ]
             },
@@ -6100,12 +6175,14 @@ window.BinderSync = window.JPSSync;
                 title: "Care Tasks", icon: "ph-list-checks", group: "care",
                 singular: "Task", desc: "Who is doing what this week: errands, calls, paperwork, home help.",
                 filterField: "status", hasCalendar: true, dateField: "due", dueFields: ["due"], defaultView: "table",
+                completable: true, doneTitle: "Mark done (a repeating task moves to its next date)",
                 fields: [
                     { name: "task", label: "Task", type: "text", required: true, placeholder: "e.g. Pick up groceries" },
                     { name: "who", label: "Who is doing it", type: "text" },
-                    { name: "repeat", label: "How often", type: "select", default: "Once", options: ["Once", "Daily", "Weekly", "Monthly"] },
+                    { name: "frequency", label: "How often", type: "select", default: "Once", options: ["Once", "Daily", "Weekly", "Twice a month", "Monthly", "Quarterly"] },
                     { name: "status", label: "Status", type: "select", required: true, default: "⏳ To do", options: ["⏳ To do", "🔄 In progress", "✅ Done"] },
                     { name: "due", label: "Do by", type: "date" },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
                     { name: "notes", label: "Notes", type: "textarea" }
                 ]
             },
@@ -6114,15 +6191,36 @@ window.BinderSync = window.JPSSync;
                 title: "Medication List", icon: "ph-pill", group: "health",
                 singular: "Medication", desc: "Copied from the labels, for every appointment and the ER. This binder does not check doses or interactions.",
                 filterField: "status", dateField: "refill", dueFields: ["refill"],
+                completable: true, doneTitle: "Refill picked up today (moves the next refill date)",
                 fields: [
                     { name: "name", label: "Medication", type: "text", required: true, placeholder: "As on the label" },
                     { name: "strength", label: "Strength", type: "text", placeholder: "As on the label, e.g. 10 mg" },
                     { name: "directions", label: "Directions (from the label)", type: "text", printLabel: "Directions", placeholder: "e.g. 1 tablet every morning" },
+                    { name: "schedule", label: "When it is taken (from the label)", printLabel: "When", type: "select", options: ["Morning", "Noon", "Evening", "Bedtime", "Morning and evening", "Morning and bedtime", "Morning, noon and evening", "Morning, noon, evening and bedtime", "As needed"] },
                     { name: "purpose", label: "What it is for", type: "text" },
                     { name: "prescriber", label: "Prescribed by", type: "text" },
                     { name: "pharmacy", label: "Pharmacy", type: "text" },
                     { name: "refill", label: "Next refill", type: "date" },
+                    { name: "supply", label: "Supply per fill", type: "select", options: ["30 days", "60 days", "90 days"] },
                     { name: "status", label: "Status", type: "select", required: true, default: "💊 Taking", options: ["💊 Taking", "⏸️ Paused", "⚪ Stopped"] },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
+                    { name: "notes", label: "Notes", type: "textarea" }
+                ]
+            },
+
+            vitals: {
+                title: "Vitals Log", icon: "ph-heartbeat", group: "health",
+                singular: "Reading", desc: "Blood pressure, pulse, blood sugar, weight and more, as the family measured them. Prints with charts for the doctor.",
+                filterField: "kind", dateField: "date", defaultView: "table",
+                fields: [
+                    { name: "date", label: "Date", type: "date", required: true, default: "today" },
+                    { name: "time", label: "Time", type: "time", default: "now" },
+                    { name: "kind", label: "Reading", filterLabel: "Readings", type: "select", required: true, default: "❤️ Blood pressure", options: ["❤️ Blood pressure", "💓 Pulse", "🩸 Blood sugar", "⚖️ Weight", "🌡️ Temperature", "🫁 Oxygen (SpO2)", "🤕 Pain (0 to 10)"] },
+                    { name: "reading", label: "Value (blood pressure: top number)", printLabel: "Value", type: "number", required: true },
+                    { name: "reading2", label: "Second value (blood pressure: bottom number)", printLabel: "Second", type: "number" },
+                    { name: "context", label: "When", type: "select", options: ["Morning", "Afternoon", "Evening", "Before medications", "After medications"] },
+                    { name: "logged_by", label: "Measured by", type: "text" },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
                     { name: "notes", label: "Notes", type: "textarea" }
                 ]
             },
@@ -6135,6 +6233,7 @@ window.BinderSync = window.JPSSync;
                     { name: "name", label: "Name", type: "text", required: true },
                     { name: "role", label: "Role", filterLabel: "Roles", type: "select", required: true, default: "Family", options: ["Primary doctor", "Specialist", "Pharmacy", "Home care aide", "Therapist", "Social worker", "Family", "Friend or neighbor", "Insurance", "Other"] },
                     { name: "phone", label: "Phone", type: "text" },
+                    { name: "emergency", label: "Emergency contact", printLabel: "Emergency", type: "select", default: "No", options: ["No", "1st to call", "2nd to call", "3rd to call"] },
                     { name: "email", label: "Email", type: "text" },
                     { name: "notes", label: "Notes", type: "textarea" }
                 ]
@@ -6148,6 +6247,7 @@ window.BinderSync = window.JPSSync;
                     { name: "detail", label: "Detail", type: "text", required: true, placeholder: "e.g. Allergy: penicillin" },
                     { name: "category", label: "Category", type: "select", required: true, default: "Condition", options: ["Condition", "Allergy", "Hospital stay or surgery", "Equipment", "Diet", "Other"] },
                     { name: "since", label: "Since", type: "date" },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
                     { name: "notes", label: "Notes", type: "textarea" }
                 ]
             },
@@ -6191,7 +6291,38 @@ window.BinderSync = window.JPSSync;
                     { name: "amount", label: "Amount", type: "number", format: "currency", required: true },
                     { name: "paid_by", label: "Paid by", type: "text" },
                     { name: "claim", label: "Reimbursable?", type: "select", default: "No", options: ["No", "Yes, not claimed", "Claimed", "Reimbursed"] },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
                     { name: "notes", label: "Notes", type: "textarea" }
+                ]
+            },
+
+            behaviors: {
+                title: "Behavior Log", icon: "ph-brain", group: "memory",
+                singular: "Entry", desc: "Sundowning, agitation, confusion and wandering: when it happened, what came before and what helped. Patterns show over weeks.",
+                filterField: "kind", dateField: "date", defaultView: "table",
+                fields: [
+                    { name: "date", label: "Date", type: "date", required: true, default: "today" },
+                    { name: "time", label: "Time", type: "time", default: "now" },
+                    { name: "title", label: "What happened", type: "text", required: true },
+                    { name: "kind", label: "Type", filterLabel: "Types", type: "select", required: true, default: "🌆 Sundowning", options: ["🌆 Sundowning", "😠 Agitation", "❓ Confusion", "🚪 Wandering or trying to leave", "😴 Sleep at night", "🔁 Repeating", "📌 Other"] },
+                    { name: "trigger", label: "What came before", type: "text" },
+                    { name: "helped", label: "What helped", type: "text" },
+                    { name: "logged_by", label: "Logged by", type: "text" },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
+                    { name: "notes", label: "Notes", type: "textarea" }
+                ]
+            },
+
+            safety: {
+                title: "Wandering & Safety Plan", icon: "ph-map-pin-line", group: "memory",
+                singular: "Item", desc: "What to do if they wander: a recent photo, places they may head for, who to call, and home safety steps.",
+                filterField: "category",
+                fields: [
+                    { name: "item", label: "Item", type: "text", required: true },
+                    { name: "category", label: "Category", type: "select", required: true, default: "Places they might go", options: ["Recent photo and description", "Places they might go", "Who to call first", "Medical ID or tracker", "Home safety"] },
+                    { name: "details", label: "Details", type: "textarea", width: "full" },
+                    { name: "member", label: "For", type: "member_select", printLabel: "For" },
+                    { name: "attachments", label: "Photos", type: "attachments" }
                 ]
             },
 
@@ -6233,7 +6364,7 @@ window.BinderSync = window.JPSSync;
         class ProductivityApp {
             constructor() {
                 // Easy Mode Initialization: Hide advanced modules by default
-                const defaultHidden = [];
+                const defaultHidden = DEFAULT_HIDDEN.slice();
                 const storedHidden = storage.get('cgHiddenSections');
                 this.hiddenSections = storedHidden ? JSON.parse(storedHidden) : defaultHidden;
 
@@ -6432,7 +6563,40 @@ window.BinderSync = window.JPSSync;
                 const shift = (days) => { const d = new Date(today); d.setDate(d.getDate() + days); return d; };
                 const at = (days) => iso(shift(days));
 
+                // A real three weeks: morning blood pressure most days, pulse every
+                // other day, weight on Sundays, doses ticked with the odd refusal.
+                let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+                const vit = [];
+                for (let i = 20; i >= 0; i--) {
+                    vit.push({ id: 'cg_v' + i, date: at(-i), time: '08:' + String(5 + Math.floor(rnd() * 40)).padStart(2, '0'), kind: '❤️ Blood pressure', reading: Math.round(122 + rnd() * 15 - (i < 6 ? 3 : 0)), reading2: Math.round(75 + rnd() * 9), context: 'Morning', logged_by: i % 3 ? 'Rosa (aide)' : 'Laura' });
+                    if (i % 2 === 0) vit.push({ id: 'cg_p' + i, date: at(-i), time: '08:20', kind: '💓 Pulse', reading: Math.round(66 + rnd() * 11), context: 'Morning', logged_by: 'Rosa (aide)' });
+                    if (i % 7 === 0) vit.push({ id: 'cg_w' + i, date: at(-i), time: '07:50', kind: '⚖️ Weight', reading: +(141.8 + (20 - i) * 0.06 + rnd() * 0.6).toFixed(1), context: 'Morning', logged_by: 'Laura' });
+                }
+                vit.push({ id: 'cg_v_pm', date: at(-2), time: '16:45', kind: '❤️ Blood pressure', reading: 142, reading2: 88, context: 'Afternoon', logged_by: 'Rosa (aide)', notes: 'Ankles swollen. 134/84 after resting 20 minutes.' });
+                const dz = [];
+                const sched = [['cg_m1', 'Lisinopril 10 mg', 'Morning'], ['cg_m3', 'Levothyroxine 50 mcg', 'Morning'], ['cg_m4', 'Vitamin D3 1,000 IU', 'Noon'], ['cg_m2', 'Atorvastatin 20 mg', 'Bedtime']];
+                for (let i = 6; i >= 1; i--) sched.forEach(([mid, name, slot], k) => {
+                    if (i === 3 && slot === 'Noon') return;
+                    const refused = i === 4 && slot === 'Bedtime';
+                    dz.push({ id: `cg_d${i}_${k}`, date: at(-i), slot, medication: name, med_id: mid, status: refused ? '🚫 Refused' : '✅ Given', given_by: slot === 'Bedtime' ? (i % 2 ? 'David' : 'Laura') : 'Rosa (aide)', time: slot === 'Morning' ? '08:1' + (i % 6) : slot === 'Noon' ? '12:3' + (i % 5) : '21:0' + (i % 7), notes: refused ? 'Said she had already taken it. Checked the organizer: she had not.' : '' });
+                });
+                sched.slice(0, 2).forEach(([mid, name, slot], k) => dz.push({ id: 'cg_d0_' + k, date: at(0), slot, medication: name, med_id: mid, status: '✅ Given', given_by: 'Rosa (aide)', time: '08:12' }));
+
                 return {
+                    members: [
+                        { id: 'cg_p_margaret', name: 'Margaret Chen', relation: 'Mother', dob: '1943-04-12', phone: '(555) 210-0100', address: '14 Willow Lane, Northgate', code_status: 'Full code. Advance directive and health care power of attorney in the blue folder, kitchen drawer.', hospital: 'St. Luke’s Hospital', notes: 'Hard of hearing on the left; speak on her right. Uses a walker. Likes tea before bed.' }
+                    ],
+                    vitals: vit,
+                    doses: dz,
+                    behaviors: [
+                        { id: 'cg_bh1', date: at(-5), time: '17:40', title: 'Restless, asked to go home', kind: '🌆 Sundowning', trigger: 'Busy afternoon, grandkids visited', helped: 'Tea, lamps on early, her music', logged_by: 'Laura' },
+                        { id: 'cg_bh2', date: at(-2), time: '18:10', title: 'Looked for her late husband', kind: '❓ Confusion', helped: 'Photo album together', logged_by: 'David' }
+                    ],
+                    safety: [
+                        { id: 'cg_sf1', item: 'Recent photo', category: 'Recent photo and description', details: '5 ft 3, gray bob, usually a blue cardigan and white sneakers.' },
+                        { id: 'cg_sf2', item: 'Her old house on Elm Street', category: 'Places they might go', details: 'Two blocks past the church.' },
+                        { id: 'cg_sf3', item: 'Door chime on the front door', category: 'Home safety', details: 'Installed last month.' }
+                    ],
                     dates: [
                         { id: 'cg_e1', date: at(-9), time: '10:00', title: 'Primary care checkup', kind: '🩺 Doctor visit', status: '✅ Done', where: 'Dr. Patel, Northgate Family Medicine', driver: 'Laura', notes: 'Blood pressure good. Recheck in three months.' },
                         { id: 'cg_e2', date: at(2), time: '14:30', title: 'Cardiology follow-up', kind: '🩺 Doctor visit', status: '⏳ Upcoming', where: 'Dr. Okafor, Riverside Heart Center', driver: 'David', notes: 'Ask about the ankle swelling. Bring the medication list.' },
@@ -6451,27 +6615,28 @@ window.BinderSync = window.JPSSync;
                         { id: 'cg_l6', date: at(0), time: '09:00', title: 'Morning medications taken', kind: '📝 General', logged_by: 'Rosa (aide)' }
                     ],
                     tasks: [
-                        { id: 'cg_t1', task: 'Pick up groceries', who: 'David', repeat: 'Weekly', status: '⏳ To do', due: at(1) },
-                        { id: 'cg_t2', task: 'Refill the pill organizer', who: 'Laura', repeat: 'Weekly', status: '⏳ To do', due: at(3) },
-                        { id: 'cg_t3', task: 'Call the Medicare plan about the walker claim', who: 'Laura', status: '🔄 In progress', due: at(4) },
+                        { id: 'cg_t1', task: 'Pick up groceries', who: 'David', frequency: 'Weekly', status: '⏳ To do', due: at(1) },
+                        { id: 'cg_t2', task: 'Refill the pill organizer', who: 'Laura', frequency: 'Weekly', status: '⏳ To do', due: at(3) },
+                        { id: 'cg_t3', task: 'Call the Medicare plan about the walker claim', who: 'Laura', frequency: 'Once', status: '🔄 In progress', due: at(4) },
                         { id: 'cg_t4', task: 'Install a grab bar in the shower', who: 'David', status: '⏳ To do', due: at(10), notes: 'Hardware store has the 24 inch one.' },
                         { id: 'cg_t5', task: 'Book a respite week for next month', who: 'Laura', status: '⏳ To do', due: at(20) },
                         { id: 'cg_t6', task: 'Sign the health care power of attorney', who: 'Mom and Laura', status: '✅ Done' }
                     ],
                     medications: [
-                        { id: 'cg_m1', name: 'Lisinopril', strength: '10 mg', directions: '1 tablet every morning', purpose: 'Blood pressure', prescriber: 'Dr. Patel', pharmacy: 'Main St Pharmacy', refill: at(6), status: '💊 Taking' },
-                        { id: 'cg_m2', name: 'Atorvastatin', strength: '20 mg', directions: '1 tablet at bedtime', purpose: 'Cholesterol', prescriber: 'Dr. Okafor', pharmacy: 'Main St Pharmacy', refill: at(18), status: '💊 Taking' },
-                        { id: 'cg_m3', name: 'Levothyroxine', strength: '50 mcg', directions: '1 tablet before breakfast', purpose: 'Thyroid', prescriber: 'Dr. Patel', pharmacy: 'Main St Pharmacy', refill: at(11), status: '💊 Taking' },
-                        { id: 'cg_m4', name: 'Vitamin D3', strength: '1,000 IU', directions: '1 softgel with lunch', purpose: 'Bones', status: '💊 Taking' },
-                        { id: 'cg_m5', name: 'Ibuprofen', strength: '200 mg', purpose: 'Knee pain', status: '⚪ Stopped', notes: 'Stopped on Dr. Okafor’s advice. Use acetaminophen instead.' }
+                        { id: 'cg_m1', schedule: 'Morning', supply: '90 days', name: 'Lisinopril', strength: '10 mg', directions: '1 tablet every morning', purpose: 'Blood pressure', prescriber: 'Dr. Patel', pharmacy: 'Main St Pharmacy', refill: at(6), status: '💊 Taking' },
+                        { id: 'cg_m2', schedule: 'Bedtime', supply: '90 days', name: 'Atorvastatin', strength: '20 mg', directions: '1 tablet at bedtime', purpose: 'Cholesterol', prescriber: 'Dr. Okafor', pharmacy: 'Main St Pharmacy', refill: at(18), status: '💊 Taking' },
+                        { id: 'cg_m3', schedule: 'Morning', supply: '30 days', name: 'Levothyroxine', strength: '50 mcg', directions: '1 tablet before breakfast', purpose: 'Thyroid', prescriber: 'Dr. Patel', pharmacy: 'Main St Pharmacy', refill: at(11), status: '💊 Taking' },
+                        { id: 'cg_m4', schedule: 'Noon', name: 'Vitamin D3', strength: '1,000 IU', directions: '1 softgel with lunch', purpose: 'Bones', status: '💊 Taking' },
+                        { id: 'cg_m5', schedule: 'As needed', name: 'Ibuprofen', strength: '200 mg', purpose: 'Knee pain', status: '⚪ Stopped', notes: 'Stopped on Dr. Okafor’s advice. Use acetaminophen instead.' }
                     ],
                     team: [
+                        { id: 'cg_c0', name: 'Laura Chen', role: 'Family', phone: '(555) 210-0127', emergency: '1st to call', notes: 'Daughter. Main caregiver; lives 10 minutes away.' },
                         { id: 'cg_c1', name: 'Dr. Anita Patel', role: 'Primary doctor', phone: '(555) 555-0141', notes: 'Northgate Family Medicine' },
                         { id: 'cg_c2', name: 'Dr. James Okafor', role: 'Specialist', phone: '(555) 555-0177', notes: 'Cardiology, Riverside Heart Center' },
                         { id: 'cg_c3', name: 'Main St Pharmacy', role: 'Pharmacy', phone: '(555) 555-0120' },
                         { id: 'cg_c4', name: 'Rosa Alvarez', role: 'Home care aide', phone: '(555) 210-0188', notes: 'Weekdays 8 to 12.' },
-                        { id: 'cg_c5', name: 'David Chen', role: 'Family', phone: '(555) 210-0134', notes: 'Brother. Drives on Tuesdays and Thursdays.' },
-                        { id: 'cg_c6', name: 'Joan (next door)', role: 'Friend or neighbor', phone: '(555) 210-0109', notes: 'Has a spare key.' }
+                        { id: 'cg_c5', name: 'David Chen', role: 'Family', phone: '(555) 210-0134', emergency: '2nd to call', notes: 'Brother. Drives on Tuesdays and Thursdays.' },
+                        { id: 'cg_c6', name: 'Joan (next door)', role: 'Friend or neighbor', phone: '(555) 210-0109', emergency: '3rd to call', notes: 'Has a spare key.' }
                     ],
                     health: [
                         { id: 'cg_h1', detail: 'Allergy: penicillin (rash)', category: 'Allergy' },
@@ -7012,7 +7177,7 @@ window.BinderSync = window.JPSSync;
 
             visibleFields(sectionKey, config) {
                 const hidden = this.hiddenColumns(sectionKey);
-                const shown = config.fields.filter(f => !hidden.includes(f.name));
+                const shown = config.fields.filter(f => !hidden.includes(f.name) && this.fieldInUse(f, sectionKey));
                 // Never leave an empty table: the first field is the record's
                 // name, so it is the one column that cannot be turned off.
                 return shown.length > 0 ? shown : [config.fields[0]];
@@ -7189,13 +7354,26 @@ window.BinderSync = window.JPSSync;
                 });
 
                 document.addEventListener('keydown', (e) => {
-                    const viewerOpen = !document.getElementById('viewer-backdrop').classList.contains('hidden');
+                    if (e.ctrlKey || e.metaKey || e.altKey) return;
+                    const t = e.target, tag = (t && t.tagName) || '';
+                    if (/^(INPUT|TEXTAREA|SELECT)$/.test(tag) || (t && t.isContentEditable)) return;
+                    if (['modal-backdrop', 'confirm-backdrop', 'print-modal-backdrop', 'viewer-backdrop', 'backup-backdrop', 'period-backdrop'].some(id => { const el = document.getElementById(id); return el && !el.classList.contains('hidden'); })) return;
+                    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+                    if (k === '/') { e.preventDefault(); const sb = document.getElementById('global-search'); if (sb) sb.focus(); }
+                    else if (k === 'n') { e.preventDefault(); const q = document.getElementById('quick-note'); if (q) q.focus(); else { this.navigateTo('care_log'); this.openModal('care_log'); } }
+                    else if (k === 'a') { if (SECTIONS[this.currentSection] && this.currentSection !== 'dashboard') { e.preventDefault(); this.openModal(this.currentSection); } }
+                    else if (k === 'm') { e.preventDefault(); this.navigateTo('dashboard'); setTimeout(() => { const el = document.getElementById('todays-meds'); if (el) el.scrollIntoView({ block: 'start' }); }, 80); }
+                    else if (k === '?') { e.preventDefault(); this.navigateTo('settings'); setTimeout(() => { const el = document.getElementById('shortcuts-card'); if (el) el.scrollIntoView({ block: 'start' }); }, 80); }
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    const vb = document.getElementById('viewer-backdrop'); const viewerOpen = !!vb && !vb.classList.contains('hidden');
                     if (viewerOpen && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
                         this.stepSampleViewer(e.key === 'ArrowRight' ? 1 : -1);
                         return;
                     }
                     if (e.key !== 'Escape') return;
-                    const open = (id) => !document.getElementById(id).classList.contains('hidden');
+                    const open = (id) => { const el = document.getElementById(id); return !!el && !el.classList.contains('hidden'); };
                     if (open('viewer-backdrop')) this.closeSampleViewer();
                     else if (open('backup-backdrop')) this.dismissBackupPrompt();
                     else if (open('modal-backdrop')) this.closeModal();
@@ -7537,7 +7715,7 @@ window.BinderSync = window.JPSSync;
                     this.autoSaveProfile();
 
                     // Easy Mode Reset
-                    this.hiddenSections = [];
+                    this.hiddenSections = DEFAULT_HIDDEN.slice();
                     storage.set('cgHiddenSections', JSON.stringify(this.hiddenSections));
                     
                     this.renderNav();
@@ -7712,6 +7890,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
             navigateTo(key) {
                 this.localSearchQuery = '';
                 this.activeFilter = 'all';
+                this.showArchived = false; this.rowLimit = 200; this.selection = { key, ids: new Set() };
                 this.sortConfig = { key: null, direction: 'asc' };
                 
                 this.currentSection = key;
@@ -7744,6 +7923,9 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                 } else {
                     const SHORTCUTS = {
                         medications: { fn: 'printMedicationList', icon: 'ph-pill', label: 'Medication List' },
+                        members:   { fn: 'printEmergencySheet', icon: 'ph-first-aid-kit', label: 'Emergency Sheet' },
+                        vitals:    { fn: 'printVitals', icon: 'ph-heartbeat', label: 'Vitals' },
+                        doses:     { fn: 'printDoseGrid', icon: 'ph-check-square-offset', label: 'Check-off Sheet' },
                         health:    { fn: 'printMedicationList', icon: 'ph-pill', label: 'Medication List' },
                         dates:     { fn: 'printCareSummary', icon: 'ph-clipboard-text', label: 'Care Summary' },
                         team:      { fn: 'printCareSummary', icon: 'ph-clipboard-text', label: 'Care Summary' },
@@ -8167,7 +8349,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                                 ${household.length > 0 ? `
                                 <div class="relative min-w-[150px]">
                                     <select onchange="window.app.dashboardMemberFilter = this.value; window.app.renderDashboard()" class="w-full pl-3 pr-8 py-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none text-slate-700 dark:text-slate-300 shadow-sm appearance-none cursor-pointer font-bold">
-                                        <option value="all" ${this.dashboardMemberFilter === 'all' ? 'selected' : ''}>All Children</option>
+                                        <option value="all" ${this.dashboardMemberFilter === 'all' ? 'selected' : ''}>Everyone</option>
                                         ${household.map(m => `<option value="${escapeHtml(m.id)}" ${this.dashboardMemberFilter === m.id ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('')}
                                     </select>
                                     <i class="ph ph-users absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"></i>
@@ -8201,7 +8383,9 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                             </div>
                         </div>
 
+                        ${this.quickNoteHtml()}
                         ${kpiHtml}
+                        ${this.todayMedsHtml()}
                         ${dueStripHtml}
                         ${topRowHtml}
                         ${bottomRowHtml}
@@ -8218,6 +8402,15 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                                 </button>
                                 <button onclick="window.app.printCareCosts()" class="px-6 py-4 bg-white hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:bg-darkCard dark:text-white dark:hover:bg-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 whitespace-nowrap transition-colors shadow-sm">
                                     <i class="ph ph-receipt text-xl"></i> Care Costs
+                                </button>
+                                <button onclick="window.app.printEmergencySheet()" class="px-6 py-4 bg-white hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:bg-darkCard dark:text-white dark:hover:bg-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 whitespace-nowrap transition-colors shadow-sm">
+                                    <i class="ph ph-first-aid-kit text-xl"></i> Emergency Sheet
+                                </button>
+                                <button onclick="window.app.printVitals()" class="px-6 py-4 bg-white hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:bg-darkCard dark:text-white dark:hover:bg-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 whitespace-nowrap transition-colors shadow-sm">
+                                    <i class="ph ph-heartbeat text-xl"></i> Vitals
+                                </button>
+                                <button onclick="window.app.printDoseGrid()" class="px-6 py-4 bg-white hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:bg-darkCard dark:text-white dark:hover:bg-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 whitespace-nowrap transition-colors shadow-sm">
+                                    <i class="ph ph-check-square-offset text-xl"></i> Check-off Sheet
                                 </button>
                                 <button onclick="window.app.printMedicationList()" class="px-6 py-4 bg-white hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:bg-darkCard dark:text-white dark:hover:bg-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 whitespace-nowrap transition-colors shadow-sm">
                                     <i class="ph ph-pill text-xl"></i> Medication List
@@ -8437,6 +8630,9 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                     processed = processed.filter(item => Object.values(item).some(val => String(val).toLowerCase().includes(this.localSearchQuery)));
                 }
 
+                // Archived records leave the everyday list but stay in the binder.
+                processed = processed.filter(i => this.showArchived ? i.archived : !i.archived);
+
                 if (this.sortConfig.key) {
                     processed.sort((a, b) => {
                         let valA = a[this.sortConfig.key] !== undefined ? a[this.sortConfig.key] : '';
@@ -8484,7 +8680,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                     roomFilterHtml = `
                     <div class="relative min-w-[150px] flex-1 md:flex-none">
                         <select onchange="window.app.memberFilter = this.value; window.app.renderGenericSection('${sectionKey}')" class="w-full pl-3 pr-8 py-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none text-slate-700 dark:text-slate-300 shadow-sm appearance-none cursor-pointer font-medium truncate">
-                            <option value="all" ${this.memberFilter === 'all' ? 'selected' : ''}>All Children</option>
+                            <option value="all" ${this.memberFilter === 'all' ? 'selected' : ''}>Everyone</option>
                             ${memberList.map(room => `<option value="${escapeHtml(room.id)}" ${this.memberFilter === room.id ? 'selected' : ''}>${escapeHtml(room.name)}</option>`).join('')}
                         </select>
                         <i class="ph ph-squares-four absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"></i>
@@ -8622,6 +8818,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
 
                                 ${columnMenuHtml}
 
+                                ${sectionKey === 'medications' ? `<label title="Import a medication list (CSV file)" class="flex items-center justify-center p-2.5 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors shadow-sm shrink-0 cursor-pointer"><i class="ph ph-upload-simple text-lg"></i><span class="sr-only">Import a medication list</span><input type="file" accept=".csv,text/csv,text/plain" class="hidden" onchange="window.app.importMedsCSV(event)"></label>` : ''}
                                 <button onclick="window.app.exportCSV('${escapeHtml(sectionKey)}')" class="flex items-center justify-center p-2.5 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm shrink-0" title="Export this section as CSV"><i class="ph ph-file-csv text-lg"></i></button>
 
                                 <button onclick="window.app.openPrintModal(false, '${escapeHtml(sectionKey)}')" class="flex items-center justify-center p-2.5 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm shrink-0" title="Export / Print Section PDF"><i class="ph ph-printer text-lg"></i></button>
@@ -8636,9 +8833,10 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
 
                         ${filtersHtml}
                         ${(items.length === 0 && !(this.viewMode === 'calendar' && config.hasCalendar)) ? this.emptyStateHtml(config, sectionKey, rawItems.length > 0) :
-                          (this.viewMode === 'table' ? this.generateTableHtml(items, config, sectionKey) : 
+                          (this.viewMode === 'table' ? this.bulkBarHtml(sectionKey) + this.generateTableHtml(items.slice(0, this.rowLimit || 200), config, sectionKey) + this.moreRowsHtml(items.length) : 
                           (this.viewMode === 'calendar' && config.hasCalendar ? this.generateCalendarHtml(items, config, sectionKey) : 
-                          this.generateGridHtml(items, config, sectionKey)))}
+                          this.generateGridHtml(items.slice(0, this.rowLimit || 200), config, sectionKey) + this.moreRowsHtml(items.length)))}
+                        ${this.archiveLinkHtml(sectionKey)}
                     </div>
                 `;
                 this.mainContent.innerHTML = html;
@@ -8732,7 +8930,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                 // silently updated nothing.
                 const config = SECTIONS[sectionKey] || {};
                 const dueField = (config.dueFields && config.dueFields[0]) || config.dateField || 'due';
-                const step = this.FREQUENCY_STEP[item.frequency];
+                const step = sectionKey === 'medications' ? this.supplyStep(item) : this.FREQUENCY_STEP[item.frequency];
 
                 if (step) {
                     let next = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -8744,11 +8942,14 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                         while (next.getDay() === 0 || next.getDay() === 6) next.setDate(next.getDate() + 1);
                     }
                     item[dueField] = this.isoDate(next);
-                    this.showToast(`Done today. Next due ${formatDate(item[dueField])}.`, 'success');
+                    if (sectionKey === 'tasks') item.status = '⏳ To do';
+                    this.showToast(sectionKey === 'medications' ? `Refill picked up. Next refill around ${formatDate(item[dueField])}.` : `Done today. Next due ${formatDate(item[dueField])}.`, 'success');
                 } else {
                     // "As needed" has no interval to roll forward, so say what was
                     // and was not changed rather than inventing a date.
-                    this.showToast('Logged as done today. This task has no set interval, so the due date is unchanged.', 'info');
+                    if (sectionKey === 'tasks') { item.status = '✅ Done'; this.showToast('Marked done.', 'success'); }
+                    else if (sectionKey === 'medications') this.showToast('Picked up today. Set "Supply per fill" on this medication and the next refill date moves forward by itself.', 'info');
+                    else this.showToast('Logged as done today. This task has no set interval, so the due date is unchanged.', 'info');
                 }
 
                 if (!this.saveData()) return;
@@ -8760,13 +8961,14 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                 const key = escapeHtml(sectionKey);
                 const del = `window.app.openConfirm('Delete Record?', 'Are you sure you want to delete this record?', 'Delete', 'bg-rose-600 hover:bg-rose-700 text-white', function() { window.app.deleteItem('${key}', '${id}') })`;
                 const done = SECTIONS[sectionKey] && SECTIONS[sectionKey].completable;
+                const prep = sectionKey === 'dates';
                 if (variant === 'card') {
-                    return `${done ? `<button onclick="window.app.markDone('${key}', '${id}')" class="p-1.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 shadow-sm" title="Mark done today and roll the due date forward"><i class="ph ph-check-circle"></i></button>` : ''}<button onclick="window.app.openModal('${key}', '${id}')" class="p-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm" title="Edit"><i class="ph ph-pencil-simple"></i></button>
+                    return `${prep ? `<button onclick="window.app.printVisitPrep('${id}')" class="p-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-primary-600 dark:text-primary-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm" title="Print a visit-prep page for this appointment"><i class="ph ph-clipboard-text"></i></button>` : ''}${done ? `<button onclick="window.app.markDone('${key}', '${id}')" class="p-1.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 shadow-sm" title="${escapeHtml((SECTIONS[sectionKey] && SECTIONS[sectionKey].doneTitle) || 'Mark done today and roll the due date forward')}"><i class="ph ph-check-circle"></i></button>` : ''}<button onclick="window.app.openModal('${key}', '${id}')" class="p-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm" title="Edit"><i class="ph ph-pencil-simple"></i></button>
                         <button onclick="window.app.duplicateItem('${key}', '${id}')" class="p-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm" title="Duplicate"><i class="ph ph-copy"></i></button>
                         <button onclick="${del}" class="p-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-rose-600 dark:text-rose-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm" title="Delete"><i class="ph ph-trash"></i></button>`;
                 }
                 const stop = 'event.stopPropagation(); ';
-                return `${done ? `<button onclick="${stop}window.app.markDone('${key}', '${id}')" class="text-emerald-500 hover:text-emerald-600 p-1 mr-1" title="Mark done today and roll the due date forward" aria-label="Mark done"><i class="ph ph-check-circle text-lg"></i></button>` : ''}<button onclick="${stop}window.app.openModal('${key}', '${id}')" class="text-slate-400 hover:text-blue-500 p-1 mr-1" title="Edit" aria-label="Edit record"><i class="ph ph-pencil-simple text-lg"></i></button>
+                return `${prep ? `<button onclick="${stop}window.app.printVisitPrep('${id}')" class="text-slate-400 hover:text-primary-500 p-1 mr-1" title="Print a visit-prep page for this appointment" aria-label="Print visit prep"><i class="ph ph-clipboard-text text-lg"></i></button>` : ''}${done ? `<button onclick="${stop}window.app.markDone('${key}', '${id}')" class="text-emerald-500 hover:text-emerald-600 p-1 mr-1" title="${escapeHtml((SECTIONS[sectionKey] && SECTIONS[sectionKey].doneTitle) || 'Mark done today and roll the due date forward')}" aria-label="Mark done"><i class="ph ph-check-circle text-lg"></i></button>` : ''}<button onclick="${stop}window.app.openModal('${key}', '${id}')" class="text-slate-400 hover:text-blue-500 p-1 mr-1" title="Edit" aria-label="Edit record"><i class="ph ph-pencil-simple text-lg"></i></button>
                     <button onclick="${stop}window.app.duplicateItem('${key}', '${id}')" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 mr-1" title="Duplicate" aria-label="Duplicate record"><i class="ph ph-copy text-lg"></i></button>
                     <button onclick="${stop}${del}" class="text-slate-400 hover:text-rose-500 p-1" title="Delete" aria-label="Delete record"><i class="ph ph-trash text-lg"></i></button>`;
             }
@@ -8817,6 +9019,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                             <table class="w-full text-left border-collapse min-w-max">
                                 <thead data-cc-skip>
                                     <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold group">
+                                        <th class="pl-4 pr-1 py-4 w-10"><label class="row-check" onclick="event.stopPropagation()"><input type="checkbox" aria-label="Select every row shown" onchange="window.app.selectAllRows('${escapeHtml(sectionKey)}', this.checked)" ${items.length && items.every(i => this.isSelected(sectionKey, i.id)) ? 'checked' : ''}></label></th>
                                         ${fields.map(f => `
                                             <th class="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors select-none" onclick="event.stopPropagation(); window.app.setSort('${escapeHtml(f.name)}')">
                                                 <div class="flex items-center gap-1">
@@ -8831,7 +9034,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-sm text-slate-700 dark:text-slate-300">
-                                    ${items.length === 0 ? `<tr><td colspan="${fields.length + 1}" class="px-6 py-10 text-center text-slate-500 italic">No records found.</td></tr>` :
+                                    ${items.length === 0 ? `<tr><td colspan="${fields.length + 2}" class="px-6 py-10 text-center text-slate-500 italic">No records found.</td></tr>` :
                                       items.map(item => {
                                         const due = this.dueStatus(item, sectionKey);
                                         const late = due && due.days !== null && due.days < 0;
@@ -8841,6 +9044,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                                             + ' group-hover:bg-slate-50 dark:group-hover:bg-slate-800';
                                         return `
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group cursor-pointer ${late ? 'bg-rose-50/40 dark:bg-rose-900/10' : ''}" onclick="window.app.openModal('${escapeHtml(sectionKey)}', '${escapeHtml(item.id)}')">
+                                            <td class="pl-4 pr-1 py-4"><label class="row-check" onclick="event.stopPropagation()"><input type="checkbox" aria-label="Select this row" data-row-id="${escapeHtml(item.id)}" onchange="window.app.toggleRow('${escapeHtml(sectionKey)}', '${escapeHtml(item.id)}', this.checked)" ${this.isSelected(sectionKey, item.id) ? 'checked' : ''}></label></td>
                                             ${fields.map(f => {
                                                 const cell = this.fieldCell(item, f, sectionKey);
                                                 return `<td class="px-6 py-4 ${cell.classes}">${cell.html}</td>`;
@@ -8885,7 +9089,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                                     </div>
                                 </div>
                                 <div class="space-y-4 text-sm flex-1 relative z-10">
-                                    ${config.fields.slice(1).map(f => {
+                                    ${config.fields.slice(1).filter(f => this.fieldInUse(f, sectionKey)).map(f => {
                                         const cell = this.fieldCell(item, f, sectionKey, { longLink: true });
                                         if (cell.isEmpty) return '';
                                         const classes = cell.classes.includes('number-font') ? cell.classes + ' text-base' : 'text-slate-800 dark:text-slate-200 font-medium';
@@ -9173,13 +9377,16 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                 }
 
                 this.dynamicForm.innerHTML = config.fields.map(f => {
-                    let value = itemData[f.name] !== undefined ? itemData[f.name] : ''; if (!itemId && f.type === 'date' && f.name === 'date' && defaultDate) value = defaultDate; if (!itemId && value === '' && f.default !== undefined) value = f.default; if (value === 'today') { const t = new Date(); value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; } 
+                    let value = itemData[f.name] !== undefined ? itemData[f.name] : ''; if (!itemId && f.type === 'date' && f.name === 'date' && defaultDate) value = defaultDate; if (!itemId && value === '' && f.default !== undefined) value = f.default; if (value === 'now') value = this.nowTime(); if (!itemId && value === '' && this.WHO_FIELDS.includes(f.name)) value = this.whoDefault(f.name); if (value === 'today') { const t = new Date(); value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; } 
 
                     const reqStr = f.required ? 'required' : '';
                     let inputHtml = '';
                     const classes = "w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none text-slate-900 dark:text-white transition-all";
                     
-                    if (f.type === 'member_select') {
+                    if ((f.type === 'member_select' || f.type === 'member_multi') && sectionKey !== 'members' && !this.showMemberField()) {
+                        const only = this.members()[0];
+                        return `<input type="hidden" name="${escapeHtml(f.name)}" value="${escapeHtml(value || (only ? only.id : ''))}">`;
+                    } else if (f.type === 'member_select') {
                         inputHtml = `<select name="${f.name}" class="${classes}" ${reqStr}><option value="" disabled ${!value?'selected':''}>Select...</option>${this.members().map(room => `<option value="${escapeHtml(room.id)}" ${value === room.id ? 'selected' : ''}>${escapeHtml(room.name)}</option>`).join('')}</select>`;
                     } else if (f.type === 'member_multi') {
                         const selected = Array.isArray(value) ? value : (value ? [value] : []);
@@ -9284,12 +9491,12 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                 if (!this.data[this.editingSection]) this.data[this.editingSection] = [];
                 if (this.editingId) {
                     const idx = this.data[this.editingSection].findIndex(i => i.id === this.editingId);
-                    if(idx > -1) this.data[this.editingSection][idx] = itemData;
-                    this.showToast("Record updated");
+                    if(idx > -1) this.data[this.editingSection][idx] = this.beforeSave(this.editingSection, Object.assign({}, this.data[this.editingSection][idx], itemData), this.data[this.editingSection][idx]);
+                    this.showToast(this._rolled || "Record updated"); this._rolled = null;
                 } else {
-                    this.data[this.editingSection].push(itemData);
+                    this.data[this.editingSection].push(this.beforeSave(this.editingSection, itemData, null));
 
-                    this.showToast("Record saved");
+                    this.showToast(this._rolled || "Record saved"); this._rolled = null;
                 }
 
                 if (!this.saveData()) return;
@@ -9608,6 +9815,30 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                             </div>
                         </div>
 
+                        <div id="shortcuts-card" class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+                            <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                                <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-lg serif-font"><i class="ph ph-devices text-primary-500"></i> This Device &amp; Shortcuts</h3>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div>
+                                    <label for="device-name" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider">This device belongs to</label>
+                                    <input type="text" id="device-name" value="${escapeHtml(storage.get(SETTINGS_PREFIX + 'DeviceName') || '')}" placeholder="e.g. Laura" onchange="window.app.setDeviceName(this.value)" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-primary-500 text-slate-900 dark:text-white">
+                                    <p class="text-xs text-slate-500 mt-2">New notes, doses, readings, costs and rides fill in this name. Each person sets it on their own phone or computer; the binder also remembers the last name typed in each form.</p>
+                                </div>
+                                <div class="pt-4 border-t border-slate-100 dark:border-slate-800">
+                                    <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Keyboard shortcuts on a computer</div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-3"><kbd class="kbd">N</kbd> Quick note</div>
+                                        <div class="flex items-center gap-3"><kbd class="kbd">A</kbd> Add to this section</div>
+                                        <div class="flex items-center gap-3"><kbd class="kbd">M</kbd> Today's medications</div>
+                                        <div class="flex items-center gap-3"><kbd class="kbd">/</kbd> Search everything</div>
+                                        <div class="flex items-center gap-3"><kbd class="kbd">?</kbd> This list</div>
+                                        <div class="flex items-center gap-3"><kbd class="kbd">Esc</kbd> Close a form</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                             <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                                 <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-lg serif-font"><i class="ph ph-globe text-primary-500"></i> Regional Settings</h3>
@@ -9850,6 +10081,12 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
 
             showChangelog() {
                 const items = [
+                    'Today\'s medications on the Overview: tick each dose as it is given, with who gave it and when, plus a weekly check-off sheet to print.',
+                    'A vitals log for blood pressure, pulse, blood sugar, weight and more, printed with charts for the doctor.',
+                    'A one-page emergency sheet for paramedics, the ER or a respite helper, built from what is already in the binder.',
+                    'A visit-prep page for every appointment: your questions, what is new since the last visit and recent readings.',
+                    'Repeating care tasks, a Picked up button for refills, quick notes from the Overview and keyboard shortcuts.',
+                    'Care for two people in one binder, select and archive many records at once, and import a medication list from a CSV file.',
                     'A medication list for every appointment and the ER: what is taken, the strength and directions from the label, allergies and the prescribers.',
                     'A care summary for a new helper, a hospital stay or a family meeting: conditions, the care team, upcoming appointments and where the documents are.',
                     'A care costs report: what care costs by category and who paid, with what is reimbursable.',
@@ -10271,6 +10508,424 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                 </div>`;
             }
 
+            // ---- Caregiver extras (expert check, Oct 2026) ---------------------
+            // Names typed in the "who" fields: this device's owner first, then the
+            // last name used, so a sibling logs a note without retyping theirs.
+            WHO_FIELDS = ['logged_by', 'paid_by', 'driver', 'who', 'given_by'];
+            SLOTS = ['Morning', 'Noon', 'Evening', 'Bedtime'];
+
+            whoDefault(field) { return storage.get(SETTINGS_PREFIX + 'Last_' + field) || storage.get(SETTINGS_PREFIX + 'DeviceName') || ''; }
+            setDeviceName(v) {
+                const name = String(v || '').trim();
+                storage.set(SETTINGS_PREFIX + 'DeviceName', name);
+                this.WHO_FIELDS.forEach(f => storage.remove(SETTINGS_PREFIX + 'Last_' + f));
+                this.showToast(name ? `New entries on this device will say ${name}.` : 'Cleared. New entries start blank.');
+            }
+            nowTime() { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+            todayIso() { return this.isoDate(new Date()); }
+            newId(prefix) { return (prefix || 'r') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+            // The For field only earns its place once there are two people to choose between.
+            showMemberField() { return this.members().length > 1; }
+            fieldInUse(f, sectionKey) { return !((f.type === 'member_select' || f.type === 'member_multi') && sectionKey !== 'members' && !this.showMemberField()); }
+
+            beforeSave(key, item, old) {
+                this.WHO_FIELDS.forEach(f => { if (item[f]) storage.set(SETTINGS_PREFIX + 'Last_' + f, item[f]); });
+                // A repeating task saved as done comes straight back on its next date.
+                if (key === 'tasks' && /✅/.test(item.status || '') && !(old && /✅/.test(old.status || ''))) {
+                    const step = this.FREQUENCY_STEP[item.frequency];
+                    if (step) {
+                        item.last_done = this.todayIso();
+                        item.due = this.stepDate(step);
+                        item.status = '⏳ To do';
+                        this._rolled = `Done. "${item.task}" comes back on ${formatDate(item.due)}.`;
+                    }
+                }
+                return item;
+            }
+            stepDate(step) {
+                const t = new Date(); const next = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+                if (step.months) next.setMonth(next.getMonth() + step.months);
+                if (step.days) next.setDate(next.getDate() + step.days);
+                if (step.weekdays) { next.setDate(next.getDate() + 1); while (next.getDay() === 0 || next.getDay() === 6) next.setDate(next.getDate() + 1); }
+                return this.isoDate(next);
+            }
+            supplyStep(m) { const n = parseInt(m.supply, 10); return n > 0 ? { days: n } : null; }
+
+            // ---- Today's medications --------------------------------------------
+            medSlots(m) {
+                const sch = String(m.schedule || '');
+                if (!sch || /as needed/i.test(sch)) return [];
+                return this.SLOTS.filter(x => new RegExp(x, 'i').test(sch));
+            }
+            scheduledMeds() {
+                return (this.data.medications || []).filter(m => /💊/.test(m.status || '') && !m.archived && this.medSlots(m).length && this.recordMatchesMember(m, this.dashboardMemberFilter));
+            }
+            doseFor(date, slot, med) { return (this.data.doses || []).find(d => d.date === date && d.slot === slot && d.med_id === med.id); }
+            toggleDose(medId, slot) {
+                const med = (this.data.medications || []).find(m => m.id === medId);
+                if (!med) return;
+                const date = this.todayIso();
+                if (!Array.isArray(this.data.doses)) this.data.doses = [];
+                const list = this.data.doses;
+                const i = list.findIndex(d => d.date === date && d.slot === slot && d.med_id === medId);
+                if (i > -1) {
+                    list.splice(i, 1);
+                    this.showToast(`${med.name}: ${slot.toLowerCase()} tick removed.`, 'info');
+                } else {
+                    const by = this.whoDefault('given_by');
+                    list.push({ id: this.newId('cg_d'), date, time: this.nowTime(), slot, medication: med.name + (med.strength ? ' ' + med.strength : ''), med_id: medId, status: '✅ Given', given_by: by, member: med.member || '' });
+                    this.showToast(`${med.name}: ${slot.toLowerCase()} dose ticked${by ? ' by ' + by : ''}.`);
+                }
+                if (!this.saveData()) return;
+                this.renderDashboard();
+            }
+            todayMedsHtml() {
+                if (this.hiddenSections.includes('doses') || this.hiddenSections.includes('medications')) return '';
+                const meds = this.scheduledMeds();
+                if (!meds.length) return '';
+                const date = this.todayIso();
+                const slots = this.SLOTS.filter(sl => meds.some(m => this.medSlots(m).includes(sl)));
+                let total = 0, done = 0;
+                const cols = slots.map(slot => {
+                    const rows = meds.filter(m => this.medSlots(m).includes(slot)).map(m => {
+                        total++;
+                        const d = this.doseFor(date, slot, m);
+                        if (d) done++;
+                        const sub = d ? `${escapeHtml(this.plain(d.status))}${d.given_by ? ' by ' + escapeHtml(d.given_by) : ''}${d.time ? ' at ' + escapeHtml(formatTime(d.time)) : ''}` : escapeHtml(m.directions || 'Not ticked yet');
+                        return `<button type="button" onclick="window.app.toggleDose('${escapeHtml(m.id)}', '${slot}')" aria-pressed="${d ? 'true' : 'false'}" class="dose-btn ${d ? 'is-given' : ''}">
+                            <i class="ph ${d ? 'ph-check-circle' : 'ph-circle'} dose-ic"></i>
+                            <span class="dose-txt"><span class="dose-name">${escapeHtml(m.name)}${m.strength ? ' <span class="dose-str">' + escapeHtml(m.strength) + '</span>' : ''}</span><span class="dose-sub">${sub}</span></span>
+                        </button>`;
+                    }).join('');
+                    return `<div class="dose-col"><div class="dose-slot">${slot}</div>${rows}</div>`;
+                }).join('');
+                return `<div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h3 id="todays-meds" class="font-bold text-slate-900 dark:text-white flex items-center gap-2"><i class="ph ph-pill text-primary-500"></i> Today's Medications</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">${done} of ${total} ticked today. Tap one when it has been given; tap again to take the tick off.</p>
+                        </div>
+                        <button onclick="window.app.printDoseGrid()" class="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">Print this week's check-off sheet</button>
+                    </div>
+                    <div class="dose-grid">${cols}</div>
+                    <p class="text-xs text-slate-500 mt-4">A record of what the family gave, copied from the labels. It does not check doses or interactions.</p>
+                </div>`;
+            }
+
+            // ---- Quick note -------------------------------------------------------
+            quickNoteHtml() {
+                if (this.hiddenSections.includes('care_log')) return '';
+                return `<div class="bg-white dark:bg-darkCard p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <form onsubmit="event.preventDefault(); window.app.quickNote(this)" class="quick-note">
+                        <label for="quick-note" class="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 shrink-0"><i class="ph ph-notepad text-primary-500 text-lg"></i> Quick note</label>
+                        <input id="quick-note" name="note" type="text" maxlength="300" autocomplete="off" placeholder="How is the day going? e.g. Ate a full lunch" class="flex-1 min-w-0 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-primary-500 text-slate-900 dark:text-white">
+                        <button type="submit" class="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm shrink-0">Add to the care log</button>
+                    </form>
+                </div>`;
+            }
+            quickNote(form) {
+                const v = form.note.value.trim();
+                if (!v) return this.showToast('Type a few words first.', 'error');
+                const by = this.whoDefault('logged_by');
+                if (!Array.isArray(this.data.care_log)) this.data.care_log = [];
+                this.data.care_log.push({ id: this.newId('cg_l'), date: this.todayIso(), time: this.nowTime(), title: v, kind: '📝 General', logged_by: by, member: this.dashboardMemberFilter !== 'all' ? this.dashboardMemberFilter : '' });
+                if (!this.saveData()) return;
+                form.note.value = '';
+                this.showToast(`Added to the care log${by ? ' as ' + by : ''}.`);
+            }
+
+            // ---- Periods for reports ------------------------------------------------
+            periodRange(p) {
+                const now = new Date(), y = now.getFullYear(), m = now.getMonth(), iso = d => this.isoDate(d);
+                const q = Math.floor(m / 3);
+                const map = {
+                    month: [new Date(y, m, 1), new Date(y, m + 1, 0), 'This month'],
+                    lastmonth: [new Date(y, m - 1, 1), new Date(y, m, 0), 'Last month'],
+                    quarter: [new Date(y, q * 3, 1), new Date(y, q * 3 + 3, 0), 'This quarter'],
+                    year: [new Date(y, 0, 1), new Date(y, 11, 31), 'This year (' + y + ')'],
+                    lastyear: [new Date(y - 1, 0, 1), new Date(y - 1, 11, 31), 'Last year (' + (y - 1) + ')']
+                };
+                if (!map[p]) return { from: '', to: '', label: 'Everything' };
+                const [a, b, label] = map[p];
+                return { from: iso(a), to: iso(b), label: `${label}: ${formatDate(iso(a))} to ${formatDate(iso(b))}` };
+            }
+            inPeriod(d, R) { if (!R.from) return true; const v = String(d || '').slice(0, 10); return !!v && v >= R.from && v <= R.to; }
+            choosePeriod(title, cb) {
+                this._periodCb = cb;
+                let el = document.getElementById('period-backdrop');
+                if (!el) { el = document.createElement('div'); el.id = 'period-backdrop'; document.body.appendChild(el); }
+                const opts = [['month', 'This month'], ['lastmonth', 'Last month'], ['quarter', 'This quarter'], ['year', 'This year'], ['lastyear', 'Last year'], ['all', 'Everything']];
+                el.className = 'period-backdrop';
+                el.innerHTML = `<div class="period-card" role="dialog" aria-modal="true" aria-labelledby="period-title">
+                    <h3 id="period-title" class="font-bold text-slate-900 dark:text-white text-lg serif-font">${escapeHtml(title)}</h3>
+                    <p class="text-sm text-slate-500 mb-4">Pick the dates to include. Taxes, FSA and HSA claims usually want one year.</p>
+                    <div class="period-opts">${opts.map(([k, l]) => `<button type="button" onclick="window.app.pickPeriod('${k}')" class="period-btn">${l}</button>`).join('')}</div>
+                    <button type="button" onclick="window.app.pickPeriod(null)" class="period-cancel">Cancel</button>
+                </div>`;
+                el.onclick = (e) => { if (e.target === el) this.pickPeriod(null); };
+                el.onkeydown = (e) => { if (e.key === 'Escape') this.pickPeriod(null); };
+                el.classList.remove('hidden');
+                setTimeout(() => { const b = el.querySelector('.period-btn:nth-child(4)'); if (b) b.focus(); }, 20);
+            }
+            pickPeriod(k) {
+                const el = document.getElementById('period-backdrop');
+                if (el) el.classList.add('hidden');
+                const cb = this._periodCb; this._periodCb = null;
+                if (k && cb) cb(k);
+            }
+
+            // ---- Selection, archive and paging in lists ---------------------------------
+            isSelected(key, id) { return !!(this.selection && this.selection.key === key && this.selection.ids.has(id)); }
+            toggleRow(key, id, on) {
+                if (!this.selection || this.selection.key !== key) this.selection = { key, ids: new Set() };
+                on ? this.selection.ids.add(id) : this.selection.ids.delete(id);
+                this.renderGenericSection(key);
+            }
+            selectAllRows(key, on) {
+                this.selection = { key, ids: new Set() };
+                if (on) this.processItems(this.data[key] || [], key).slice(0, this.rowLimit || 200).forEach(i => this.selection.ids.add(i.id));
+                this.renderGenericSection(key);
+            }
+            bulkBarHtml(key) {
+                const n = this.selection && this.selection.key === key ? this.selection.ids.size : 0;
+                if (!n) return '';
+                return `<div class="bulk-bar" role="region" aria-label="Selected records">
+                    <span class="font-bold text-sm">${n} selected</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="window.app.bulkArchive('${escapeHtml(key)}', ${this.showArchived ? 'false' : 'true'})" class="bulk-btn"><i class="ph ${this.showArchived ? 'ph-arrow-counter-clockwise' : 'ph-archive'}"></i> ${this.showArchived ? 'Restore' : 'Archive'}</button>
+                        <button type="button" onclick="window.app.bulkDelete('${escapeHtml(key)}')" class="bulk-btn bulk-del"><i class="ph ph-trash"></i> Delete</button>
+                        <button type="button" onclick="window.app.selectAllRows('${escapeHtml(key)}', false)" class="bulk-btn">Clear</button>
+                    </div>
+                </div>`;
+            }
+            bulkArchive(key, on) {
+                const ids = this.selection.ids, list = this.data[key] || [];
+                let n = 0;
+                list.forEach(i => { if (ids.has(i.id)) { if (on) i.archived = true; else delete i.archived; n++; } });
+                this.selection = { key, ids: new Set() };
+                if (!this.saveData()) return;
+                this.showToast(on ? `${n} archived. Find them under "Show archived" at the bottom of the list.` : `${n} restored.`, 'success', on ? { label: 'Undo', onClick: () => { list.forEach(i => { if (ids.has(i.id)) delete i.archived; }); this.saveData(); this.renderGenericSection(key); } } : null);
+                this.renderGenericSection(key);
+            }
+            bulkDelete(key) {
+                const ids = new Set(this.selection.ids);
+                this.openConfirm('Delete Records?', `Delete ${ids.size} record${ids.size === 1 ? '' : 's'}? You can undo this straight after.`, 'Delete', 'bg-rose-600 hover:bg-rose-700 text-white', () => {
+                    const before = (this.data[key] || []).slice();
+                    this.data[key] = before.filter(i => !ids.has(i.id));
+                    this.selection = { key, ids: new Set() };
+                    if (!this.saveData()) return;
+                    this.showToast(`${ids.size} deleted`, 'success', { label: 'Undo', onClick: () => { this.data[key] = before; this.saveData(); this.showToast('Restored', 'success'); this.renderGenericSection(key); } });
+                    this.renderGenericSection(key);
+                });
+            }
+            archiveLinkHtml(key) {
+                const n = (this.data[key] || []).filter(i => i.archived).length;
+                if (!n && !this.showArchived) return '';
+                return `<div class="mt-4 text-center"><button type="button" onclick="window.app.showArchived = ${this.showArchived ? 'false' : 'true'}; window.app.selection = { key: '${escapeHtml(key)}', ids: new Set() }; window.app.renderGenericSection('${escapeHtml(key)}')" class="text-sm font-bold text-primary-600 dark:text-primary-400 hover:underline">${this.showArchived ? 'Back to the current list' : `Show archived (${n})`}</button></div>`;
+            }
+            moreRowsHtml(total) {
+                const shown = Math.min(total, this.rowLimit || 200);
+                if (total <= shown) return '';
+                return `<div class="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm text-slate-500"><span>Showing ${shown.toLocaleString()} of ${total.toLocaleString()}</span><button type="button" onclick="window.app.rowLimit = (window.app.rowLimit || 200) + 200; window.app.reRenderCurrentSection()" class="px-4 py-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 shadow-sm">Show 200 more</button></div>`;
+            }
+
+            // ---- Import a medication list from a CSV file ------------------------------------
+            parseCSV(text) {
+                text = String(text || '').replace(/^﻿/, '');
+                const first = text.split(/\r?\n/)[0] || '';
+                const delim = first.split(';').length > first.split(',').length ? ';' : (first.split('\t').length > first.split(',').length ? '\t' : ',');
+                const rows = []; let row = [], f = '', q = false;
+                for (let i = 0; i < text.length; i++) {
+                    const c = text[i];
+                    if (q) { if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+                    else if (c === '"') q = true;
+                    else if (c === delim) { row.push(f); f = ''; }
+                    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(f); rows.push(row); row = []; f = ''; }
+                    else f += c;
+                }
+                if (f !== '' || row.length) { row.push(f); rows.push(row); }
+                return rows.filter(r => r.some(x => String(x).trim() !== ''));
+            }
+            importMedsCSV(e) {
+                const file = e.target.files && e.target.files[0];
+                e.target.value = '';
+                if (!file) return;
+                file.text().then(text => {
+                    const rows = this.parseCSV(text);
+                    // Pharmacy and medication apps put a title line above the header: find the header.
+                    const hi = rows.findIndex(r => r.filter(h => String(h).trim()).length >= 2 && r.some(h => /medication|medicine|drug|^name$/i.test(String(h).trim())));
+                    if (hi < 0 || rows.length < hi + 2) return this.showToast('No medication column found. The file needs a column called Medication or Name.', 'error');
+                    const head = rows[hi].map(h => String(h).trim().toLowerCase());
+                    const col = (...names) => {
+                        for (const n of names) { const i = head.indexOf(n); if (i > -1) return i; }
+                        for (const n of names) { const i = head.findIndex(h => h.includes(n)); if (i > -1) return i; }
+                        return -1;
+                    };
+                    const map = { name: col('medication', 'medicine', 'drug name', 'drug', 'name'), strength: col('strength', 'dose', 'dosage'), directions: col('directions', 'instructions', 'sig', 'how to take'), purpose: col('purpose', 'reason', 'condition', 'used for'), prescriber: col('prescriber', 'prescribed by', 'doctor'), pharmacy: col('pharmacy') };
+                    const have = new Set((this.data.medications || []).map(m => String(m.name || '').trim().toLowerCase()));
+                    const add = rows.slice(hi + 1).map(r => {
+                        const o = { id: this.newId('cg_m'), status: '💊 Taking' };
+                        Object.entries(map).forEach(([k, i]) => { if (i >= 0 && r[i] !== undefined && String(r[i]).trim()) o[k] = String(r[i]).trim(); });
+                        return o;
+                    }).filter(o => o.name && !have.has(o.name.toLowerCase()));
+                    if (!add.length) return this.showToast('Every medication in that file is already on the list.', 'info');
+                    this.openConfirm('Import Medications?', `${add.length} found: ${add.slice(0, 5).map(o => o.name).join(', ')}${add.length > 5 ? ' and more' : ''}. Check each one against its label afterwards.`, 'Import', 'bg-primary-600 hover:bg-primary-700 text-white', () => {
+                        if (!Array.isArray(this.data.medications)) this.data.medications = [];
+                        this.data.medications.push(...add);
+                        if (!this.saveData()) return;
+                        this.showToast(`${add.length} medication${add.length === 1 ? '' : 's'} imported.`);
+                        this.reRenderCurrentSection();
+                    });
+                }).catch(() => this.showToast('That file could not be read.', 'error'));
+            }
+
+            // ---- More documents ---------------------------------------------------------------
+            vitalKey(kind) { return this.plain(kind).replace(/\s*\(.*$/, ''); }
+            VITAL_UNITS = { 'Blood pressure': 'mmHg', 'Pulse': 'bpm', 'Blood sugar': 'mg/dL', 'Weight': 'lb', 'Temperature': '°F', 'Oxygen': '%', 'Pain': 'of 10' };
+            vitalText(v) {
+                const r2 = v.reading2 !== null && v.reading2 !== undefined && v.reading2 !== '' ? '/' + v.reading2 : '';
+                const u = this.VITAL_UNITS[this.vitalKey(v.kind)] || '';
+                return `${v.reading}${r2}${u ? ' ' + u : ''}`;
+            }
+            chartSvg(points, two) {
+                // points: [{d, a, b}] in date order. Simple lines with the range labelled in words.
+                const W = 680, H = 130, pad = 34;
+                const vals = points.flatMap(p => two && p.b !== undefined && p.b !== null && p.b !== '' ? [p.a, +p.b] : [p.a]).filter(v => isFinite(v));
+                if (points.length < 2 || !vals.length) return '';
+                let lo = Math.min(...vals), hi = Math.max(...vals);
+                if (hi === lo) { hi += 1; lo -= 1; }
+                const x = i => pad + (W - pad * 2) * (i / (points.length - 1));
+                const y = v => 12 + (H - 34) * (1 - (v - lo) / (hi - lo));
+                const line = (k, color) => `<polyline fill="none" stroke="${color}" stroke-width="2" points="${points.map((p, i) => p[k] === undefined || p[k] === null || p[k] === '' ? '' : x(i).toFixed(1) + ',' + y(+p[k]).toFixed(1)).filter(Boolean).join(' ')}"/>` + points.map((p, i) => p[k] === undefined || p[k] === null || p[k] === '' ? '' : `<circle cx="${x(i).toFixed(1)}" cy="${y(+p[k]).toFixed(1)}" r="2.6" fill="${color}"/>`).join('');
+                return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;display:block;margin:0 0 6px 0" font-family="DM Sans, sans-serif" font-size="11" fill="#475569">
+                    <line x1="${pad}" y1="${y(hi)}" x2="${W - pad}" y2="${y(hi)}" stroke="#e2e8f0"/><line x1="${pad}" y1="${y(lo)}" x2="${W - pad}" y2="${y(lo)}" stroke="#e2e8f0"/>
+                    <text x="2" y="${y(hi) + 4}">${hi}</text><text x="2" y="${y(lo) + 4}">${lo}</text>
+                    ${line('a', '#1e3a5f')}${two ? line('b', '#c2410c') : ''}
+                    <text x="${pad}" y="${H - 4}">${escapeHtml(formatDate(points[0].d))}</text><text x="${W - pad}" y="${H - 4}" text-anchor="end">${escapeHtml(formatDate(points[points.length - 1].d))}</text>
+                </svg>`;
+            }
+            forPerson(list) { return (list || []).filter(i => !i.archived && this.recordMatchesMember(i, this.dashboardMemberFilter)); }
+
+            // Readings with a chart per type, for the doctor.
+            printVitals() {
+                const V = this.forPerson(this.data.vitals).slice().sort((a, b) => (String(a.date) + (a.time || '')).localeCompare(String(b.date) + (b.time || '')));
+                if (!V.length) return this.showToast('Add a reading in the Vitals Log first.', 'error');
+                const e = escapeHtml;
+                let html = `<div style="padding: 16px 16px;">` + this.docHead('Vitals Log');
+                const order = SECTIONS.vitals.fields.find(f => f.name === 'kind').options.map(o => this.vitalKey(o));
+                const kinds = [...new Set(V.map(v => this.vitalKey(v.kind)))].sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));
+                kinds.forEach(k => {
+                    const list = V.filter(v => this.vitalKey(v.kind) === k);
+                    const last = list.slice(-60);
+                    const two = list.some(v => v.reading2 !== null && v.reading2 !== undefined && v.reading2 !== '');
+                    html += `<div style="break-inside:avoid;margin-bottom:14px"><h3 style="font-size:15px;margin:0 0 6px 0">${e(k)} <span style="font-weight:400;color:#64748b;font-size:12px">${list.length} reading${list.length === 1 ? '' : 's'}${this.VITAL_UNITS[k] ? ' · ' + e(this.VITAL_UNITS[k]) : ''}${two ? ' · top number dark blue, bottom number orange' : ''}</span></h3>`
+                        + this.chartSvg(last.map(v => ({ d: v.date, a: +v.reading, b: v.reading2 })), two)
+                        + this.printTable(['Date', 'Time', 'Reading', 'When', 'By', 'Notes'], [14, 10, 16, 16, 14, 30],
+                            list.slice(-8).reverse().map(v => [`<span class="num">${e(formatDate(v.date))}</span>`, `<span class="num">${e(v.time ? formatTime(v.time) : '')}</span>`, `<span class="num">${e(this.vitalText(v))}</span>`, e(v.context || ''), e(v.logged_by || ''), e(v.notes || '')]))
+                        + `</div>`;
+                });
+                html += `<p style="font-size:11px;color:#64748b;margin-top:12px">Readings as the family measured and recorded them. Not medical advice; the care team decides what they mean.</p></div>`;
+                this.deliverDocument('Vitals Log', this.getPrintHTML('Vitals Log', '', html), 'Vitals_Log');
+            }
+
+            // A week to tick off by hand: today and the next six days, with any ticks already made.
+            printDoseGrid() {
+                const meds = this.scheduledMeds();
+                const prn = this.forPerson(this.data.medications).filter(m => /💊/.test(m.status || '') && /as needed/i.test(m.schedule || ''));
+                if (!meds.length && !prn.length) return this.showToast('Set "When it is taken" on a medication first.', 'error');
+                const e = escapeHtml, days = [];
+                for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate() + i); days.push(this.isoDate(d)); }
+                const short = iso => { const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString(undefined, { weekday: 'short' }) + '<br>' + formatDate(iso).replace(/\/\d{4}$/, ''); };
+                const box = '<span style="display:inline-block;width:14px;height:14px;border:1.3px solid #334155;border-radius:3px"></span>';
+                const rows = [];
+                this.SLOTS.forEach(slot => meds.filter(m => this.medSlots(m).includes(slot)).forEach(m => {
+                    rows.push([`${e(m.name)} ${e(m.strength || '')}<div style="font-weight:400;color:#475569;font-size:11px">${e(slot)}${m.directions ? ' · ' + e(m.directions) : ''}</div>`]
+                        .concat(days.map(d => { const g = this.doseFor(d, slot, m); return `<div style="text-align:center">${g ? (/✅/.test(g.status) ? this.tickSvg(true) : this.tickSvg(false)) + e((g.given_by || '').split(' ')[0]) : box}</div>`; })));
+                }));
+                let html = `<div style="padding: 12px 12px;">` + this.docHead('Medication Check-off Sheet')
+                    + `<p style="font-size:12px;margin:-12px 0 12px 0">Tick each dose and add your initials. ${this.tickSvg(true)} given · ${this.tickSvg(false)} skipped or refused (write why on the back).</p>`;
+                if (rows.length) html += this.printTable(['Medication and time'].concat(days.map(short)), [30].concat(days.map(() => 10)), rows);
+                if (prn.length) html += `<h3 style="font-size:15px;">As needed</h3>` + this.printTable(['Medication', 'Date', 'Time', 'Why', 'Given by'], [30, 14, 12, 28, 16],
+                    prn.flatMap(m => [0, 1].map(() => [`${e(m.name)} ${e(m.strength || '')}`, '', '', '', ''])));
+                html += `<p style="font-size:11px;color:#64748b;margin-top:12px">Copied from the labels by the family. Not medical advice; follow the label and the care team.</p></div>`;
+                this.deliverDocument('Medication Check-off Sheet', this.getPrintHTML('Medication Check-off Sheet', '', html), 'Medication_Check_off_Sheet');
+            }
+
+            tickSvg(ok) { return ok ? '<svg width="12" height="12" viewBox="0 0 12 12" style="vertical-align:-1px"><path d="M2 6.5l2.6 2.6L10 3.2" fill="none" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg width="12" height="12" viewBox="0 0 12 12" style="vertical-align:-1px"><path d="M3 3l6 6M9 3l-6 6" fill="none" stroke="#b91c1c" stroke-width="1.8" stroke-linecap="round"/></svg>'; }
+
+            // One page for paramedics, the ER or a respite helper. Everything already in the binder.
+            printEmergencySheet() {
+                let people = this.members();
+                if (this.dashboardMemberFilter && this.dashboardMemberFilter !== 'all') people = people.filter(m => m.id === this.dashboardMemberFilter);
+                if (!people.length) return this.showToast('Add the person you care for in About Them first.', 'error');
+                const e = escapeHtml, open = v => !/⚪|Stopped/.test(v || '');
+                const age = dob => { if (!dob) return ''; const b = new Date(dob + 'T12:00:00'), n = new Date(); let a = n.getFullYear() - b.getFullYear(); if (n < new Date(n.getFullYear(), b.getMonth(), b.getDate())) a--; return a > 0 ? ` (${a})` : ''; };
+                const pages = people.map(p => {
+                    const mine = list => (list || []).filter(i => !i.archived && (!i.member || i.member === p.id || (Array.isArray(i.member) && i.member.includes(p.id))));
+                    const H = mine(this.data.health), M = mine(this.data.medications).filter(m => /💊/.test(m.status || ''));
+                    const allergies = H.filter(h => h.category === 'Allergy'), conds = H.filter(h => h.category === 'Condition');
+                    const T = this.data.team || [], em = T.filter(t => /to call/.test(t.emergency || '')).sort((a, b) => String(a.emergency).localeCompare(String(b.emergency)));
+                    const docs = T.filter(t => /doctor|Specialist|Pharmacy/i.test(t.role || ''));
+                    const ins = (this.data.benefits || []).filter(b => /Active/.test(b.status || ''));
+                    const papers = (this.data.documents || []).filter(d => /attorney|directive|living will|POLST|DNR|MOLST/i.test(d.item || ''));
+                    const sec = t => `<h3 style="font-size:12px;margin:9px 0 3px 0;text-transform:uppercase;letter-spacing:.06em;color:#334155">${t}</h3>`;
+                    const small = (head, w, rows) => this.printTable(head, w, rows).replace('margin-bottom:18px', 'margin-bottom:6px');
+                    return `<div class="es" style="padding:0 8px;${people.length > 1 ? 'page-break-after:always;' : ''}">
+                        <div style="background:#1e293b;color:#fff;border-radius:10px;padding:9px 14px;margin-bottom:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+                            <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.8">Emergency information</div>
+                            <div style="font-size:24px;font-weight:800;font-family:Manrope,sans-serif">${e(p.name)}</div>
+                            <div style="font-size:13px">${p.dob ? 'Born ' + e(formatDate(p.dob)) + e(age(p.dob)) : ''}${p.phone ? ' · ' + e(p.phone) : ''}${p.address ? ' · ' + e(p.address) : ''}</div>
+                        </div>
+                        <div style="display:flex;gap:10px;margin-bottom:4px">
+                            <div style="flex:1;border:1.5px solid #b91c1c;border-radius:8px;padding:8px 10px;font-size:13px"><strong style="color:#b91c1c">Allergies:</strong> ${allergies.length ? allergies.map(a => e(a.detail.replace(/^Allergy:\s*/i, ''))).join(', ') : 'None recorded'}</div>
+                            <div style="flex:1;border:1.5px solid #334155;border-radius:8px;padding:8px 10px;font-size:13px"><strong>Code status:</strong> ${e(p.code_status || 'Not recorded')}</div>
+                        </div>
+                        ${conds.length ? sec('Conditions') + `<p style="font-size:12.5px;margin:0">${conds.map(c => e(c.detail)).join(' · ')}</p>` : ''}
+                        ${M.length ? sec('Current medications') + small(['Medication', 'Strength', 'Directions', 'For'], [28, 14, 36, 22], M.map(m => [e(m.name), e(m.strength || ''), e(m.directions || ''), e(m.purpose || '')])) : ''}
+                        ${em.length ? sec('Emergency contacts') + small(['Call', 'Name', 'Phone', 'Notes'], [14, 28, 20, 38], em.map(t => [e(t.emergency.replace(' to call', '')), e(t.name), `<span class="num">${e(t.phone || '')}</span>`, e(t.notes || '')])) : ''}
+                        ${docs.length ? sec('Doctors and pharmacy') + small(['Name', 'Role', 'Phone'], [44, 28, 28], docs.map(t => [e(t.name), e(t.role || ''), `<span class="num">${e(t.phone || '')}</span>`])) : ''}
+                        ${ins.length ? sec('Insurance') + small(['Plan', 'Member ID', 'Phone'], [50, 20, 30], ins.map(b => [e(b.provider), `<span class="num">${e(b.reference || '')}</span>`, `<span class="num">${e(b.phone || '')}</span>`])) : ''}
+                        ${sec('Papers and preferences')}<p style="font-size:12.5px;margin:0">${papers.length ? papers.map(d => `<strong>${e(d.item)}:</strong> ${e(d.location || 'location not recorded')}`).join('<br>') : 'No advance directive or power of attorney recorded.'}${p.hospital ? '<br><strong>Preferred hospital:</strong> ' + e(p.hospital) : ''}${p.notes ? '<br><strong>Good to know:</strong> ' + e(p.notes) : ''}</p>
+                        <p style="font-size:10.5px;color:#64748b;margin-top:10px">Kept by the family; updated ${e(new Date().toLocaleDateString())}. Not a medical order. Medical orders such as a DNR or POLST are the signed forms themselves.</p>
+                    </div>`;
+                }).join('');
+                const html = `<style>.es td,.es th{padding-top:2px!important;padding-bottom:2px!important;font-size:11.5px!important;line-height:1.3!important}.es table{margin-bottom:4px!important}</style>` + pages;
+                this.deliverDocument('Emergency Sheet', this.getPrintHTML('Emergency Sheet', '', html), 'Emergency_Sheet');
+            }
+
+            // Before an appointment: the questions, what is new since the last visit, recent readings.
+            printVisitPrep(id) {
+                const appt = (this.data.dates || []).find(d => d.id === id);
+                if (!appt) return;
+                const e = escapeHtml;
+                const prior = (this.data.dates || []).filter(d => d.id !== id && /Doctor|Test|Therapy/.test(d.kind || '') && /✅/.test(d.status || '') && String(d.date) < String(appt.date)).sort((a, b) => String(b.date).localeCompare(String(a.date)))[0];
+                const since = prior ? prior.date : this.isoDate(new Date(Date.now() - 60 * 864e5));
+                const who = appt.member || '';
+                const mine = list => (list || []).filter(i => !i.archived && (!who || !i.member || i.member === who));
+                const news = mine(this.data.care_log).filter(l => String(l.date) >= since && /🌡️|🚶|💭/.test(l.kind || '')).sort((a, b) => String(a.date).localeCompare(String(b.date)));
+                const beh = this.hiddenSections.includes('behaviors') ? [] : mine(this.data.behaviors).filter(l => String(l.date) >= since);
+                const V = mine(this.data.vitals).filter(v => String(v.date) >= since);
+                const kinds = [...new Set(V.map(v => this.vitalKey(v.kind)))];
+                const H = mine(this.data.health), allergies = H.filter(h => h.category === 'Allergy');
+                const M = mine(this.data.medications).filter(m => /💊/.test(m.status || ''));
+                let html = `<style>.vp td,.vp th{padding-top:3px!important;padding-bottom:3px!important}.vp h3{margin:12px 0 5px 0!important}.vp table{margin-bottom:8px!important}</style><div class="vp" style="padding: 16px 16px;">` + this.docHead('Visit Prep: ' + appt.title);
+                html += `<p style="font-size:13px;margin:-8px 0 12px 0"><strong>${e(formatDate(appt.date))}${appt.time ? ' at ' + e(formatTime(appt.time)) : ''}</strong>${appt.where ? ' · ' + e(appt.where) : ''}${appt.driver ? ' · going with ' + e(appt.driver) : ''}${who ? ' · for ' + e(this.memberName(who)) : ''}<br><span style="font-size:11px;color:#64748b">Prepared by the family from their own records. Not medical advice.</span></p>`;
+                html += `<h3 style="font-size:15px;margin:0 0 6px 0">Questions to ask</h3><div style="border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;font-size:13px;min-height:44px;white-space:pre-wrap">${e(appt.notes || '')}</div>`;
+                html += `<h3 style="font-size:15px;">What is new since ${e(formatDate(since))}</h3>` + ((news.length + beh.length) ? this.printTable(['Date', 'What happened', 'Type'], [16, 60, 24], news.map(l => [`<span class="num">${e(formatDate(l.date))}</span>`, e(l.title) + (l.notes ? `<div style="font-weight:400;color:#475569;font-size:11px">${e(l.notes)}</div>` : ''), e(this.plain(l.kind))]).concat(beh.map(b => [`<span class="num">${e(formatDate(b.date))}</span>`, e(b.title), e(this.plain(b.kind))]))) : `<p style="font-size:12px">Nothing flagged in the care log.</p>`);
+                if (kinds.length) html += `<h3 style="font-size:15px;">Readings since then</h3>` + this.printTable(['Reading', 'Latest', 'Lowest', 'Highest', 'Count'], [28, 20, 16, 16, 20], kinds.map(k => {
+                    const l = V.filter(v => this.vitalKey(v.kind) === k).sort((a, b) => (String(a.date) + (a.time || '')).localeCompare(String(b.date) + (b.time || '')));
+                    const nums = l.map(v => +v.reading);
+                    const lo = l[nums.indexOf(Math.min(...nums))], hi = l[nums.indexOf(Math.max(...nums))];
+                    return [e(k), `<span class="num">${e(this.vitalText(l[l.length - 1]))}</span>`, `<span class="num">${e(this.vitalText(lo))}</span>`, `<span class="num">${e(this.vitalText(hi))}</span>`, String(l.length)];
+                }));
+                if (M.length) html += `<p style="font-size:12px;margin:10px 0 0 0"><strong>Medications taken now:</strong> ${M.map(m => e(m.name + (m.strength ? ' ' + m.strength : ''))).join(' · ')}. The full medication list prints separately.</p>`;
+                html += `<p style="font-size:12px;margin:4px 0 0 0"><strong>Allergies:</strong> ${allergies.length ? allergies.map(a => e(a.detail.replace(/^Allergy:\s*/i, ''))).join(', ') : 'None recorded'}</p>`;
+                html += `<h3 style="font-size:15px;">Notes from the visit</h3><div style="border:1px solid #cbd5e1;border-radius:8px;height:80px"></div>`;
+                html += `</div>`;
+                this.deliverDocument('Visit Prep', this.getPrintHTML('Visit Prep', '', html), 'Visit_Prep');
+            }
+
             // ---- Caregiver documents ------------------------------------------
             // Three papers: the medication list a doctor or ER asks for, a care
             // summary a new helper can read in five minutes, and the costs.
@@ -10343,7 +10998,7 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                 if (openT.length) {
                     html += `<h3 style="font-size:15px;">Who is doing what</h3>` + this.printTable(
                         ['<span style="display:inline-block;width:11px;height:11px;border:1.3px solid #334155;border-radius:2px;vertical-align:middle"></span>', 'Task', 'Who', 'How often', 'Do by'], [6, 44, 18, 14, 18],
-                        openT.map(t => ['<div style="text-align:center"><span style="display:inline-block;width:11px;height:11px;border:1.3px solid #334155;border-radius:2px;vertical-align:middle"></span></div>', e(t.task), e(t.who || ''), e(t.repeat || ''), `<span class="num">${e(t.due ? formatDate(t.due) : '')}</span>`]));
+                        openT.map(t => ['<div style="text-align:center"><span style="display:inline-block;width:11px;height:11px;border:1.3px solid #334155;border-radius:2px;vertical-align:middle"></span></div>', e(t.task), e(t.who || ''), e(t.frequency || ''), `<span class="num">${e(t.due ? formatDate(t.due) : '')}</span>`]));
                 }
                 if (K.length) {
                     html += `<h3 style="font-size:15px;">Documents</h3>` + this.printTable(
@@ -10354,11 +11009,14 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
             }
 
             // What care costs, by category and by who paid, plus the plans that may cover it.
-            printCareCosts() {
-                const C = (this.data.costs || []).slice().sort((a, b) => String(a.date).localeCompare(String(b.date))), B = this.data.benefits || [];
+            printCareCosts(period) {
+                if (!period) return this.choosePeriod('Print care costs for', p => this.printCareCosts(p));
+                const R = this.periodRange(period);
+                const C = (this.data.costs || []).filter(c => this.inPeriod(c.date, R)).slice().sort((a, b) => String(a.date).localeCompare(String(b.date))), B = this.data.benefits || [];
                 if (C.length + B.length === 0) return this.showToast('Add a care cost first.', 'error');
                 const e = escapeHtml, m = v => `<span class="num" style="white-space:nowrap">${e(formatMoney(parseFloat(v) || 0))}</span>`;
-                let html = `<div style="padding: 16px 16px;">` + this.docHead('Care Costs');
+                let html = `<div style="padding: 16px 16px;">` + this.docHead('Care Costs') + `<p style="font-size:12px;margin:-12px 0 16px 0"><strong>Period:</strong> ${escapeHtml(R.label)}</p>`;
+                if (!C.length) html += `<p style="font-size:12px">No care costs in this period.</p>`;
                 if (C.length) {
                     const by = (f) => { const o = {}; C.forEach(c => { const k = c[f] || 'Not recorded'; o[k] = (o[k] || 0) + (parseFloat(c.amount) || 0); }); return Object.entries(o).sort((a, b) => b[1] - a[1]); };
                     const total = C.reduce((n, c) => n + (parseFloat(c.amount) || 0), 0);
@@ -10662,9 +11320,13 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
 
             // One workbook for family or the accountant: costs, medications, plans and appointments.
             // The care log and the journal stay out on purpose: a file you email gets forwarded.
-            exportWorkbook() {
-                const C = (this.data.costs || []).slice().sort((a, b) => String(a.date).localeCompare(String(b.date))), M = this.data.medications || [], B = this.data.benefits || [];
-                const D = (this.data.dates || []).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+            exportWorkbook(period) {
+                if (!period) return this.choosePeriod('Excel workbook for', p => this.exportWorkbook(p));
+                const R = this.periodRange(period), inR = r => this.inPeriod(r.date, R);
+                const C = (this.data.costs || []).filter(inR).slice().sort((a, b) => String(a.date).localeCompare(String(b.date))), M = this.data.medications || [], B = this.data.benefits || [];
+                const D = (this.data.dates || []).filter(inR).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+                const V = (this.data.vitals || []).filter(inR).slice().sort((a, b) => (String(a.date) + (a.time || '')).localeCompare(String(b.date) + (b.time || '')));
+                const G = (this.data.doses || []).filter(inR).slice().sort((a, b) => (String(a.date) + (a.time || '')).localeCompare(String(b.date) + (b.time || '')));
                 if (C.length + M.length + B.length + D.length === 0) return this.showToast('Add a cost or a medication first.', 'error');
                 const plain = v => this.plain(v).replace(/’/g, "'"), num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
                 const date = v => v ? formatDate(v) : '', H = list => list.map(v => ({ v, s: 'h' }));
@@ -10689,7 +11351,12 @@ overview.innerHTML = `${overviewActive ? '<span data-cc-skip class="absolute lef
                         [{ v: 'Claimed, waiting', s: 'b' }, { f: `SUMIF('Care Costs'!F2:F${cn},"Claimed",'Care Costs'!D2:D${cn})`, s: 'mb' }],
                         [{ v: 'Medications taken now', s: 'b' }, { f: `COUNTIF(Medications!H2:H${M.length + 1},"Taking")` }], [],
                         ['Member IDs show the last four characters only. The care log and journal are not included. Not medical, tax or financial advice.']] };
-                const blob = xlsxLite.build([summary, costs, meds, plans].concat(D.length ? [appts] : []));
+                const vitals = { name: 'Vitals', freeze: 1, widths: [12, 10, 20, 10, 10, 18, 16, 40],
+                    rows: [H(['Date', 'Time', 'Reading', 'Value', 'Second', 'When', 'Measured by', 'Notes']), ...V.map(v => [date(v.date), v.time ? formatTime(v.time) : '', plain(v.kind), num(v.reading), v.reading2 === null || v.reading2 === undefined || v.reading2 === '' ? '' : num(v.reading2), v.context || '', v.logged_by || '', v.notes || ''])] };
+                const given = { name: 'Medications Given', freeze: 1, widths: [12, 12, 30, 12, 16, 10, 36],
+                    rows: [H(['Date', 'Time of day', 'Medication', 'Status', 'Given by', 'Time', 'Notes']), ...G.map(g => [date(g.date), g.slot || '', g.medication || '', plain(g.status), g.given_by || '', g.time ? formatTime(g.time) : '', g.notes || ''])] };
+                summary.rows.splice(1, 1, [`${this.ownerLine() ? this.ownerLine() + ' · ' : ''}${R.label} · prepared ${new Date().toLocaleDateString()}`]);
+                const blob = xlsxLite.build([summary, costs, meds, plans].concat(D.length ? [appts] : [], V.length ? [vitals] : [], G.length ? [given] : []));
                 this.downloadFile(`Caregiver_Workbook_${new Date().toISOString().slice(0, 10)}.xlsx`, blob, blob.type);
                 this.showToast('Excel workbook downloaded');
             }

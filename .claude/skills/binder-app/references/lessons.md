@@ -129,3 +129,23 @@ worlds, digital on every device and a real binder on the shelf.
 - **Every binder with dates gets a calendar.** A dated section that people plan around (court dates, appointments, deadlines, tasks) sets `hasCalendar: true`, which gives the three views: calendar, cards and list. Divorce shipped without one and was sent back. Finished (✅/🟢) or cancelled (❌) items are never overdue; times show 12-hour (formatTime) in US date format.
 
 - **defaultView** on a section picks its first view (a checklist with hasCalendar opens as a list, cards on a phone). A binder with no people list needs the `data.members` guard in migrate (After Loss). verify_binder and novice_check now find records by the field the form filled, and read the list view.
+
+## Expert check on the Caregiver Binder (Oct 2026)
+
+The first expert-check run found gaps a daily user hits in week one. Rules for every binder from now on:
+
+- **A select that promises behavior ships with that behavior.** "How often" on Care Tasks did nothing. Use the
+  engine's `completable` + `frequency` (FREQUENCY_STEP), so Mark done and a form saved as Done both roll the date.
+- **Money and time reports follow a period.** Any cost report or Excel export opens `choosePeriod()` (this month,
+  last month, quarter, this year, last year, everything); DOC_CALLS pass `'all'`.
+- **Health-adjacent binders** ship a vitals log with charts, a dose check-off (Overview card + 7-day sheet) and a
+  one-page emergency sheet built from data already in the binder. Record only: never ranges, alerts or dosing.
+- **Logs a user adds to daily** page at 200 rows ("Show 200 more"), and the Overview has a one-line quick note.
+- **"Who" fields remember:** this device's owner (Settings) and then the last name typed, per field.
+- **Lists get select, archive and bulk delete with Undo;** saves merge into the stored record so hidden keys
+  (archived, med_id, last_done) survive an edit.
+- **A people field (member_select) stays hidden until there are two people;** "All Children" became "Everyone".
+- **Engine bug fixed here, port to every binder:** the Escape/arrow key handler read `viewer-backdrop` without a
+  null check and threw on every key press in binders without a photo viewer.
+- **Prints:** an emergency sheet fits one page; no page holds only a footer or a lone box (move disclaimers up,
+  compact tables with a scoped `<style>`).

@@ -32,7 +32,11 @@ const DOC_CALLS = {   // engine method per document; 'all' = every student, whol
   notify: app => app.printNotificationLog(),                    // After Loss
   meds: app => app.printMedicationList(),                       // Caregiver
   care: app => app.printCareSummary(),                          // Caregiver
-  costs: app => app.printCareCosts(),                           // Caregiver
+  costs: app => app.printCareCosts('all'),                      // Caregiver (no argument opens the period chooser)
+  emergency: app => app.printEmergencySheet(),
+  vitals: app => app.printVitals(),
+  checkoff: app => app.printDoseGrid(),
+  visitprep: app => app.printVisitPrep((app.data.dates.find(d => /Upcoming/.test(d.status)) || app.data.dates[0]).id),
   claims: app => app.printClaimsTracker(),
   estate: app => app.printEstateChecklist(),
   inventory: app => app.printInventoryReport('all', 'all'),    // Home Management
